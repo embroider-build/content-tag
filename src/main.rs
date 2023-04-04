@@ -2,23 +2,27 @@ use swc_common::{
     self,
     errors::{ColorConfig, Handler},
     sync::Lrc,
-    FileName, SourceMap,
+    SourceMap,
 };
+use std::{path::Path, process::exit};
+use std::env;
 use swc_ecma_parser::{lexer::Lexer, Capturing, Parser, StringInput, Syntax};
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Must pass input filename");
+        exit(-1);
+    }
+    let filename = &args[1];
+    
     let cm: Lrc<SourceMap> = Default::default();
     let handler = Handler::with_tty_emitter(ColorConfig::Auto, true, false, Some(cm.clone()));
 
-    // Real usage
-    // let fm = cm
-    //     .load_file(Path::new("test.js"))
-    //     .expect("failed to load test.js");
+    let fm = cm
+        .load_file(Path::new(filename))
+        .expect("failed to load input file");
 
-    let fm = cm.new_source_file(
-        FileName::Custom("test.js".into()),
-        "function foo() {}".into(),
-    );
 
     let lexer = Lexer::new(
         Syntax::Es(Default::default()),
