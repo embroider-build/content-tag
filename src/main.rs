@@ -39,10 +39,11 @@ fn main() {
         e.into_diagnostic(&handler).emit();
     }
 
-    let _module = parser
+    let module = parser
         .parse_module()
         .map_err(|e| e.into_diagnostic(&handler).emit())
         .expect("Failed to parse module.");
 
-    println!("Tokens: {:?}", parser.input().take());
+    //println!("Tokens: {:?}", parser.input().take());
+    println!("{:?}", module );
 }
