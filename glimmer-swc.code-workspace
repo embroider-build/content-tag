@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../swc"
+		},
+		{
+			"path": "../my-swc-plugin"
 		}
 	],
 	"settings": {
