@@ -14,6 +14,12 @@ fn main() {
 
     let src = fs::read_to_string(filename.clone()).unwrap();
 
-    let output = gjs_to_js(src, Options { filename: Some(filename) }).expect("converted");
-    println!("{}" , output);
+    let output = gjs_to_js(
+        src,
+        Options {
+            filename: Some(filename),
+        },
+    )
+    .expect("converted");
+    println!("{}", output);
 }
