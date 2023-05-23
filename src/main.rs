@@ -9,6 +9,9 @@ use swc_common::{
 use swc_ecma_ast::Module;
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax};
+use swc_ecma_visit::{as_folder, FoldWith };
+
+mod transform;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -42,7 +45,11 @@ fn main() {
     }
 
     match res {
-        Ok(m) => {println!("{}", print(&m, cm)) }
+        Ok(m) => {
+            let mut tr = as_folder(transform::TransformVisitor);
+            let mt = m.fold_with(&mut tr);
+            println!("{}", print(&mt, cm)) 
+        }
         Err(_) => {}
     }
 }
