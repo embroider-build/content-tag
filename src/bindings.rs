@@ -7,7 +7,7 @@ extern "C" {
     fn js_error(message: JsValue) -> JsValue;
 }
 
-// Next:
+// TODO:
 //   - report errors through the bindgen
 //   - change the implementation to match my draft rfc
 //   - maybe offer a direct file-reading version of the API to avoid the inbound copy

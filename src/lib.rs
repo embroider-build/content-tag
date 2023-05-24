@@ -34,9 +34,12 @@ impl Preprocessor {
         options: Options,
     ) -> Result<String, swc_ecma_parser::error::Error> {
         let filename = options.filename.unwrap_or_else(|| "anonymous".into());
+
+        // TODO: see source_file_by_stable_id instead so that our source_map stays relevant across rebuilds and doesn't grow without bound
         let source_file = self
             .source_map
-            .new_source_file(FileName::Real(filename), src);
+            .new_source_file(FileName::Real(filename), src); 
+
         let lexer = Lexer::new(
             Syntax::Es(EsConfig {
                 decorators: true,
