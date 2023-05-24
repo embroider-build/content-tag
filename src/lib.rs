@@ -19,12 +19,14 @@ pub struct Options {
 }
 
 #[wasm_bindgen]
-pub fn wip_binding(src: String) -> Option<String> {
-    let res = gjs_to_js(src, Default::default());
-    match res {
-        Ok(output) => Some(output),
-        Err(_) => None
-    }
+extern "C" {
+    #[wasm_bindgen(js_name = Error)]
+    fn js_error(message: JsValue) -> JsValue;
+}
+
+#[wasm_bindgen]
+pub fn wip_binding(src: String) -> Result<String, JsValue> {
+    gjs_to_js(src, Default::default()).map_err(|_| js_error("Something went wrong".into()))
 }
 
 pub fn gjs_to_js(src: String, options: Options) -> Result<String, ()> {
