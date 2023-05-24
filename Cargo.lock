@@ -547,6 +547,7 @@ dependencies = [
  "swc_ecma_codegen",
  "swc_ecma_parser",
  "swc_ecma_visit",
+ "wasm-bindgen",
 ]
 
 [[package]]

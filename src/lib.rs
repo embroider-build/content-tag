@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-
+use wasm_bindgen::prelude::*;
 use swc_common::{
     self,
     errors::{ColorConfig, Handler},
@@ -16,6 +16,11 @@ mod transform;
 #[derive(Default)]
 pub struct Options {
     pub filename: Option<PathBuf>,
+}
+
+#[wasm_bindgen]
+pub fn simple() -> f32 {
+    return 123.0;
 }
 
 pub fn gjs_to_js(src: String, options: Options) -> Result<String, ()> {
