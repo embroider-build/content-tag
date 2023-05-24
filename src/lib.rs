@@ -8,7 +8,7 @@ use swc_common::{
 };
 use swc_ecma_ast::Module;
 use swc_ecma_codegen::Emitter;
-use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax};
+use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, EsConfig};
 use swc_ecma_visit::{as_folder, FoldWith};
 
 mod transform;
@@ -23,7 +23,7 @@ pub fn gjs_to_js(src: String, options: Options) -> Result<String, ()> {
     let source_map: Lrc<SourceMap> = Default::default();
     let source_file = source_map.new_source_file(FileName::Real(filename), src);
     let lexer = Lexer::new(
-        Syntax::Es(Default::default()),
+        Syntax::Es(EsConfig { decorators: true , ..Default::default() }),
         Default::default(),
         StringInput::from(&*source_file),
         None,
