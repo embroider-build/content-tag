@@ -5,33 +5,15 @@ use swc_ecma_ast::Module;
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, EsConfig, Parser, StringInput, Syntax};
 use swc_ecma_visit::{as_folder, FoldWith};
-use wasm_bindgen::prelude::*;
 
 mod transform;
+mod bindings;
 
 #[derive(Default)]
 pub struct Options {
     pub filename: Option<PathBuf>,
 }
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_name = Error)]
-    fn js_error(message: JsValue) -> JsValue;
-}
-
-// Next:
-//   - report errors through the bindgen
-//   - change the implementation to match my draft rfc
-//   - maybe offer a direct file-reading version of the API to avoid the inbound copy
-//   - and even when passing a string, see if we can constructor StringInput from JsString
-
-#[wasm_bindgen]
-pub fn wip_binding(src: String) -> Result<String, JsValue> {
-    let p = Preprocessor::new();
-    p.process(src, Default::default())
-        .map_err(|_| js_error("Something went wrong".into()))
-}
 
 pub struct Preprocessor {
     source_map: Lrc<SourceMap>,
