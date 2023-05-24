@@ -1,13 +1,23 @@
 use swc_core::ecma::{
     ast::{
         BlockStmt, CallExpr, Callee, ClassMember, Expr, ExprOrSpread, ExprStmt,
-        GlimmerTemplateExpression, GlimmerTemplateMember, Ident, Lit, StaticBlock, Stmt, ThisExpr,
+        GlimmerTemplateExpression, GlimmerTemplateMember, Lit, StaticBlock, Stmt, ThisExpr, 
     },
     transforms::testing::test,
     visit::VisitMut,
 };
 
-pub struct TransformVisitor;
+use swc_ecma_ast::Ident;
+
+pub struct TransformVisitor {
+    template_identifier: Ident
+}
+
+impl TransformVisitor {
+    pub fn new(id: &Ident) -> Self {
+        TransformVisitor { template_identifier: id.clone() }
+    }
+}
 
 impl VisitMut for TransformVisitor {
     fn visit_mut_expr(&mut self, n: &mut Expr) {
@@ -18,11 +28,7 @@ impl VisitMut for TransformVisitor {
             };
             *n = Expr::Call(CallExpr {
                 span: *span,
-                callee: Callee::Expr(Box::new(Expr::Ident(Ident {
-                    span: *span,
-                    sym: "_GLIMMER_TEMPLATE_".into(),
-                    optional: false,
-                }))),
+                callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
                 args: vec![content_literal],
                 type_args: None,
             })
@@ -41,11 +47,7 @@ impl VisitMut for TransformVisitor {
             };
             let call_expr = Expr::Call(CallExpr {
                 span: *span,
-                callee: Callee::Expr(Box::new(Expr::Ident(Ident {
-                    span: *span,
-                    sym: "_GLIMMER_TEMPLATE_".into(),
-                    optional: false,
-                }))),
+                callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
                 args: vec![content_literal, this],
                 type_args: None,
             });
@@ -69,20 +71,21 @@ use swc_core::ecma::visit::as_folder;
 
 test!(
     Default::default(),
-    |_| as_folder(TransformVisitor),
+    |_| as_folder(TransformVisitor::new(&Ident::new("template".into(), Default::default()))),
     glimmer_template_expression,
     r#"let x = <template>Hello</template>"#,
-    r#"let x = _GLIMMER_TEMPLATE_("Hello")"#
+    r#"let x = template("Hello")"#
 );
 
 test!(
     Default::default(),
-    |_| as_folder(TransformVisitor),
+    |_| as_folder(TransformVisitor::new(&Ident::new("template".into(), Default::default()))),
     glimmer_template_member,
     r#"class X { <template>Hello</template> } "#,
     r#"class X {
       static {
-          _GLIMMER_TEMPLATE_("Hello", this);
+          template("Hello", this);
       }
   }"#
 );
+

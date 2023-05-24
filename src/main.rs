@@ -19,7 +19,7 @@ fn main() {
     let p = Preprocessor::new();
 
     let result = p.process(
-        src,
+        &src,
         Options {
             filename: Some(filename),
         },

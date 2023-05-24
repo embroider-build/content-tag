@@ -14,5 +14,6 @@ swc_ecma_parser = { path = "../swc/crates/swc_ecma_parser" }
 swc_ecma_codegen = { path = "../swc/crates/swc_ecma_codegen" }
 swc_ecma_ast = { path = "../swc/crates/swc_ecma_ast" }
 swc_ecma_visit = { path = "../swc/crates/swc_ecma_visit" }
+swc_ecma_utils = { path = "../swc/crates/swc_ecma_utils" }
 wasm-bindgen = "0.2.63"
 
