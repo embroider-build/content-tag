@@ -1,8 +1,10 @@
-use glimmer_swc::{gjs_to_js, Options};
+use glimmer_swc::{Options, Preprocessor};
 use std::env;
 use std::fs;
 use std::path::PathBuf;
 use std::process::exit;
+
+use swc_common::errors::{ColorConfig, Handler};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -14,12 +16,21 @@ fn main() {
 
     let src = fs::read_to_string(filename.clone()).unwrap();
 
-    let output = gjs_to_js(
+    let p = Preprocessor::new();
+
+    let result = p.process(
         src,
         Options {
             filename: Some(filename),
         },
-    )
-    .expect("converted");
-    println!("{}", output);
+    );
+
+    match result {
+        Ok(output) => println!("{}", output),
+        Err(err) => {
+            let handler =
+                Handler::with_tty_emitter(ColorConfig::Auto, true, false, Some(p.source_map()));
+            err.into_diagnostic(&handler).emit();
+        }
+    }
 }
