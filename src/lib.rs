@@ -19,8 +19,12 @@ pub struct Options {
 }
 
 #[wasm_bindgen]
-pub fn simple() -> f32 {
-    return 123.0;
+pub fn wip_binding(src: String) -> Option<String> {
+    let res = gjs_to_js(src, Default::default());
+    match res {
+        Ok(output) => Some(output),
+        Err(_) => None
+    }
 }
 
 pub fn gjs_to_js(src: String, options: Options) -> Result<String, ()> {
