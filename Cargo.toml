@@ -17,3 +17,8 @@ swc_ecma_visit = { path = "../swc/crates/swc_ecma_visit" }
 swc_ecma_utils = { path = "../swc/crates/swc_ecma_utils" }
 wasm-bindgen = "0.2.63"
 
+[dev-dependencies]
+difference = "2"
+
+
+

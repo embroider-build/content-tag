@@ -3,12 +3,20 @@ use swc_common::comments::SingleThreadedComments;
 use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, EsConfig, Parser, StringInput, Syntax};
+use difference::Changeset;
 
 use crate::Preprocessor;
 
 pub fn testcase(input: &str, expected: &str) -> Result<(), swc_ecma_parser::error::Error> {
     let p = Preprocessor::new();
-    assert_eq!(p.process(input, Default::default())?, normalize(expected));
+    let actual = p.process(input, Default::default())?;
+    let normalized_expected = normalize(expected);
+    if actual != normalized_expected {
+        panic!(
+            "code differs from expected:\n{}",
+          format!("{}", Changeset::new(&normalized_expected,&actual,  "\n"))
+        );
+    }
     Ok(())
 }
 
