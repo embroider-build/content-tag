@@ -149,9 +149,50 @@ fn insert_import(parsed_module: &mut Module, target_module: &str, target_specifi
     );
     local
 }
-#[test]
-fn existing_import() -> Result<(), swc_ecma_parser::error::Error> {
-    let p = Preprocessor::new();
-    assert_eq!(p.process("<template>hello</template>", Default::default())?, "");
-    Ok(())
+
+#[cfg(test)]
+mod test_helpers;
+
+macro_rules! testcase {
+    ($test_name:ident, $input:expr, $expected:expr) => {
+        #[test]
+        fn $test_name() -> Result<(), swc_ecma_parser::error::Error> {
+            test_helpers::testcase($input, $expected)
+        }
+    };
+}
+
+testcase! {
+  no_preexisting_import,
+  r#"<template>hello</template>"#,
+  r#"import { template } from "@ember/template-compiler";
+     template("hello");"#
+}
+
+testcase! {
+  uses_preexisting_import,
+  r#"import { template } from "@ember/template-compiler";
+     <template>hello</template>"#,
+  r#"import { template } from "@ember/template-compiler";
+     template("hello");"#
+}
+
+testcase! {
+  uses_preexisting_renamed_import,
+  r#"import { template as t } from "@ember/template-compiler";
+     <template>hello</template>"#,
+  r#"import { template as t } from "@ember/template-compiler";
+     t("hello")"#
+}
+
+testcase! {
+  no_template_tags,
+  r#"console.log('hello')"#,
+  r#"console.log('hello')"#
+}
+
+testcase! {
+  avoids_top_level_collision,
+  "function template() {}; export default <template>Hi</template>",
+  "import { template as template } from \"@ember/template-compiler\";\nfunction template1() {}\nexport defaulte template(\"Hi\");"
 }
