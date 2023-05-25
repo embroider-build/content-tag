@@ -9,17 +9,24 @@ use swc_core::ecma::{
 
 use swc_ecma_ast::Ident;
 
-pub struct TransformVisitor {
-    template_identifier: Ident
+pub struct TransformVisitor<'a> {
+    template_identifier: Ident,
+    found_it: Option<&'a mut bool>,
 }
 
-impl TransformVisitor {
-    pub fn new(id: &Ident) -> Self {
-        TransformVisitor { template_identifier: id.clone() }
+impl <'a> TransformVisitor<'a> {
+    pub fn new(id: &Ident, found_it: Option<&'a mut bool>) -> Self {
+        TransformVisitor { template_identifier: id.clone(), found_it }
+    }
+    fn set_found_it(&mut self)  {
+        match self.found_it.as_mut() {
+            Some(flag) => { **flag = true },
+            None => {}
+        }
     }
 }
 
-impl VisitMut for TransformVisitor {
+impl <'a> VisitMut for TransformVisitor<'a> {
     fn visit_mut_expr(&mut self, n: &mut Expr) {
         if let Expr::GlimmerTemplateExpression(GlimmerTemplateExpression { span, contents }) = n {
             let content_literal = ExprOrSpread {
@@ -31,7 +38,8 @@ impl VisitMut for TransformVisitor {
                 callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
                 args: vec![content_literal],
                 type_args: None,
-            })
+            });
+            self.set_found_it();
         }
     }
 
@@ -61,7 +69,8 @@ impl VisitMut for TransformVisitor {
                     span: *span,
                     stmts: vec![Stmt::Expr(call_statement)],
                 },
-            })
+            });
+            self.set_found_it();
         }
     }
 }
@@ -71,7 +80,9 @@ use swc_core::ecma::visit::as_folder;
 
 test!(
     Default::default(),
-    |_| as_folder(TransformVisitor::new(&Ident::new("template".into(), Default::default()))),
+    |_| {
+        as_folder(TransformVisitor::new(&Ident::new("template".into(), Default::default()), None))
+    },
     glimmer_template_expression,
     r#"let x = <template>Hello</template>"#,
     r#"let x = template("Hello")"#
@@ -79,7 +90,7 @@ test!(
 
 test!(
     Default::default(),
-    |_| as_folder(TransformVisitor::new(&Ident::new("template".into(), Default::default()))),
+    |_| as_folder(TransformVisitor::new(&Ident::new("template".into(), Default::default()), None)),
     glimmer_template_member,
     r#"class X { <template>Hello</template> } "#,
     r#"class X {

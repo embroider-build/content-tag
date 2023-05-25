@@ -38,6 +38,8 @@ impl Preprocessor {
         src: &str,
         options: Options,
     ) -> Result<String, swc_ecma_parser::error::Error> {
+        let target_specifier = "template";
+        let target_module = "@ember/template-compiler";
         let filename = options.filename.unwrap_or_else(|| "anonymous".into());
 
         let source_file = self
@@ -57,16 +59,23 @@ impl Preprocessor {
         GLOBALS.set(&Default::default(), || {
             let mut parsed_module = parser.parse_module()?;
 
-            let id = find_existing_import(&parsed_module, "@ember/template-compiler", "template")
-                .unwrap_or_else(|| {
-                    insert_import(&mut parsed_module, "@ember/template-compiler", "template")
-                });
+            let found_id = find_existing_import(&parsed_module, target_module, target_specifier);
+            let had_id_already = found_id.is_some();
+            let id = found_id.unwrap_or_else(|| private_ident!(target_specifier));
+            let mut needs_import = false;
+            parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
+                &id,
+                Some(&mut needs_import),
+            )));
 
-            let mut tr = as_folder(transform::TransformVisitor::new(&id));
-            parsed_module.visit_mut_with(&mut tr);
+            if !had_id_already && needs_import {
+                insert_import(&mut parsed_module, target_module, target_specifier, &id)
+            }
 
             let mut h = hygiene();
             parsed_module.visit_mut_with(&mut h);
+
+            simplify_imports(&mut parsed_module);
 
             Ok(self.print(&parsed_module))
         })
@@ -127,8 +136,12 @@ fn find_existing_import(
     None
 }
 
-fn insert_import(parsed_module: &mut Module, target_module: &str, target_specifier: &str) -> Ident {
-    let local = private_ident!("template");
+fn insert_import(
+    parsed_module: &mut Module,
+    target_module: &str,
+    target_specifier: &str,
+    local: &Ident,
+) {
     parsed_module.body.insert(
         0,
         ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
@@ -147,7 +160,32 @@ fn insert_import(parsed_module: &mut Module, target_module: &str, target_specifi
             asserts: None,
         })),
     );
-    local
+}
+
+// It's not until after the hygiene pass that we know what local name is being
+// used for our import. If it turns out to equal the imported name, we can
+// implify from "import { template as template } from..." down to  "import {
+// template } from ...".
+fn simplify_imports(parsed_module: &mut Module) {
+    for item in parsed_module.body.iter_mut() {
+        match item {
+            ModuleItem::ModuleDecl(ModuleDecl::Import(import_declaration)) => {
+                for specifier in import_declaration.specifiers.iter_mut() {
+                    match specifier {
+                        ImportSpecifier::Named(specifier) => {
+                            if let ImportNamedSpecifier { imported: Some(ModuleExportName::Ident(imported)), local, .. } = specifier {
+                                if local.sym == imported.sym {
+                                    specifier.imported = None;
+                                }
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
 }
 
 #[cfg(test)]
@@ -193,6 +231,24 @@ testcase! {
 
 testcase! {
   avoids_top_level_collision,
-  "function template() {}; export default <template>Hi</template>",
-  "import { template as template } from \"@ember/template-compiler\";\nfunction template1() {}\nexport defaulte template(\"Hi\");"
+  r#"function template() {};
+     console.log(template());
+     export default <template>Hi</template>"#,
+  r#"import { template } from "@ember/template-compiler";
+     function template1() {};
+     console.log(template1());
+     export default template("Hi");"#
 }
+
+testcase! {
+    avoids_local_collision,
+    r#"export default function (template) {
+         console.log(template);
+         return <template>X</template>; 
+       };"#,
+    r#"import { template } from "@ember/template-compiler";
+       export default function(template1) {
+         console.log(template1);
+         return template("X");
+       };"#
+  }
