@@ -9,7 +9,12 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 swc_common = { path = "../swc/crates/swc_common", features=["tty-emitter"] }
 swc = { path = "../swc/crates/swc" }
-swc_core = { path = "../swc/crates/swc_core", features = ["ecma_plugin_transform"] }
+# The feature set here needs to be chosen carefully to not accidentally enable
+# "plugin_mode" and the related stuff, because with that enabled, wasm32 builds
+# expect swc plugin-runner specific environment that we don't use. When that
+# happens, the javascript shims try to do "require('env')" to find the missing
+# stuff, which is nonsense and blows up.
+swc_core = { path = "../swc/crates/swc_core", features = ["ecma_ast", "common", "ecma_visit", "ecma_transforms", "__testing_transform"] }
 swc_ecma_parser = { path = "../swc/crates/swc_ecma_parser" }
 swc_ecma_codegen = { path = "../swc/crates/swc_ecma_codegen" }
 swc_ecma_ast = { path = "../swc/crates/swc_ecma_ast" }
