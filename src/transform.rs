@@ -86,7 +86,7 @@ test!(
             None,
         ))
     },
-    glimmer_template_expression,
+    content_tag_template_expression,
     r#"let x = <template>Hello</template>"#,
     r#"let x = template("Hello", { eval() { return eval(arguments[0]); }})"#
 );
@@ -97,7 +97,7 @@ test!(
         &Ident::new("template".into(), Default::default()),
         None,
     )),
-    glimmer_template_member,
+    content_tag_template_member,
     r#"class X { <template>Hello</template> } "#,
     r#"class X {
       static {

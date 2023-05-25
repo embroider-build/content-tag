@@ -1,4 +1,4 @@
-# glimmer-swc
+# content-tag
 
 ## Prerequisites
 

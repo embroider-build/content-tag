@@ -1,4 +1,4 @@
-use glimmer_swc::{Options, Preprocessor};
+use content_tag::{Options, Preprocessor};
 use std::env;
 use std::fs;
 use std::path::PathBuf;

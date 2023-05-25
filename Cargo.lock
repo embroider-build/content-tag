@@ -238,6 +238,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "content-tag"
+version = "0.1.0"
+dependencies = [
+ "difference",
+ "lazy_static",
+ "swc",
+ "swc_common",
+ "swc_core",
+ "swc_ecma_ast",
+ "swc_ecma_codegen",
+ "swc_ecma_parser",
+ "swc_ecma_transforms",
+ "swc_ecma_utils",
+ "swc_ecma_visit",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "core-foundation-sys"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -477,24 +495,6 @@ name = "gimli"
 version = "0.27.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ad0a93d233ebf96623465aad4046a8d3aa4da22d4f4beba5388838c8a434bbb4"
-
-[[package]]
-name = "glimmer-swc"
-version = "0.1.0"
-dependencies = [
- "difference",
- "lazy_static",
- "swc",
- "swc_common",
- "swc_core",
- "swc_ecma_ast",
- "swc_ecma_codegen",
- "swc_ecma_parser",
- "swc_ecma_transforms",
- "swc_ecma_utils",
- "swc_ecma_visit",
- "wasm-bindgen",
-]
 
 [[package]]
 name = "glob"

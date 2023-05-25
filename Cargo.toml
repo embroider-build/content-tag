@@ -1,5 +1,5 @@
 [package]
-name = "glimmer-swc"
+name = "content-tag"
 version = "0.1.0"
 edition = "2021"
 
