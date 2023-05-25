@@ -16,6 +16,7 @@ swc_ecma_ast = { path = "../swc/crates/swc_ecma_ast" }
 swc_ecma_visit = { path = "../swc/crates/swc_ecma_visit" }
 swc_ecma_utils = { path = "../swc/crates/swc_ecma_utils" }
 swc_ecma_transforms = { path = "../swc/crates/swc_ecma_transforms" }
+lazy_static = "1.4.0"
 
 wasm-bindgen = "0.2.63"
 

@@ -10,15 +10,13 @@ use swc_core::ecma::{
 pub struct TransformVisitor<'a> {
     template_identifier: Ident,
     found_it: Option<&'a mut bool>,
-    scope_expr: Box<Expr>,
 }
 
 impl<'a> TransformVisitor<'a> {
-    pub fn new(id: &Ident, found_it: Option<&'a mut bool>, scope_expr: Box<Expr>) -> Self {
+    pub fn new(id: &Ident, found_it: Option<&'a mut bool>) -> Self {
         TransformVisitor {
             template_identifier: id.clone(),
             found_it,
-            scope_expr,
         }
     }
     fn set_found_it(&mut self) {
@@ -36,7 +34,10 @@ impl<'a> VisitMut for TransformVisitor<'a> {
             *n = Expr::Call(CallExpr {
                 span: *span,
                 callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
-                args: vec![content_literal, self.scope_expr.clone().into()],
+                args: vec![
+                    content_literal,
+                    crate::snippets::SCOPE_PARAMS.clone().into(),
+                ],
                 type_args: None,
             });
             self.set_found_it();
@@ -51,7 +52,11 @@ impl<'a> VisitMut for TransformVisitor<'a> {
             let call_expr = Expr::Call(CallExpr {
                 span: *span,
                 callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
-                args: vec![content_literal, self.scope_expr.clone().into(), this],
+                args: vec![
+                    content_literal,
+                    crate::snippets::SCOPE_PARAMS.clone().into(),
+                    this,
+                ],
                 type_args: None,
             });
             let call_statement = ExprStmt {
@@ -79,15 +84,11 @@ test!(
         as_folder(TransformVisitor::new(
             &Ident::new("template".into(), Default::default()),
             None,
-            Box::new(Expr::Ident(Ident::new(
-                "scopeGoesHere".into(),
-                Default::default(),
-            ))),
         ))
     },
     glimmer_template_expression,
     r#"let x = <template>Hello</template>"#,
-    r#"let x = template("Hello", scopeGoesHere)"#
+    r#"let x = template("Hello", { eval() { return eval(arguments[0]); }})"#
 );
 
 test!(
@@ -95,16 +96,12 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
-        Box::new(Expr::Ident(Ident::new(
-            "scopeGoesHere".into(),
-            Default::default()
-        )))
     )),
     glimmer_template_member,
     r#"class X { <template>Hello</template> } "#,
     r#"class X {
       static {
-          template("Hello", scopeGoesHere, this);
+          template("Hello", { eval() { return eval(arguments[0]) }}, this);
       }
   }"#
 );

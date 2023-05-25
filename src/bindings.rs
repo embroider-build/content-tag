@@ -9,7 +9,6 @@ extern "C" {
 
 // TODO:
 //   - report errors through the bindgen
-//   - change the implementation to match my draft rfc
 //   - maybe offer a direct file-reading version of the API to avoid the inbound copy
 //   - and even when passing a string, see if we can constructor StringInput from JsString
 

@@ -523,6 +523,7 @@ name = "glimmer-swc"
 version = "0.1.0"
 dependencies = [
  "difference",
+ "lazy_static",
  "swc",
  "swc_common",
  "swc_core",

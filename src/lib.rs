@@ -1,11 +1,14 @@
+#[macro_use]
+extern crate lazy_static;
+
 use std::path::PathBuf;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::Mark;
 use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_core::common::GLOBALS;
 use swc_ecma_ast::{
-    Expr, Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl,
-    ModuleExportName, ModuleItem,
+    Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl, ModuleExportName,
+    ModuleItem,
 };
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, EsConfig, Parser, StringInput, Syntax};
@@ -15,6 +18,7 @@ use swc_ecma_utils::private_ident;
 use swc_ecma_visit::{as_folder, VisitMutWith};
 
 mod bindings;
+mod snippets;
 mod transform;
 
 #[derive(Default)]
@@ -68,7 +72,6 @@ impl Preprocessor {
             parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
                 &id,
                 Some(&mut needs_import),
-                self.parse_expression(r#"({ eval() { return eval(arguments[0]); } })"#),
             )));
 
             if !had_id_already && needs_import {
@@ -113,40 +116,6 @@ impl Preprocessor {
 
     pub fn source_map(&self) -> Lrc<SourceMap> {
         return self.source_map.clone();
-    }
-
-    fn parse_expression(&self, src: &str) -> Box<Expr> {
-        let filename = "glimmer-template-prelude.js".into();
-        let source_file = self
-            .source_map
-            .new_source_file(FileName::Real(filename), src.to_string());
-
-        let lexer = Lexer::new(
-            Syntax::Es(EsConfig {
-                decorators: true,
-                ..Default::default()
-            }),
-            Default::default(),
-            StringInput::from(&*source_file),
-            Some(&self.comments),
-        );
-
-        let mut parser = Parser::new_from(lexer);
-        let module = parser.parse_module().unwrap();
-
-        module
-            .body
-            .first()
-            .unwrap()
-            .as_stmt()
-            .unwrap()
-            .as_expr()
-            .unwrap()
-            .expr
-            .as_paren()
-            .unwrap()
-            .expr
-            .clone()
     }
 }
 
