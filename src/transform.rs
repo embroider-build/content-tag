@@ -1,42 +1,45 @@
 use swc_core::ecma::{
     ast::{
         BlockStmt, CallExpr, Callee, ClassMember, Expr, ExprOrSpread, ExprStmt,
-        GlimmerTemplateExpression, GlimmerTemplateMember, Lit, StaticBlock, Stmt, ThisExpr, 
+        GlimmerTemplateExpression, GlimmerTemplateMember, Ident, Lit, StaticBlock, Stmt, ThisExpr,
     },
     transforms::testing::test,
     visit::VisitMut,
 };
 
-use swc_ecma_ast::Ident;
-
 pub struct TransformVisitor<'a> {
     template_identifier: Ident,
     found_it: Option<&'a mut bool>,
+    scope_expr: Box<Expr>
 }
 
-impl <'a> TransformVisitor<'a> {
-    pub fn new(id: &Ident, found_it: Option<&'a mut bool>) -> Self {
-        TransformVisitor { template_identifier: id.clone(), found_it }
+impl<'a> TransformVisitor<'a> {
+    pub fn new(id: &Ident, found_it: Option<&'a mut bool>, scope_expr: Box<Expr>) -> Self {
+        TransformVisitor {
+            template_identifier: id.clone(),
+            found_it,
+            scope_expr,
+        }
     }
-    fn set_found_it(&mut self)  {
+    fn set_found_it(&mut self) {
         match self.found_it.as_mut() {
-            Some(flag) => { **flag = true },
+            Some(flag) => **flag = true,
             None => {}
         }
     }
 }
 
-impl <'a> VisitMut for TransformVisitor<'a> {
+impl<'a> VisitMut for TransformVisitor<'a> {
     fn visit_mut_expr(&mut self, n: &mut Expr) {
         if let Expr::GlimmerTemplateExpression(GlimmerTemplateExpression { span, contents }) = n {
-            let content_literal = ExprOrSpread {
-                spread: None,
-                expr: Box::new(Expr::Lit(Lit::Str(contents.clone().into()))),
-            };
+            let content_literal = Box::new(Expr::Lit(Lit::Str(contents.clone().into()))).into();
             *n = Expr::Call(CallExpr {
                 span: *span,
                 callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
-                args: vec![content_literal],
+                args: vec![
+                    content_literal,
+                    self.scope_expr.clone().into()
+                ],
                 type_args: None,
             });
             self.set_found_it();
@@ -45,18 +48,13 @@ impl <'a> VisitMut for TransformVisitor<'a> {
 
     fn visit_mut_class_member(&mut self, n: &mut ClassMember) {
         if let ClassMember::GlimmerTemplateMember(GlimmerTemplateMember { span, contents }) = n {
-            let content_literal = ExprOrSpread {
-                spread: None,
-                expr: Box::new(Expr::Lit(Lit::Str(contents.clone().into()))),
-            };
-            let this = ExprOrSpread {
-                spread: None,
-                expr: Box::new(Expr::This(ThisExpr { span: *span })),
-            };
+            let content_literal = Box::new(Expr::Lit(Lit::Str(contents.clone().into()))).into();
+            let this: ExprOrSpread = Box::new(Expr::This(ThisExpr { span: *span })).into();
+
             let call_expr = Expr::Call(CallExpr {
                 span: *span,
                 callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
-                args: vec![content_literal, this],
+                args: vec![content_literal, self.scope_expr.clone().into(), this],
                 type_args: None,
             });
             let call_statement = ExprStmt {
@@ -81,22 +79,30 @@ use swc_core::ecma::visit::as_folder;
 test!(
     Default::default(),
     |_| {
-        as_folder(TransformVisitor::new(&Ident::new("template".into(), Default::default()), None))
+        as_folder(TransformVisitor::new(
+            &Ident::new("template".into(), Default::default()),
+            None,
+            Box::new(Expr::Ident(Ident::new("scopeGoesHere".into(), Default::default())))
+        ))
     },
     glimmer_template_expression,
     r#"let x = <template>Hello</template>"#,
-    r#"let x = template("Hello")"#
+    r#"let x = template("Hello", scopeGoesHere)"#
 );
 
 test!(
     Default::default(),
-    |_| as_folder(TransformVisitor::new(&Ident::new("template".into(), Default::default()), None)),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+        Box::new(Expr::Ident(Ident::new("scopeGoesHere".into(), Default::default())))
+
+    )),
     glimmer_template_member,
     r#"class X { <template>Hello</template> } "#,
     r#"class X {
       static {
-          template("Hello", this);
+          template("Hello", scopeGoesHere, this);
       }
   }"#
 );
-

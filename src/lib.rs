@@ -5,7 +5,7 @@ use swc_core::common::GLOBALS;
 use swc_core::ecma::transforms::base::hygiene::hygiene;
 use swc_ecma_ast::{
     Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl, ModuleExportName,
-    ModuleItem,
+    ModuleItem, Expr
 };
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, EsConfig, Parser, StringInput, Syntax};
@@ -14,6 +14,7 @@ use swc_ecma_visit::{as_folder, VisitMutWith};
 
 mod bindings;
 mod transform;
+mod snippets;
 
 #[derive(Default)]
 pub struct Options {
@@ -66,6 +67,7 @@ impl Preprocessor {
             parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
                 &id,
                 Some(&mut needs_import),
+                self.parse_expression(r#"({ eval() { return eval(arguments[0]); } })"#)
             )));
 
             if !had_id_already && needs_import {
@@ -101,6 +103,38 @@ impl Preprocessor {
 
     pub fn source_map(&self) -> Lrc<SourceMap> {
         return self.source_map.clone();
+    }
+
+    fn parse_expression(&self, src: &str) -> Box<Expr> {
+        let filename = "glimmer-template-prelude.js".into();
+        let source_file = self.source_map.new_source_file(FileName::Real(filename), src.to_string());
+    
+        let lexer = Lexer::new(
+            Syntax::Es(EsConfig {
+                decorators: true,
+                ..Default::default()
+            }),
+            Default::default(),
+            StringInput::from(&*source_file),
+            Some(&self.comments),
+        );
+    
+        let mut parser = Parser::new_from(lexer);
+        let module = parser.parse_module().unwrap();
+    
+        module
+            .body
+            .first()
+            .unwrap()
+            .as_stmt()
+            .unwrap()
+            .as_expr()
+            .unwrap()
+            .expr
+            .as_paren()
+            .unwrap()
+            .expr
+            .clone()
     }
 }
 
@@ -204,7 +238,7 @@ testcase! {
   no_preexisting_import,
   r#"<template>hello</template>"#,
   r#"import { template } from "@ember/template-compiler";
-     template("hello");"#
+     template("hello", { eval() { return eval(arguments[0])} });"#
 }
 
 testcase! {
@@ -212,7 +246,7 @@ testcase! {
   r#"import { template } from "@ember/template-compiler";
      <template>hello</template>"#,
   r#"import { template } from "@ember/template-compiler";
-     template("hello");"#
+     template("hello", { eval() { return eval(arguments[0])} });"#
 }
 
 testcase! {
@@ -220,7 +254,7 @@ testcase! {
   r#"import { template as t } from "@ember/template-compiler";
      <template>hello</template>"#,
   r#"import { template as t } from "@ember/template-compiler";
-     t("hello")"#
+     t("hello", { eval() { return eval(arguments[0])} })"#
 }
 
 testcase! {
@@ -237,7 +271,7 @@ testcase! {
   r#"import { template } from "@ember/template-compiler";
      function template1() {};
      console.log(template1());
-     export default template("Hi");"#
+     export default template("Hi", { eval() { return eval(arguments[0])} });"#
 }
 
 testcase! {
@@ -249,6 +283,6 @@ testcase! {
     r#"import { template } from "@ember/template-compiler";
        export default function(template1) {
          console.log(template1);
-         return template("X");
+         return template("X", { eval() { return eval(arguments[0])} });
        };"#
   }
