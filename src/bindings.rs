@@ -11,6 +11,7 @@ extern "C" {
 //   - report errors through the bindgen
 //   - maybe offer a direct file-reading version of the API to avoid the inbound copy
 //   - and even when passing a string, see if we can constructor StringInput from JsString
+//   - do top-level form
 
 #[wasm_bindgen]
 pub struct Preprocessor {
