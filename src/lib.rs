@@ -1,16 +1,18 @@
 use std::path::PathBuf;
+use swc_common::Mark;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_core::common::GLOBALS;
-use swc_core::ecma::transforms::base::hygiene::hygiene;
 use swc_ecma_ast::{
     Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl, ModuleExportName,
     ModuleItem, Expr
 };
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, EsConfig, Parser, StringInput, Syntax};
+use swc_ecma_transforms::hygiene::{hygiene_with_config};
 use swc_ecma_utils::private_ident;
 use swc_ecma_visit::{as_folder, VisitMutWith};
+use swc_ecma_transforms::resolver;
 
 mod bindings;
 mod transform;
@@ -74,7 +76,16 @@ impl Preprocessor {
                 insert_import(&mut parsed_module, target_module, target_specifier, &id)
             }
 
-            let mut h = hygiene();
+            let unresolved_mark = Mark::new();
+            let top_level_mark = Mark::new();
+
+            parsed_module.visit_mut_with(&mut resolver(unresolved_mark, top_level_mark, false));
+
+            let mut h = hygiene_with_config(swc_ecma_transforms::hygiene::Config {
+                keep_class_names: true,
+                top_level_mark,
+                safari_10: false,
+            });
             parsed_module.visit_mut_with(&mut h);
 
             simplify_imports(&mut parsed_module);
@@ -268,10 +279,10 @@ testcase! {
   r#"function template() {};
      console.log(template());
      export default <template>Hi</template>"#,
-  r#"import { template } from "@ember/template-compiler";
-     function template1() {};
-     console.log(template1());
-     export default template("Hi", { eval() { return eval(arguments[0])} });"#
+  r#"import { template as template1 } from "@ember/template-compiler";
+     function template() {};
+     console.log(template());
+     export default template1("Hi", { eval() { return eval(arguments[0])} });"#
 }
 
 testcase! {
@@ -280,9 +291,9 @@ testcase! {
          console.log(template);
          return <template>X</template>; 
        };"#,
-    r#"import { template } from "@ember/template-compiler";
-       export default function(template1) {
-         console.log(template1);
-         return template("X", { eval() { return eval(arguments[0])} });
+    r#"import { template as template1 } from "@ember/template-compiler";
+       export default function(template) {
+         console.log(template);
+         return template1("X", { eval() { return eval(arguments[0])} });
        };"#
   }
