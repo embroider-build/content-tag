@@ -1,22 +1,21 @@
 use std::path::PathBuf;
-use swc_common::Mark;
 use swc_common::comments::SingleThreadedComments;
+use swc_common::Mark;
 use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_core::common::GLOBALS;
 use swc_ecma_ast::{
-    Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl, ModuleExportName,
-    ModuleItem, Expr
+    Expr, Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl,
+    ModuleExportName, ModuleItem,
 };
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, EsConfig, Parser, StringInput, Syntax};
-use swc_ecma_transforms::hygiene::{hygiene_with_config};
+use swc_ecma_transforms::hygiene::hygiene_with_config;
+use swc_ecma_transforms::resolver;
 use swc_ecma_utils::private_ident;
 use swc_ecma_visit::{as_folder, VisitMutWith};
-use swc_ecma_transforms::resolver;
 
 mod bindings;
 mod transform;
-mod snippets;
 
 #[derive(Default)]
 pub struct Options {
@@ -69,7 +68,7 @@ impl Preprocessor {
             parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
                 &id,
                 Some(&mut needs_import),
-                self.parse_expression(r#"({ eval() { return eval(arguments[0]); } })"#)
+                self.parse_expression(r#"({ eval() { return eval(arguments[0]); } })"#),
             )));
 
             if !had_id_already && needs_import {
@@ -118,8 +117,10 @@ impl Preprocessor {
 
     fn parse_expression(&self, src: &str) -> Box<Expr> {
         let filename = "glimmer-template-prelude.js".into();
-        let source_file = self.source_map.new_source_file(FileName::Real(filename), src.to_string());
-    
+        let source_file = self
+            .source_map
+            .new_source_file(FileName::Real(filename), src.to_string());
+
         let lexer = Lexer::new(
             Syntax::Es(EsConfig {
                 decorators: true,
@@ -129,10 +130,10 @@ impl Preprocessor {
             StringInput::from(&*source_file),
             Some(&self.comments),
         );
-    
+
         let mut parser = Parser::new_from(lexer);
         let module = parser.parse_module().unwrap();
-    
+
         module
             .body
             .first()
@@ -218,7 +219,12 @@ fn simplify_imports(parsed_module: &mut Module) {
                 for specifier in import_declaration.specifiers.iter_mut() {
                     match specifier {
                         ImportSpecifier::Named(specifier) => {
-                            if let ImportNamedSpecifier { imported: Some(ModuleExportName::Ident(imported)), local, .. } = specifier {
+                            if let ImportNamedSpecifier {
+                                imported: Some(ModuleExportName::Ident(imported)),
+                                local,
+                                ..
+                            } = specifier
+                            {
                                 if local.sym == imported.sym {
                                     specifier.imported = None;
                                 }
@@ -286,14 +292,14 @@ testcase! {
 }
 
 testcase! {
-    avoids_local_collision,
-    r#"export default function (template) {
+  avoids_local_collision,
+  r#"export default function (template) {
          console.log(template);
          return <template>X</template>; 
        };"#,
-    r#"import { template as template1 } from "@ember/template-compiler";
+  r#"import { template as template1 } from "@ember/template-compiler";
        export default function(template) {
          console.log(template);
          return template1("X", { eval() { return eval(arguments[0])} });
        };"#
-  }
+}

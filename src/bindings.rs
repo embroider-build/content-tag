@@ -28,7 +28,8 @@ impl Preprocessor {
     }
 
     pub fn process(&self, src: String) -> Result<String, JsValue> {
-      self.core.process(&src, Default::default())
-        .map_err(|_| js_error("Something went wrong".into()))
+        self.core
+            .process(&src, Default::default())
+            .map_err(|_| js_error("Something went wrong".into()))
     }
 }

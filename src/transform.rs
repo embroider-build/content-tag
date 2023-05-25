@@ -10,7 +10,7 @@ use swc_core::ecma::{
 pub struct TransformVisitor<'a> {
     template_identifier: Ident,
     found_it: Option<&'a mut bool>,
-    scope_expr: Box<Expr>
+    scope_expr: Box<Expr>,
 }
 
 impl<'a> TransformVisitor<'a> {
@@ -36,10 +36,7 @@ impl<'a> VisitMut for TransformVisitor<'a> {
             *n = Expr::Call(CallExpr {
                 span: *span,
                 callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
-                args: vec![
-                    content_literal,
-                    self.scope_expr.clone().into()
-                ],
+                args: vec![content_literal, self.scope_expr.clone().into()],
                 type_args: None,
             });
             self.set_found_it();
@@ -82,7 +79,10 @@ test!(
         as_folder(TransformVisitor::new(
             &Ident::new("template".into(), Default::default()),
             None,
-            Box::new(Expr::Ident(Ident::new("scopeGoesHere".into(), Default::default())))
+            Box::new(Expr::Ident(Ident::new(
+                "scopeGoesHere".into(),
+                Default::default(),
+            ))),
         ))
     },
     glimmer_template_expression,
@@ -95,8 +95,10 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
-        Box::new(Expr::Ident(Ident::new("scopeGoesHere".into(), Default::default())))
-
+        Box::new(Expr::Ident(Ident::new(
+            "scopeGoesHere".into(),
+            Default::default()
+        )))
     )),
     glimmer_template_member,
     r#"class X { <template>Hello</template> } "#,
