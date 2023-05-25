@@ -1,7 +1,7 @@
 use swc_core::ecma::{
     ast::{
-        BlockStmt, CallExpr, Callee, ClassMember, Expr, ExprOrSpread, ExprStmt,
-        GlimmerTemplateExpression, GlimmerTemplateMember, Ident, Lit, StaticBlock, Stmt, ThisExpr,
+        BlockStmt, CallExpr, Callee, ClassMember, ContentTagExpression, ContentTagMember, Expr,
+        ExprOrSpread, ExprStmt, Ident, Lit, StaticBlock, Stmt, ThisExpr,
     },
     transforms::testing::test,
     visit::VisitMut,
@@ -29,7 +29,7 @@ impl<'a> TransformVisitor<'a> {
 
 impl<'a> VisitMut for TransformVisitor<'a> {
     fn visit_mut_expr(&mut self, n: &mut Expr) {
-        if let Expr::GlimmerTemplateExpression(GlimmerTemplateExpression { span, contents }) = n {
+        if let Expr::ContentTagExpression(ContentTagExpression { span, contents }) = n {
             let content_literal = Box::new(Expr::Lit(Lit::Str(contents.clone().into()))).into();
             *n = Expr::Call(CallExpr {
                 span: *span,
@@ -45,7 +45,7 @@ impl<'a> VisitMut for TransformVisitor<'a> {
     }
 
     fn visit_mut_class_member(&mut self, n: &mut ClassMember) {
-        if let ClassMember::GlimmerTemplateMember(GlimmerTemplateMember { span, contents }) = n {
+        if let ClassMember::ContentTagMember(ContentTagMember { span, contents }) = n {
             let content_literal = Box::new(Expr::Lit(Lit::Str(contents.clone().into()))).into();
             let this: ExprOrSpread = Box::new(Expr::This(ThisExpr { span: *span })).into();
 
