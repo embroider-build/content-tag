@@ -19,7 +19,7 @@ Tests:
 
 Build wasm package:
 
-`wasm-pack build --target=nodejs`
+`wasm-pack build --target=nodejs --scope=ef4`
 
 See wasm package in action:
 
