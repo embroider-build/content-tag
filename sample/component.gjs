@@ -1,6 +1,6 @@
 import { template as t } from '@ember/template-compiler';
 
-console.log(template);
+console.log(template
 
 const Inner = <template>I am inner</template>
 
