@@ -7,20 +7,20 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-swc_common = { path = "../swc/crates/swc_common", features=["tty-emitter"] }
-swc = { path = "../swc/crates/swc" }
+swc_common = { git = "https://github.com/ef4/swc.git", branch = "content-tag", features=["tty-emitter"] }
+swc = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
 # The feature set here needs to be chosen carefully to not accidentally enable
 # "plugin_mode" and the related stuff, because with that enabled, wasm32 builds
 # expect swc plugin-runner specific environment that we don't use. When that
 # happens, the javascript shims try to do "require('env')" to find the missing
 # stuff, which is nonsense and blows up.
-swc_core = { path = "../swc/crates/swc_core", features = ["ecma_ast", "common", "ecma_visit", "ecma_transforms", "__testing_transform"] }
-swc_ecma_parser = { path = "../swc/crates/swc_ecma_parser" }
-swc_ecma_codegen = { path = "../swc/crates/swc_ecma_codegen" }
-swc_ecma_ast = { path = "../swc/crates/swc_ecma_ast" }
-swc_ecma_visit = { path = "../swc/crates/swc_ecma_visit" }
-swc_ecma_utils = { path = "../swc/crates/swc_ecma_utils" }
-swc_ecma_transforms = { path = "../swc/crates/swc_ecma_transforms" }
+swc_core = { git = "https://github.com/ef4/swc.git", branch = "content-tag", features = ["ecma_ast", "common", "ecma_visit", "ecma_transforms", "__testing_transform"] }
+swc_ecma_parser = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
+swc_ecma_codegen = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
+swc_ecma_ast = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
+swc_ecma_visit = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
+swc_ecma_utils = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
+swc_ecma_transforms = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
 lazy_static = "1.4.0"
 
 wasm-bindgen = "0.2.63"

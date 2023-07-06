@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request: {}
+
+concurrency:
+  group: ci-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cache Crates
+      uses: actions/cache@v3
+      with:
+        path: |
+          ./target
+          ~/.cargo                        
+        key: debug-${{ runner.os }}-${{ hashFiles('rust-toolchain') }}-${{ hashFiles('Cargo.lock') }}
+        restore-keys: |
+          debug-${{ runner.os }}-${{ hashFiles('rust-toolchain') }}-
+          debug-${{ runner.os }}-
+    - name: Run tests
+      run: cargo test --verbose
