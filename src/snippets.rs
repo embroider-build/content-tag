@@ -8,6 +8,11 @@ lazy_static! {
         parse_expression(r#"({ eval() { return eval(arguments[0]); } })"#);
 }
 
+lazy_static! {
+    pub static ref SCOPE_PARAMS_WITH_THIS: Box<Expr> =
+        parse_expression(r#"({ component: this, eval() { return eval(arguments[0]); } })"#);
+}
+
 fn parse_expression(src: &str) -> Box<Expr> {
     let filename = "glimmer-template-prelude.js".into();
     let source_map: Lrc<SourceMap> = Default::default();
