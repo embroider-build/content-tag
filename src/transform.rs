@@ -1,7 +1,7 @@
 use swc_core::ecma::{
     ast::{
         BlockStmt, CallExpr, Callee, ClassMember, ContentTagExpression, ContentTagMember, Expr,
-        ExprOrSpread, ExprStmt, Ident, Lit, StaticBlock, Stmt, ThisExpr,
+        ExprStmt, Ident, Lit, StaticBlock, Stmt,
     },
     transforms::testing::test,
     visit::VisitMut,
@@ -47,15 +47,13 @@ impl<'a> VisitMut for TransformVisitor<'a> {
     fn visit_mut_class_member(&mut self, n: &mut ClassMember) {
         if let ClassMember::ContentTagMember(ContentTagMember { span, contents }) = n {
             let content_literal = Box::new(Expr::Lit(Lit::Str(contents.clone().into()))).into();
-            let this: ExprOrSpread = Box::new(Expr::This(ThisExpr { span: *span })).into();
 
             let call_expr = Expr::Call(CallExpr {
                 span: *span,
                 callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
                 args: vec![
                     content_literal,
-                    crate::snippets::SCOPE_PARAMS.clone().into(),
-                    this,
+                    crate::snippets::SCOPE_PARAMS_WITH_THIS.clone().into(),
                 ],
                 type_args: None,
             });
@@ -101,7 +99,7 @@ test!(
     r#"class X { <template>Hello</template> } "#,
     r#"class X {
       static {
-          template("Hello", { eval() { return eval(arguments[0]) }}, this);
+          template("Hello", { component: this, eval() { return eval(arguments[0]) }},);
       }
   }"#
 );
