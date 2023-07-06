@@ -7,8 +7,7 @@ This preprocessor can be used to transform files using the `content-tag` spec to
 ## Installation
 
 ```sh
-# note this will change when we decide where this package lives
-npm install @real_ate/content-tag
+npm install content-tag
 ```
 
 ## Usage
