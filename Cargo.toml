@@ -24,6 +24,7 @@ swc_ecma_ast = { git = "https://github.com/ef4/swc.git", branch = "content-tag" 
 swc_ecma_visit = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
 swc_ecma_utils = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
 swc_ecma_transforms = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
+swc_error_reporters = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
 lazy_static = "1.4.0"
 
 wasm-bindgen = "0.2.63"
