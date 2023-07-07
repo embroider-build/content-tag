@@ -24,6 +24,20 @@ describe("something", function() {
     expect(function() {
       p.process(`const thing = "face";
   <template>Hi`);
-    }).to.throw('error at: anon-file:2:39: 2:39 - Unexpected eof');
+    }).to.throw(`× Unexpected eof
+   ╭─[:1:1]
+ 1 │ const thing = "face";
+ 2 │   <template>Hi
+   ╰────`);
   })
+
+  it("shows a graphical error info that points to the problem", function() {
+    expect(function() {
+      p.process(`class {`)
+    }).to.throw(`× Expected ident
+   ╭─[:1:1]
+ 1 │ class {
+   ·       ─
+   ╰────`);
+  });
 })
