@@ -28,7 +28,7 @@ impl fmt::Write for Writer {
     }
 }
 
-fn err_to_string(err: swc_ecma_parser::error::Error, source_map: Lrc<SourceMap>) -> String {
+fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<SourceMap>) -> JsValue {
     let wr = Writer::default();
 
     let emitter = PrettyEmitter::new(
@@ -43,7 +43,7 @@ fn err_to_string(err: swc_ecma_parser::error::Error, source_map: Lrc<SourceMap>)
     err.into_diagnostic(&handler).emit();
 
     let s = wr.0.lock().as_str().to_string();
-    return s.into();
+    return js_error(s.into());
 }
 
 #[wasm_bindgen]
@@ -66,7 +66,7 @@ impl Preprocessor {
 
         match result {
             Ok(output) => Ok(output),
-            Err(err) => Err(js_error(err_to_string(err, self.core.source_map()).into())),
+            Err(err) => Err(as_javascript_error(err, self.core.source_map()).into()),
         }
     }
 }
