@@ -25,10 +25,19 @@ jobs:
       with:
         path: |
           ./target
-          ~/.cargo                        
+          ~/.cargo
         key: debug-${{ runner.os }}-${{ hashFiles('rust-toolchain') }}-${{ hashFiles('Cargo.lock') }}
         restore-keys: |
           debug-${{ runner.os }}-${{ hashFiles('rust-toolchain') }}-
           debug-${{ runner.os }}-
     - name: Run tests
       run: cargo test --verbose
+    - name: Install wasm-pack
+      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+    - run: wasm-pack build --target nodejs
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    - run: npm ci
+    - run: npm test

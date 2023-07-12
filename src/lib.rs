@@ -46,11 +46,14 @@ impl Preprocessor {
     ) -> Result<String, swc_ecma_parser::error::Error> {
         let target_specifier = "template";
         let target_module = "@ember/template-compiler";
-        let filename = options.filename.unwrap_or_else(|| "anonymous".into());
+        let filename = match options.filename {
+            Some(name) =>  FileName::Real(name),
+            None => FileName::Anon,
+        };
 
         let source_file = self
             .source_map
-            .new_source_file(FileName::Real(filename), src.to_string());
+            .new_source_file(filename, src.to_string());
 
         let lexer = Lexer::new(
             Syntax::Es(EsConfig {
