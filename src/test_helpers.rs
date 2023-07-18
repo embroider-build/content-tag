@@ -2,7 +2,7 @@ use difference::Changeset;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_ecma_codegen::Emitter;
-use swc_ecma_parser::{lexer::Lexer, EsConfig, Parser, StringInput, Syntax};
+use swc_ecma_parser::{lexer::Lexer, TsConfig, Parser, StringInput, Syntax};
 
 use crate::Preprocessor;
 
@@ -28,7 +28,7 @@ fn normalize(src: &str) -> String {
     let source_file = source_map.new_source_file(FileName::Real(filename), src.to_string());
 
     let lexer = Lexer::new(
-        Syntax::Es(EsConfig {
+        Syntax::Typescript(TsConfig {
             decorators: true,
             ..Default::default()
         }),

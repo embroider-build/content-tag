@@ -11,7 +11,7 @@ use swc_ecma_ast::{
     ModuleItem,
 };
 use swc_ecma_codegen::Emitter;
-use swc_ecma_parser::{lexer::Lexer, EsConfig, Parser, StringInput, Syntax};
+use swc_ecma_parser::{lexer::Lexer, TsConfig, Parser, StringInput, Syntax};
 use swc_ecma_transforms::hygiene::hygiene_with_config;
 use swc_ecma_transforms::resolver;
 use swc_ecma_utils::private_ident;
@@ -56,7 +56,7 @@ impl Preprocessor {
             .new_source_file(filename, src.to_string());
 
         let lexer = Lexer::new(
-            Syntax::Es(EsConfig {
+            Syntax::Typescript(TsConfig {
                 decorators: true,
                 ..Default::default()
             }),
@@ -275,3 +275,17 @@ testcase! {
          return template1("X", { eval() { return eval(arguments[0])} });
        };"#
 }
+
+
+testcase! {
+    handles_typescript,
+    r#"function makeComponent(message: string) {
+        console.log(message);
+        return <template>hello</template>
+    }"#,
+    r#"import { template } from "@ember/template-compiler";
+       function makeComponent(message: string) {
+         console.log(message);
+         return template("hello", { eval() { return eval(arguments[0]) } });
+       }"#
+  }
