@@ -5,7 +5,10 @@ use swc_core::ecma::{
     },
     transforms::testing::test,
     visit::VisitMut,
+    visit::VisitMutWith,
 };
+
+use swc_ecma_ast::{ExportDefaultExpr, ModuleDecl, ModuleItem};
 
 pub struct TransformVisitor<'a> {
     template_identifier: Ident,
@@ -25,21 +28,25 @@ impl<'a> TransformVisitor<'a> {
             None => {}
         }
     }
+    fn transform_tag_expression(&mut self, expr: &ContentTagExpression) -> Expr {
+        let ContentTagExpression { span, contents } = expr;
+        let content_literal = Box::new(Expr::Lit(Lit::Str(contents.clone().into()))).into();
+        Expr::Call(CallExpr {
+            span: *span,
+            callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
+            args: vec![
+                content_literal,
+                crate::snippets::SCOPE_PARAMS.clone().into(),
+            ],
+            type_args: None,
+        })
+    }
 }
 
 impl<'a> VisitMut for TransformVisitor<'a> {
     fn visit_mut_expr(&mut self, n: &mut Expr) {
-        if let Expr::ContentTagExpression(ContentTagExpression { span, contents }) = n {
-            let content_literal = Box::new(Expr::Lit(Lit::Str(contents.clone().into()))).into();
-            *n = Expr::Call(CallExpr {
-                span: *span,
-                callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
-                args: vec![
-                    content_literal,
-                    crate::snippets::SCOPE_PARAMS.clone().into(),
-                ],
-                type_args: None,
-            });
+        if let Expr::ContentTagExpression(expr) = n {
+            *n = self.transform_tag_expression(expr);
             self.set_found_it();
         }
     }
@@ -70,6 +77,38 @@ impl<'a> VisitMut for TransformVisitor<'a> {
             });
             self.set_found_it();
         }
+    }
+
+    fn visit_mut_module_items(&mut self, items: &mut Vec<ModuleItem>) {
+        let mut items_updated = Vec::with_capacity(items.len());
+        for item in items.drain(..) {
+            if let Some(content_tag) = content_tag_expression_statement(&item) 
+            {
+                items_updated.push(ModuleItem::ModuleDecl(ModuleDecl::ExportDefaultExpr(
+                    ExportDefaultExpr {
+                        span: content_tag.span,
+                        expr: Box::new(self.transform_tag_expression(&content_tag)),
+                    },
+                )));
+                self.set_found_it();
+            } else {
+                items_updated.push(item);
+            }
+        }
+
+        *items = items_updated;
+        items.visit_mut_children_with(self)
+    }
+}
+
+fn content_tag_expression_statement(item: &ModuleItem) -> Option<&ContentTagExpression> {
+    if let ModuleItem::Stmt(Stmt::Expr(ExprStmt {
+        expr: box Expr::ContentTagExpression(content_tag),
+        ..
+    })) = item {
+        Some(content_tag)
+    } else {
+        None
     }
 }
 
@@ -102,4 +141,15 @@ test!(
           template("Hello", { component: this, eval() { return eval(arguments[0]) }},);
       }
   }"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    content_tag_export_default,
+    r#"<template>Hello</template>"#,
+    r#"export default template("Hello", { eval() { return eval(arguments[0]) }},);"#
 );

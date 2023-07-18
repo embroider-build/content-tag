@@ -1,3 +1,5 @@
+#![feature(box_patterns)]
+
 #[macro_use]
 extern crate lazy_static;
 
@@ -225,25 +227,25 @@ macro_rules! testcase {
 
 testcase! {
   no_preexisting_import,
-  r#"<template>hello</template>"#,
+  r#"let x = <template>hello</template>"#,
   r#"import { template } from "@ember/template-compiler";
-     template("hello", { eval() { return eval(arguments[0])} });"#
+     let x = template("hello", { eval() { return eval(arguments[0])} });"#
 }
 
 testcase! {
   uses_preexisting_import,
   r#"import { template } from "@ember/template-compiler";
-     <template>hello</template>"#,
+     let x = <template>hello</template>"#,
   r#"import { template } from "@ember/template-compiler";
-     template("hello", { eval() { return eval(arguments[0])} });"#
+     let x = template("hello", { eval() { return eval(arguments[0])} });"#
 }
 
 testcase! {
   uses_preexisting_renamed_import,
   r#"import { template as t } from "@ember/template-compiler";
-     <template>hello</template>"#,
+     let x = <template>hello</template>"#,
   r#"import { template as t } from "@ember/template-compiler";
-     t("hello", { eval() { return eval(arguments[0])} })"#
+     let x = t("hello", { eval() { return eval(arguments[0])} })"#
 }
 
 testcase! {
@@ -289,3 +291,5 @@ testcase! {
          return template("hello", { eval() { return eval(arguments[0]) } });
        }"#
   }
+
+  

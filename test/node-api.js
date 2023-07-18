@@ -13,7 +13,7 @@ describe("something", function() {
     let output = p.process('<template>Hi</template>');
 
     expect(output).to.equalCode(`import { template } from "@ember/template-compiler";
-    template("Hi", {
+    export default template("Hi", {
         eval () {
             return eval(arguments[0]);
         }
