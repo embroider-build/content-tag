@@ -3,17 +3,17 @@
 #[macro_use]
 extern crate lazy_static;
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use swc_common::comments::SingleThreadedComments;
-use swc_common::Mark;
 use swc_common::{self, sync::Lrc, FileName, SourceMap};
+use swc_common::{Mark, SourceFile};
 use swc_core::common::GLOBALS;
 use swc_ecma_ast::{
     Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl, ModuleExportName,
     ModuleItem,
 };
 use swc_ecma_codegen::Emitter;
-use swc_ecma_parser::{lexer::Lexer, TsConfig, Parser, StringInput, Syntax};
+use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
 use swc_ecma_transforms::hygiene::hygiene_with_config;
 use swc_ecma_transforms::resolver;
 use swc_ecma_utils::private_ident;
@@ -46,16 +46,21 @@ impl Preprocessor {
         src: &str,
         options: Options,
     ) -> Result<String, swc_ecma_parser::error::Error> {
-        let target_specifier = "template";
-        let target_module = "@ember/template-compiler";
         let filename = match options.filename {
-            Some(name) =>  FileName::Real(name),
+            Some(name) => FileName::Real(name),
             None => FileName::Anon,
         };
 
-        let source_file = self
-            .source_map
-            .new_source_file(filename, src.to_string());
+        let source_file = self.source_map.new_source_file(filename, src.to_string());
+        return self.process_source(source_file);
+    }
+
+    fn process_source(
+        &self,
+        source_file: Lrc<SourceFile>,
+    ) -> Result<String, swc_ecma_parser::error::Error> {
+        let target_specifier = "template";
+        let target_module = "@ember/template-compiler";
 
         let lexer = Lexer::new(
             Syntax::Typescript(TsConfig {
@@ -99,6 +104,17 @@ impl Preprocessor {
 
             Ok(self.print(&parsed_module))
         })
+    }
+
+    pub fn process_file(&self, filename: &str) -> Result<String, FileProcessingError> {
+        let path = Path::new(filename);
+        let source_file_result = self.source_map.load_file(path);
+        match source_file_result {
+            Ok(source_file) => self
+                .process_source(source_file)
+                .map_err(|err| FileProcessingError::Parse(err)),
+            Err(io_error) => Err(FileProcessingError::IO(io_error)),
+        }
     }
 
     fn print(&self, module: &Module) -> String {
@@ -278,18 +294,20 @@ testcase! {
        };"#
 }
 
-
 testcase! {
-    handles_typescript,
-    r#"function makeComponent(message: string) {
+  handles_typescript,
+  r#"function makeComponent(message: string) {
         console.log(message);
         return <template>hello</template>
     }"#,
-    r#"import { template } from "@ember/template-compiler";
+  r#"import { template } from "@ember/template-compiler";
        function makeComponent(message: string) {
          console.log(message);
          return template("hello", { eval() { return eval(arguments[0]) } });
        }"#
-  }
+}
 
-  
+pub enum FileProcessingError {
+    IO(std::io::Error),
+    Parse(swc_ecma_parser::error::Error),
+}

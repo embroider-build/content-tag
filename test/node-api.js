@@ -1,5 +1,7 @@
+/* eslint-env node */
 const { Preprocessor } = require('../pkg');
 const chai = require('chai');
+const { resolve } = require('path');
 const { codeEquality } = require("code-equality-assertions/chai");
 
 chai.use(codeEquality)
@@ -19,6 +21,18 @@ describe("something", function() {
         }
     });`);
   });
+
+  it("can process_file", function() {
+    let output = p.processFile(resolve(__dirname, '../sample/component.gjs'));
+
+    expect(output).to.equalCode(`import { template } from "@ember/template-compiler";
+    export default template("Hi", {
+        eval () {
+            return eval(arguments[0]);
+        }
+    });`);
+  });
+
 
   it("Emits parse errors with anonymous file", function() {
     expect(function() {
