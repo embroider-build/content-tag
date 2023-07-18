@@ -89,7 +89,8 @@ impl<'a> VisitMut for TransformVisitor<'a> {
                         span: content_tag.span,
                         expr: Box::new(self.transform_tag_expression(&content_tag)),
                     },
-                )))
+                )));
+                self.set_found_it();
             } else {
                 items_updated.push(item);
             }
