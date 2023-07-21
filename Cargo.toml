@@ -3,7 +3,7 @@ name = "content-tag"
 description = "A rust program that uses a fork of swc to parse and transform Javascript containing the content-tag proposal"
 repository = "https://github.com/embroider-build/content-tag"
 license = "MIT"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 
 [lib]
