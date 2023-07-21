@@ -153,3 +153,14 @@ test!(
     r#"<template>Hello</template>"#,
     r#"export default template("Hello", { eval() { return eval(arguments[0]) }},);"#
 );
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    inner_expression,
+    r#"let x = doIt(<template>Hello</template>)"#,
+    r#"let x = doIt(template("Hello", { eval() { return eval(arguments[0]) }}))"#
+);
