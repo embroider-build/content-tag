@@ -45,6 +45,7 @@ impl<'a> TransformVisitor<'a> {
 
 impl<'a> VisitMut for TransformVisitor<'a> {
     fn visit_mut_expr(&mut self, n: &mut Expr) {
+        n.visit_mut_children_with(self);
         if let Expr::ContentTagExpression(expr) = n {
             *n = self.transform_tag_expression(expr);
             self.set_found_it();
@@ -52,6 +53,7 @@ impl<'a> VisitMut for TransformVisitor<'a> {
     }
 
     fn visit_mut_class_member(&mut self, n: &mut ClassMember) {
+        n.visit_mut_children_with(self);
         if let ClassMember::ContentTagMember(ContentTagMember { span, contents }) = n {
             let content_literal = Box::new(Expr::Lit(Lit::Str(contents.clone().into()))).into();
 
@@ -141,6 +143,34 @@ test!(
           template("Hello", { component: this, eval() { return eval(arguments[0]) }},);
       }
   }"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    expression_inside_class_member,
+    r#"class X { thing = <template>Hello</template> } "#,
+    r#"class X {
+        thing = template("Hello", { eval() { return eval(arguments[0]) }},);
+    }"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    class_member_inside_expression,
+    r#"let x = class { <template>Hello</template> } "#,
+    r#"let x = class {
+        static {
+            template("Hello", { component: this, eval() { return eval(arguments[0]) }},);
+        }
+    }"#
 );
 
 test!(
