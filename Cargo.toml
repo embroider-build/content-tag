@@ -9,6 +9,10 @@ edition = "2021"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[profile.release]
+lto = true
+opt-level = 'z'
+
 [dependencies]
 swc_common = { git = "https://github.com/ef4/swc.git", branch = "content-tag", features=["tty-emitter"] }
 swc = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }

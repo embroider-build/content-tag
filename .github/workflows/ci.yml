@@ -32,12 +32,18 @@ jobs:
           debug-${{ runner.os }}-
     - name: Run tests
       run: cargo test --verbose
+
     - name: Install wasm-pack
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-    - run: wasm-pack build --target nodejs
+    - name: Install wasm-opt
+      run: cargo install wasm-opt
     - uses: actions/setup-node@v3
       with:
         node-version: 16
         cache: 'npm'
-    - run: npm ci
+    - run: npm install
+
+    # requires node generating package.json
+    - run: ./build.sh
+
     - run: npm test

@@ -5,6 +5,7 @@
     "url": "git@github.com:embroider-build/content-tag.git"
   },
   "scripts": {
+    "web": "npx html-pages . --no-cache",
     "test": "mocha"
   },
   "devDependencies": {
@@ -12,8 +13,10 @@
     "@release-it/bumper": "^5.1.0",
     "chai": "^4.3.7",
     "code-equality-assertions": "github:mansona/code-equality-assertions#add-chai-build",
+    "content-tag": "file:./pkg",
     "eslint": "^8.44.0",
     "mocha": "^10.2.0",
+    "toml": "^3.0.0",
     "release-it": "^16.2.1"
   },
   "publishConfig": {

@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+    <script type="module">
+      import init, { Preprocessor } from './pkg/browser/content_tag.js';
+
+      async function run() {
+        await init();
+
+        const p = new Preprocessor();
+        const output = p.process('<template>Hi</template>');
+
+        document.querySelector('#output').innerHTML = output;
+      }
+
+      run();
+    </script>
+  </head>
+  <body>
+    <pre id="output"></pre>
+  </body>
+</html>
