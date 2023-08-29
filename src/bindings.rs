@@ -1,10 +1,9 @@
-use crate::{Options, Preprocessor as CorePreprocessor};
-use std::{fmt,  str};
+use crate::{ContentTagInfo, Options, Preprocessor as CorePreprocessor};
+use std::{fmt, str};
 use swc_common::{
     errors::Handler,
     sync::{Lock, Lrc},
-    SourceMap,
-    Spanned,
+    SourceMap, Spanned,
 };
 use swc_error_reporters::{GraphicalReportHandler, GraphicalTheme, PrettyEmitter};
 use wasm_bindgen::prelude::*;
@@ -13,6 +12,9 @@ use wasm_bindgen::prelude::*;
 extern "C" {
     #[wasm_bindgen(js_name = Error)]
     fn js_error(message: JsValue) -> JsValue;
+
+    #[wasm_bindgen(js_name = Array)]
+    fn js_array(length: usize) -> JsValue;
 }
 
 #[wasm_bindgen]
@@ -29,7 +31,11 @@ impl fmt::Write for Writer {
     }
 }
 
-fn capture_err_detail(err: swc_ecma_parser::error::Error, source_map: Lrc<SourceMap>, theme: GraphicalTheme) -> JsValue {
+fn capture_err_detail(
+    err: swc_ecma_parser::error::Error,
+    source_map: Lrc<SourceMap>,
+    theme: GraphicalTheme,
+) -> JsValue {
     let wr = Writer::default();
     let emitter = PrettyEmitter::new(
         source_map,
@@ -46,9 +52,27 @@ fn capture_err_detail(err: swc_ecma_parser::error::Error, source_map: Lrc<Source
 fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<SourceMap>) -> JsValue {
     let short_desc = format!("Parse Error at {}", source_map.span_to_string(err.span()));
     let js_err = js_error(short_desc.into());
-    js_sys::Reflect::set(&js_err, &"source_code".into(), &capture_err_detail(err.clone(), source_map.clone(), GraphicalTheme::unicode_nocolor())).unwrap();
-    js_sys::Reflect::set(&js_err, &"source_code_color".into(), &capture_err_detail(err, source_map, GraphicalTheme::unicode())).unwrap();
+    js_sys::Reflect::set(
+        &js_err,
+        &"source_code".into(),
+        &capture_err_detail(
+            err.clone(),
+            source_map.clone(),
+            GraphicalTheme::unicode_nocolor(),
+        ),
+    )
+    .unwrap();
+    js_sys::Reflect::set(
+        &js_err,
+        &"source_code_color".into(),
+        &capture_err_detail(err, source_map, GraphicalTheme::unicode()),
+    )
+    .unwrap();
     return js_err;
+}
+
+fn tag_infos_to_js(infos: Vec<ContentTagInfo>) -> JsValue {
+    return js_array(infos.len());
 }
 
 #[wasm_bindgen]
@@ -64,12 +88,25 @@ impl Preprocessor {
         let result = self.core.process(
             &src,
             Options {
-                filename: filename.map(|f| f.into())
-            }
+                filename: filename.map(|f| f.into()),
+            },
         );
 
         match result {
             Ok(output) => Ok(output),
+            Err(err) => Err(as_javascript_error(err, self.core.source_map()).into()),
+        }
+    }
+
+    pub fn locate(&self, src: String, filename: Option<String>) -> Result<JsValue, JsValue> {
+        let result = self.core.locate(
+            &src,
+            Options {
+                filename: filename.map(|f| f.into()),
+            },
+        );
+        match result {
+            Ok(infos) => Ok(tag_infos_to_js(infos)),
             Err(err) => Err(as_javascript_error(err, self.core.source_map()).into()),
         }
     }

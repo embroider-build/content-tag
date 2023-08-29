@@ -8,7 +8,7 @@ const { expect } = chai;
 
 const p = new Preprocessor();
 
-describe("something", function() {
+describe("process", function() {
   it("works for a basic example", function() {
     let output = p.process('<template>Hi</template>');
 
@@ -55,3 +55,27 @@ describe("something", function() {
     expect(parseError).to.have.property("source_code_color").matches(/Expected ident.*[\u001b].*class \{/s);
   });
 })
+
+describe("locate", function () {
+  it("Can emit location data for template tags", function () {
+    const input = `let x = <template>Hello!</template>`;
+
+    const templates = p.locate(input, "foo.gjs", {
+      templateTag: "template",
+    });
+
+    expect(templates).to.deep.equal(
+      [
+        {
+          start: 8,
+          contentStart: 18,
+          contentEnd: 24,
+          end: 34,
+          tagName: 'template',
+          type: 'expression',
+          content: 'Hello!',
+        },
+      ]
+    );
+  });
+});

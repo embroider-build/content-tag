@@ -13,7 +13,7 @@ use swc_ecma_ast::{
     ModuleItem,
 };
 use swc_ecma_codegen::Emitter;
-use swc_ecma_parser::{lexer::Lexer, TsConfig, Parser, StringInput, Syntax};
+use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
 use swc_ecma_transforms::hygiene::hygiene_with_config;
 use swc_ecma_transforms::resolver;
 use swc_ecma_utils::private_ident;
@@ -22,10 +22,21 @@ use swc_ecma_visit::{as_folder, VisitMutWith};
 mod bindings;
 mod snippets;
 mod transform;
+mod locate;
 
 #[derive(Default)]
 pub struct Options {
     pub filename: Option<PathBuf>,
+}
+
+pub struct ContentTagInfo {
+    pub start: u32,
+    pub content_start: u32,
+    pub content_end: u32,
+    pub end: u32,
+    pub tag_name: String,
+    pub tag_type: String,
+    pub content: String,
 }
 
 pub struct Preprocessor {
@@ -49,13 +60,11 @@ impl Preprocessor {
         let target_specifier = "template";
         let target_module = "@ember/template-compiler";
         let filename = match options.filename {
-            Some(name) =>  FileName::Real(name),
+            Some(name) => FileName::Real(name),
             None => FileName::Anon,
         };
 
-        let source_file = self
-            .source_map
-            .new_source_file(filename, src.to_string());
+        let source_file = self.source_map.new_source_file(filename, src.to_string());
 
         let lexer = Lexer::new(
             Syntax::Typescript(TsConfig {
@@ -121,6 +130,36 @@ impl Preprocessor {
 
     pub fn source_map(&self) -> Lrc<SourceMap> {
         return self.source_map.clone();
+    }
+
+    pub fn locate(
+        &self,
+        src: &str,
+        options: Options,
+    ) -> Result<Vec<ContentTagInfo>, swc_ecma_parser::error::Error> {
+        let filename = match options.filename {
+            Some(name) => FileName::Real(name),
+            None => FileName::Anon,
+        };
+
+        let source_file = self.source_map.new_source_file(filename, src.to_string());
+
+        let lexer = Lexer::new(
+            Syntax::Typescript(TsConfig {
+                decorators: true,
+                ..Default::default()
+            }),
+            Default::default(),
+            StringInput::from(&*source_file),
+            Some(&self.comments),
+        );
+        let mut parser = Parser::new_from(lexer);
+        GLOBALS.set(&Default::default(), || {
+            let mut parsed_module = parser.parse_module()?;
+            let mut infos: Vec<ContentTagInfo> = vec![];
+            parsed_module.visit_mut_with(&mut as_folder(locate::LocateVisitor { infos: &mut infos }));
+            Ok(infos)
+        })
     }
 }
 
@@ -278,18 +317,27 @@ testcase! {
        };"#
 }
 
-
 testcase! {
-    handles_typescript,
-    r#"function makeComponent(message: string) {
+  handles_typescript,
+  r#"function makeComponent(message: string) {
         console.log(message);
         return <template>hello</template>
     }"#,
-    r#"import { template } from "@ember/template-compiler";
+  r#"import { template } from "@ember/template-compiler";
        function makeComponent(message: string) {
          console.log(message);
          return template("hello", { eval() { return eval(arguments[0]) } });
        }"#
-  }
+}
 
-  
+#[test]
+fn test_locate() -> Result<(), swc_ecma_parser::error::Error> {
+    let input = r#"<template>Hello world!</template>"#;
+    let p = Preprocessor::new();
+    let actual = p.locate(input, Default::default())?;
+    assert_eq!(actual.len(), 1);
+
+    let info = actual.get(0).unwrap();
+    assert_eq!(info.start, 8);
+    Ok(())
+}

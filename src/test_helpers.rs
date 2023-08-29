@@ -2,9 +2,9 @@ use difference::Changeset;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_ecma_codegen::Emitter;
-use swc_ecma_parser::{lexer::Lexer, TsConfig, Parser, StringInput, Syntax};
+use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
 
-use crate::Preprocessor;
+use crate::{Preprocessor};
 
 pub fn testcase(input: &str, expected: &str) -> Result<(), swc_ecma_parser::error::Error> {
     let p = Preprocessor::new();

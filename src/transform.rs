@@ -84,8 +84,7 @@ impl<'a> VisitMut for TransformVisitor<'a> {
     fn visit_mut_module_items(&mut self, items: &mut Vec<ModuleItem>) {
         let mut items_updated = Vec::with_capacity(items.len());
         for item in items.drain(..) {
-            if let Some(content_tag) = content_tag_expression_statement(&item) 
-            {
+            if let Some(content_tag) = content_tag_expression_statement(&item) {
                 items_updated.push(ModuleItem::ModuleDecl(ModuleDecl::ExportDefaultExpr(
                     ExportDefaultExpr {
                         span: content_tag.span,
@@ -107,7 +106,8 @@ fn content_tag_expression_statement(item: &ModuleItem) -> Option<&ContentTagExpr
     if let ModuleItem::Stmt(Stmt::Expr(ExprStmt {
         expr: box Expr::ContentTagExpression(content_tag),
         ..
-    })) = item {
+    })) = item
+    {
         Some(content_tag)
     } else {
         None
