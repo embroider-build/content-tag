@@ -21,3 +21,7 @@ Build wasm package:
 `wasm-pack build --target=nodejs`
 
 which will output your wasm package in `./pkg`
+
+## Running against a local copy of SWC
+
+In Cargo.toml, replace all of `git = "https://github.com/ef4/swc.git", branch = "content-tag"` with `path = "../swc/crates/the_crate_name`.
