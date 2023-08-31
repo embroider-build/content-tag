@@ -92,6 +92,7 @@ impl Preprocessor {
                 keep_class_names: true,
                 top_level_mark,
                 safari_10: false,
+                ignore_eval: false,
             });
             parsed_module.visit_mut_with(&mut h);
 
@@ -177,7 +178,7 @@ fn insert_import(
             })],
             src: Box::new(target_module.into()),
             type_only: false,
-            asserts: None,
+            with: None,
         })),
     );
 }
