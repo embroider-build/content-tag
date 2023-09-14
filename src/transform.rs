@@ -1,14 +1,16 @@
 use swc_core::ecma::{
     ast::{
         BlockStmt, CallExpr, Callee, ClassMember, ContentTagExpression, ContentTagMember, Expr,
-        ExprStmt, Ident, Lit, StaticBlock, Stmt,
+        ExprStmt, Ident, StaticBlock, Stmt,
     },
     transforms::testing::test,
     visit::VisitMut,
     visit::VisitMutWith,
 };
 
-use swc_ecma_ast::{ExportDefaultExpr, ModuleDecl, ModuleItem};
+use swc_ecma_ast::{
+    ContentTagContent, ExportDefaultExpr, ExprOrSpread, ModuleDecl, ModuleItem, Tpl, TplElement,
+};
 
 pub struct TransformVisitor<'a> {
     template_identifier: Ident,
@@ -29,17 +31,36 @@ impl<'a> TransformVisitor<'a> {
         }
     }
     fn transform_tag_expression(&mut self, expr: &ContentTagExpression) -> Expr {
-        let ContentTagExpression { span, contents } = expr;
-        let content_literal = Box::new(Expr::Lit(Lit::Str(contents.clone().into()))).into();
+        let ContentTagExpression {
+            span,
+            contents,
+            closing,
+            ..
+        } = expr;
+
         Expr::Call(CallExpr {
             span: *span,
             callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
             args: vec![
-                content_literal,
-                crate::snippets::SCOPE_PARAMS.clone().into(),
+                self.content_literal(contents),
+                crate::snippets::scope_params(closing.span).into(),
             ],
             type_args: None,
         })
+    }
+
+    fn content_literal(&self, contents: &Box<ContentTagContent>) -> ExprOrSpread {
+        Box::new(Expr::Tpl(Tpl {
+            span: contents.span,
+            exprs: vec![],
+            quasis: vec![TplElement {
+                span: contents.span,
+                cooked: None,
+                raw: contents.value.clone().into(),
+                tail: false,
+            }],
+        }))
+        .into()
     }
 }
 
@@ -54,15 +75,19 @@ impl<'a> VisitMut for TransformVisitor<'a> {
 
     fn visit_mut_class_member(&mut self, n: &mut ClassMember) {
         n.visit_mut_children_with(self);
-        if let ClassMember::ContentTagMember(ContentTagMember { span, contents }) = n {
-            let content_literal = Box::new(Expr::Lit(Lit::Str(contents.clone().into()))).into();
-
+        if let ClassMember::ContentTagMember(ContentTagMember {
+            span,
+            opening,
+            contents,
+            closing,
+        }) = n
+        {
             let call_expr = Expr::Call(CallExpr {
                 span: *span,
                 callee: Callee::Expr(Box::new(Expr::Ident(self.template_identifier.clone()))),
                 args: vec![
-                    content_literal,
-                    crate::snippets::SCOPE_PARAMS_WITH_THIS.clone().into(),
+                    self.content_literal(contents),
+                    crate::snippets::scope_params_with_this(closing.span).into(),
                 ],
                 type_args: None,
             });
@@ -71,7 +96,7 @@ impl<'a> VisitMut for TransformVisitor<'a> {
                 expr: Box::new(call_expr),
             };
             *n = ClassMember::StaticBlock(StaticBlock {
-                span: *span,
+                span: opening.span,
                 body: BlockStmt {
                     span: *span,
                     stmts: vec![Stmt::Expr(call_statement)],
@@ -84,8 +109,7 @@ impl<'a> VisitMut for TransformVisitor<'a> {
     fn visit_mut_module_items(&mut self, items: &mut Vec<ModuleItem>) {
         let mut items_updated = Vec::with_capacity(items.len());
         for item in items.drain(..) {
-            if let Some(content_tag) = content_tag_expression_statement(&item) 
-            {
+            if let Some(content_tag) = content_tag_expression_statement(&item) {
                 items_updated.push(ModuleItem::ModuleDecl(ModuleDecl::ExportDefaultExpr(
                     ExportDefaultExpr {
                         span: content_tag.span,
@@ -107,7 +131,8 @@ fn content_tag_expression_statement(item: &ModuleItem) -> Option<&ContentTagExpr
     if let ModuleItem::Stmt(Stmt::Expr(ExprStmt {
         expr: box Expr::ContentTagExpression(content_tag),
         ..
-    })) = item {
+    })) = item
+    {
         Some(content_tag)
     } else {
         None
@@ -127,7 +152,7 @@ test!(
     },
     content_tag_template_expression,
     r#"let x = <template>Hello</template>"#,
-    r#"let x = template("Hello", { eval() { return eval(arguments[0]); }})"#
+    r#"let x = template(`Hello`, { eval() { return eval(arguments[0]); }})"#
 );
 
 test!(
@@ -140,7 +165,7 @@ test!(
     r#"class X { <template>Hello</template> } "#,
     r#"class X {
       static {
-          template("Hello", { component: this, eval() { return eval(arguments[0]) }},);
+          template(`Hello`, { component: this, eval() { return eval(arguments[0]) }},);
       }
   }"#
 );
@@ -154,7 +179,7 @@ test!(
     expression_inside_class_member,
     r#"class X { thing = <template>Hello</template> } "#,
     r#"class X {
-        thing = template("Hello", { eval() { return eval(arguments[0]) }},);
+        thing = template(`Hello`, { eval() { return eval(arguments[0]) }},);
     }"#
 );
 
@@ -168,7 +193,7 @@ test!(
     r#"let x = class { <template>Hello</template> } "#,
     r#"let x = class {
         static {
-            template("Hello", { component: this, eval() { return eval(arguments[0]) }},);
+            template(`Hello`, { component: this, eval() { return eval(arguments[0]) }},);
         }
     }"#
 );
@@ -181,7 +206,7 @@ test!(
     )),
     content_tag_export_default,
     r#"<template>Hello</template>"#,
-    r#"export default template("Hello", { eval() { return eval(arguments[0]) }},);"#
+    r#"export default template(`Hello`, { eval() { return eval(arguments[0]) }},);"#
 );
 
 test!(
@@ -192,5 +217,5 @@ test!(
     )),
     inner_expression,
     r#"let x = doIt(<template>Hello</template>)"#,
-    r#"let x = doIt(template("Hello", { eval() { return eval(arguments[0]) }}))"#
+    r#"let x = doIt(template(`Hello`, { eval() { return eval(arguments[0]) }}))"#
 );

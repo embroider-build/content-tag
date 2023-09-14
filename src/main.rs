@@ -22,6 +22,7 @@ fn main() {
         &src,
         Options {
             filename: Some(filename),
+            inline_source_map: true,
         },
     );
 

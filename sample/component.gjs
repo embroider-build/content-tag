@@ -1,10 +1,10 @@
-import { template as t } from '@ember/template-compiler';
-
-console.log(template
-
-const Inner = <template>I am inner</template>
+const Inner = <template>I am inner {{yield}}</template>
 
 // here's a comment
 export class Outer {
-  <template><Inner /></template>
+  <template>
+    <Inner>
+      Hello world
+    </Inner>
+  </template>
 }
