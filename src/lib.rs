@@ -28,7 +28,7 @@ mod transform;
 #[derive(Default)]
 pub struct Options {
     pub filename: Option<PathBuf>,
-    pub inlineSourcemap: bool,
+    pub inline_source_map: bool,
 }
 
 pub struct Preprocessor {
@@ -110,7 +110,7 @@ impl Preprocessor {
 
             simplify_imports(&mut parsed_module);
 
-            Ok(self.print(&parsed_module, options.inlineSourcemap))
+            Ok(self.print(&parsed_module, options.inline_source_map))
         })
     }
 
