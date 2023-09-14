@@ -82,6 +82,7 @@ impl Preprocessor {
             &src,
             Options {
                 filename: filename.map(|f| f.into()),
+                inlineSourcemap: false,
             },
         );
 

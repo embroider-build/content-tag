@@ -152,7 +152,7 @@ test!(
     },
     content_tag_template_expression,
     r#"let x = <template>Hello</template>"#,
-    r#"let x = template("Hello", { eval() { return eval(arguments[0]); }})"#
+    r#"let x = template(`Hello`, { eval() { return eval(arguments[0]); }})"#
 );
 
 test!(
@@ -165,7 +165,7 @@ test!(
     r#"class X { <template>Hello</template> } "#,
     r#"class X {
       static {
-          template("Hello", { component: this, eval() { return eval(arguments[0]) }},);
+          template(`Hello`, { component: this, eval() { return eval(arguments[0]) }},);
       }
   }"#
 );
@@ -179,7 +179,7 @@ test!(
     expression_inside_class_member,
     r#"class X { thing = <template>Hello</template> } "#,
     r#"class X {
-        thing = template("Hello", { eval() { return eval(arguments[0]) }},);
+        thing = template(`Hello`, { eval() { return eval(arguments[0]) }},);
     }"#
 );
 
@@ -193,7 +193,7 @@ test!(
     r#"let x = class { <template>Hello</template> } "#,
     r#"let x = class {
         static {
-            template("Hello", { component: this, eval() { return eval(arguments[0]) }},);
+            template(`Hello`, { component: this, eval() { return eval(arguments[0]) }},);
         }
     }"#
 );
@@ -206,7 +206,7 @@ test!(
     )),
     content_tag_export_default,
     r#"<template>Hello</template>"#,
-    r#"export default template("Hello", { eval() { return eval(arguments[0]) }},);"#
+    r#"export default template(`Hello`, { eval() { return eval(arguments[0]) }},);"#
 );
 
 test!(
@@ -217,5 +217,5 @@ test!(
     )),
     inner_expression,
     r#"let x = doIt(<template>Hello</template>)"#,
-    r#"let x = doIt(template("Hello", { eval() { return eval(arguments[0]) }}))"#
+    r#"let x = doIt(template(`Hello`, { eval() { return eval(arguments[0]) }}))"#
 );
