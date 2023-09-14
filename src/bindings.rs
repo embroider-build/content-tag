@@ -12,6 +12,9 @@ use wasm_bindgen::prelude::*;
 extern "C" {
     #[wasm_bindgen(js_name = Error)]
     fn js_error(message: JsValue) -> JsValue;
+
+    #[wasm_bindgen(js_namespace = JSON, js_name = parse)]
+    fn json_parse(value: JsValue) -> JsValue;
 }
 
 #[wasm_bindgen]
@@ -90,5 +93,15 @@ impl Preprocessor {
             Ok(output) => Ok(output),
             Err(err) => Err(as_javascript_error(err, self.core.source_map()).into()),
         }
+    }
+
+    pub fn parse(&self, src: String, filename: Option<String>) -> Result<JsValue, JsValue> {
+        let result = self
+            .core
+            .parse(&src)
+            .map_err(|_err| self.process(src, filename).unwrap_err())?;
+        let serialized = serde_json::to_string(&result)
+            .map_err(|err| js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))?;
+        Ok(json_parse(serialized.into()))
     }
 }
