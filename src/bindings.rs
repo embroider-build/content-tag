@@ -1,10 +1,9 @@
 use crate::{Options, Preprocessor as CorePreprocessor};
-use std::{fmt,  str};
+use std::{fmt, str};
 use swc_common::{
     errors::Handler,
     sync::{Lock, Lrc},
-    SourceMap,
-    Spanned,
+    SourceMap, Spanned,
 };
 use swc_error_reporters::{GraphicalReportHandler, GraphicalTheme, PrettyEmitter};
 use wasm_bindgen::prelude::*;
@@ -29,7 +28,11 @@ impl fmt::Write for Writer {
     }
 }
 
-fn capture_err_detail(err: swc_ecma_parser::error::Error, source_map: Lrc<SourceMap>, theme: GraphicalTheme) -> JsValue {
+fn capture_err_detail(
+    err: swc_ecma_parser::error::Error,
+    source_map: Lrc<SourceMap>,
+    theme: GraphicalTheme,
+) -> JsValue {
     let wr = Writer::default();
     let emitter = PrettyEmitter::new(
         source_map,
@@ -46,8 +49,22 @@ fn capture_err_detail(err: swc_ecma_parser::error::Error, source_map: Lrc<Source
 fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<SourceMap>) -> JsValue {
     let short_desc = format!("Parse Error at {}", source_map.span_to_string(err.span()));
     let js_err = js_error(short_desc.into());
-    js_sys::Reflect::set(&js_err, &"source_code".into(), &capture_err_detail(err.clone(), source_map.clone(), GraphicalTheme::unicode_nocolor())).unwrap();
-    js_sys::Reflect::set(&js_err, &"source_code_color".into(), &capture_err_detail(err, source_map, GraphicalTheme::unicode())).unwrap();
+    js_sys::Reflect::set(
+        &js_err,
+        &"source_code".into(),
+        &capture_err_detail(
+            err.clone(),
+            source_map.clone(),
+            GraphicalTheme::unicode_nocolor(),
+        ),
+    )
+    .unwrap();
+    js_sys::Reflect::set(
+        &js_err,
+        &"source_code_color".into(),
+        &capture_err_detail(err, source_map, GraphicalTheme::unicode()),
+    )
+    .unwrap();
     return js_err;
 }
 
@@ -64,8 +81,8 @@ impl Preprocessor {
         let result = self.core.process(
             &src,
             Options {
-                filename: filename.map(|f| f.into())
-            }
+                filename: filename.map(|f| f.into()),
+            },
         );
 
         match result {
