@@ -64,20 +64,20 @@ enum ContentTagKind {
 impl ContentTagVisitor {
     fn add_occurrence(
         &mut self,
+        kind: ContentTagKind,
         span: &Span,
         opening: &ContentTagStart,
         contents: &ContentTagContent,
         closing: &ContentTagEnd,
-        kind: ContentTagKind,
     ) {
         let occurrence = Occurrence {
+            kind,
+            tag_name: "template".to_owned(),
+            contents: contents.value.to_string(),
             range: span.into(),
+            start_range: opening.span.into(),
             content_range: contents.span.into(),
             end_range: closing.span.into(),
-            start_range: opening.span.into(),
-            tag_name: "template".to_owned(),
-            kind,
-            contents: contents.value.to_string(),
         };
 
         self.occurrences.push(occurrence);
@@ -93,7 +93,7 @@ impl Visit for ContentTagVisitor {
                 contents,
                 closing,
             }) => {
-                self.add_occurrence(span, opening, contents, closing, ContentTagKind::Expression);
+                self.add_occurrence(ContentTagKind::Expression, span, opening, contents, closing);
             }
             _ => {}
         }
@@ -108,11 +108,11 @@ impl Visit for ContentTagVisitor {
                 closing,
             }) => {
                 self.add_occurrence(
+                    ContentTagKind::ClassMember,
                     span,
                     opening,
                     contents,
                     closing,
-                    ContentTagKind::ClassMember,
                 );
             }
             _ => {}
@@ -382,16 +382,16 @@ impl From<Span> for Range {
 #[derive(Serialize, Debug, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Occurrence {
-    range: Range,
-    content_range: Range,
-    contents: String,
-    // the span of the closing "</template>" tag
-    end_range: Range,
-    // the span of the opening "<template>" tag
-    start_range: Range,
-    tag_name: String,
     #[serde(rename = "type")]
     kind: ContentTagKind,
+    tag_name: String,
+    contents: String,
+    range: Range,
+    // the span of the opening "<template>" tag
+    start_range: Range,
+    content_range: Range,
+    // the span of the closing "</template>" tag
+    end_range: Range,
 }
 
 #[cfg(test)]
@@ -412,8 +412,8 @@ mod parser_tests {
             tag_name: "template".into(),
             contents: "Hello!".into(),
             range: Range { start: 0, end: 27 },
-            content_range: Range { start: 10, end: 16 },
             start_range: Range { start: 0, end: 10 },
+            content_range: Range { start: 10, end: 16 },
             end_range: Range { start: 16, end: 27 },
         };
         assert_eq!(output, vec![expected]);
@@ -434,8 +434,8 @@ mod parser_tests {
             tag_name: "template".into(),
             contents: "Hello!".into(),
             range: Range { start: 12, end: 39 },
-            content_range: Range { start: 22, end: 28 },
             start_range: Range { start: 12, end: 22 },
+            content_range: Range { start: 22, end: 28 },
             end_range: Range { start: 28, end: 39 },
         }];
 
@@ -445,23 +445,25 @@ mod parser_tests {
     #[test]
     fn test_inside_class_body() {
         let p = Preprocessor::new();
-        let src = r#"
-                    class A {
-                      <template>Hello!</template>
-                    }
-                "#;
-
-        let bytes = src.as_bytes();
-        let output = p.parse(src, Default::default()).unwrap();
+        let output = p
+            .parse(
+                r#"
+                  class A {
+                    <template>Hello!</template>
+                  }
+                "#,
+                Default::default(),
+            )
+            .unwrap();
 
         let expected = vec![Occurrence {
             kind: ContentTagKind::ClassMember,
             tag_name: "template".into(),
             contents: "Hello!".into(),
-            range: Range { start: 53, end: 80 },
-            content_range: Range { start: 63, end: 69 },
-            start_range: Range { start: 53, end: 63 },
-            end_range: Range { start: 69, end: 80 },
+            range: Range { start: 49, end: 76 },
+            start_range: Range { start: 49, end: 59 },
+            content_range: Range { start: 59, end: 65 },
+            end_range: Range { start: 65, end: 76 },
         }];
 
         assert_eq!(output, expected);
@@ -484,13 +486,13 @@ mod parser_tests {
             .unwrap();
 
         let expected = vec![Occurrence {
-            range: Range { start: 65, end: 92 },
-            content_range: Range { start: 75, end: 81 },
-            contents: "Hello!".into(),
-            end_range: Range { start: 81, end: 92 },
-            start_range: Range { start: 65, end: 75 },
-            tag_name: "template".into(),
             kind: ContentTagKind::Expression,
+            tag_name: "template".into(),
+            contents: "Hello!".into(),
+            range: Range { start: 65, end: 92 },
+            start_range: Range { start: 65, end: 75 },
+            content_range: Range { start: 75, end: 81 },
+            end_range: Range { start: 81, end: 92 },
         }];
 
         assert_eq!(output, expected);
@@ -510,13 +512,13 @@ mod parser_tests {
             .unwrap();
 
         let expected = vec![Occurrence {
-            range: Range { start: 67, end: 94 },
-            content_range: Range { start: 77, end: 83 },
-            contents: "Hello!".into(),
-            end_range: Range { start: 83, end: 94 },
-            start_range: Range { start: 67, end: 77 },
-            tag_name: "template".into(),
             kind: ContentTagKind::Expression,
+            tag_name: "template".into(),
+            contents: "Hello!".into(),
+            range: Range { start: 67, end: 94 },
+            start_range: Range { start: 67, end: 77 },
+            content_range: Range { start: 77, end: 83 },
+            end_range: Range { start: 83, end: 94 },
         }];
 
         assert_eq!(output, expected);
