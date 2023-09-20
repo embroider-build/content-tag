@@ -12,9 +12,9 @@ use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_common::{Mark, Span};
 use swc_core::common::GLOBALS;
 use swc_ecma_ast::{
-    Callee, ClassMember, ContentTagContent, ContentTagEnd, ContentTagExpression, ContentTagMember,
-    ContentTagStart, Decl, Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module,
-    ModuleDecl, ModuleExportName, ModuleItem, VarDecl, VarDeclarator,
+    ClassMember, ContentTagContent, ContentTagEnd, ContentTagExpression, ContentTagMember,
+    ContentTagStart, Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl,
+    ModuleExportName, ModuleItem,
 };
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
@@ -54,6 +54,13 @@ struct ContentTagVisitor {
     occurrences: Vec<Occurrence>,
 }
 
+#[derive(Eq, PartialEq, Debug, Serialize)]
+#[serde(rename_all = "kebab-case")]
+enum ContentTagKind {
+    Expression,
+    ClassMember,
+}
+
 impl ContentTagVisitor {
     fn add_occurrence(
         &mut self,
@@ -61,6 +68,7 @@ impl ContentTagVisitor {
         opening: &ContentTagStart,
         contents: &ContentTagContent,
         closing: &ContentTagEnd,
+        kind: ContentTagKind,
     ) {
         let occurrence = Occurrence {
             range: span.into(),
@@ -68,7 +76,7 @@ impl ContentTagVisitor {
             end_range: closing.span.into(),
             start_range: opening.span.into(),
             tag_name: "template".to_owned(),
-            kind: "template-tag".to_owned(),
+            kind,
             contents: contents.value.to_string(),
         };
 
@@ -85,7 +93,7 @@ impl Visit for ContentTagVisitor {
                 contents,
                 closing,
             }) => {
-                self.add_occurrence(span, opening, contents, closing);
+                self.add_occurrence(span, opening, contents, closing, ContentTagKind::Expression);
             }
             _ => {}
         }
@@ -99,7 +107,13 @@ impl Visit for ContentTagVisitor {
                 contents,
                 closing,
             }) => {
-                self.add_occurrence(span, opening, contents, closing);
+                self.add_occurrence(
+                    span,
+                    opening,
+                    contents,
+                    closing,
+                    ContentTagKind::ClassMember,
+                );
             }
             _ => {}
         }
@@ -119,10 +133,11 @@ impl Preprocessor {
         }
     }
 
-    pub fn parse(&self, src: &str) -> Result<Vec<Occurrence>, swc_ecma_parser::error::Error> {
-        let target_specifier = "template";
-        let options: Options = Default::default();
-        let target_module = "@ember/template-compiler";
+    pub fn parse(
+        &self,
+        src: &str,
+        options: Options,
+    ) -> Result<Vec<Occurrence>, swc_ecma_parser::error::Error> {
         let filename = match options.filename {
             Some(name) => FileName::Real(name),
             None => FileName::Anon,
@@ -141,7 +156,7 @@ impl Preprocessor {
         );
         let mut parser = Parser::new_from(lexer);
         GLOBALS.set(&Default::default(), || {
-            let mut parsed_module = parser.parse_module()?;
+            let parsed_module = parser.parse_module()?;
 
             let mut visitor = ContentTagVisitor::default();
 
@@ -376,7 +391,7 @@ pub struct Occurrence {
     start_range: Range,
     tag_name: String,
     #[serde(rename = "type")]
-    kind: String, // FIXME enum?
+    kind: ContentTagKind,
 }
 
 #[cfg(test)]
@@ -384,14 +399,16 @@ mod test_helpers;
 
 #[cfg(test)]
 mod parser_tests {
-    use crate::{Occurrence, Preprocessor, Range};
+    use crate::{ContentTagKind, Occurrence, Preprocessor, Range};
 
     #[test]
     fn test_basic_example() {
         let p = Preprocessor::new();
-        let output = p.parse("<template>Hello!</template>").unwrap();
+        let output = p
+            .parse("<template>Hello!</template>", Default::default())
+            .unwrap();
         let expected = Occurrence {
-            kind: "template-tag".into(),
+            kind: ContentTagKind::Expression,
             tag_name: "template".into(),
             contents: "Hello!".into(),
             range: Range { start: 0, end: 27 },
@@ -405,10 +422,15 @@ mod parser_tests {
     #[test]
     fn test_expression_position() {
         let p = Preprocessor::new();
-        let output = p.parse("const tpl = <template>Hello!</template>").unwrap();
+        let output = p
+            .parse(
+                "const tpl = <template>Hello!</template>",
+                Default::default(),
+            )
+            .unwrap();
 
         let expected = vec![Occurrence {
-            kind: "template-tag".into(),
+            kind: ContentTagKind::Expression,
             tag_name: "template".into(),
             contents: "Hello!".into(),
             range: Range { start: 12, end: 39 },
@@ -430,10 +452,10 @@ mod parser_tests {
                 "#;
 
         let bytes = src.as_bytes();
-        let output = p.parse(src).unwrap();
+        let output = p.parse(src, Default::default()).unwrap();
 
         let expected = vec![Occurrence {
-            kind: "template-tag".into(),
+            kind: ContentTagKind::ClassMember,
             tag_name: "template".into(),
             contents: "Hello!".into(),
             range: Range { start: 53, end: 80 },
@@ -457,6 +479,7 @@ mod parser_tests {
                   const divide = () => 4 / 2;
                   <template>Hello!</template>
                 "#,
+                Default::default(),
             )
             .unwrap();
 
@@ -467,7 +490,7 @@ mod parser_tests {
             end_range: Range { start: 81, end: 92 },
             start_range: Range { start: 65, end: 75 },
             tag_name: "template".into(),
-            kind: "template-tag".into(),
+            kind: ContentTagKind::Expression,
         }];
 
         assert_eq!(output, expected);
@@ -482,6 +505,7 @@ mod parser_tests {
                   const myregex = /<template>/;
                   <template>Hello!</template>
                 "#,
+                Default::default(),
             )
             .unwrap();
 
@@ -492,7 +516,7 @@ mod parser_tests {
             end_range: Range { start: 83, end: 94 },
             start_range: Range { start: 67, end: 77 },
             tag_name: "template".into(),
-            kind: "template-tag".into(),
+            kind: ContentTagKind::Expression,
         }];
 
         assert_eq!(output, expected);
@@ -501,7 +525,9 @@ mod parser_tests {
     #[test]
     fn test_no_match() {
         let p = Preprocessor::new();
-        let output = p.parse("console.log('Hello world');").unwrap();
+        let output = p
+            .parse("console.log('Hello world');", Default::default())
+            .unwrap();
 
         assert_eq!(output, vec![]);
     }

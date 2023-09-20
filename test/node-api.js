@@ -13,7 +13,7 @@ describe("parse", function() {
 
     expect(output).to.eql([
       {
-        type: "template-tag",
+        type: "expression",
         tagName: "template",
         contents: "Hello!",
         range: {
@@ -42,7 +42,7 @@ describe("parse", function() {
 
     expect(output).to.eql([
       {
-        type: "template-tag",
+        type: "expression",
         tagName: "template",
         contents: "Hello!",
         range: {
@@ -75,7 +75,7 @@ describe("parse", function() {
 
     expect(output).to.eql([
       {
-        type: "template-tag",
+        type: "class-member",
         tagName: "template",
         contents: "Hello!",
         range: {
@@ -110,7 +110,7 @@ describe("parse", function() {
 
     expect(output).to.eql([
       {
-        type: "template-tag",
+        type: "expression",
         tagName: "template",
         contents: "Hello!",
         range: {
@@ -142,7 +142,7 @@ describe("parse", function() {
 
     expect(output).to.eql([
       {
-        type: "template-tag",
+        type: "expression",
         tagName: "template",
         contents: "Hello!",
         range: {

@@ -98,7 +98,13 @@ impl Preprocessor {
     pub fn parse(&self, src: String, filename: Option<String>) -> Result<JsValue, JsValue> {
         let result = self
             .core
-            .parse(&src)
+            .parse(
+                &src,
+                Options {
+                    filename: filename.as_ref().map(|f| f.into()),
+                    inline_source_map: false,
+                },
+            )
             .map_err(|_err| self.process(src, filename).unwrap_err())?;
         let serialized = serde_json::to_string(&result)
             .map_err(|err| js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))?;
