@@ -6,9 +6,10 @@ chai.use(codeEquality);
 
 const { expect } = chai;
 
-describe("parse", function() {
-  it("basic example", function() {
-    let p = new Preprocessor();
+const p = new Preprocessor();
+
+describe("parse", function () {
+  it("basic example", function () {
     let output = p.parse("<template>Hello!</template>");
 
     expect(output).to.eql([
@@ -18,26 +19,25 @@ describe("parse", function() {
         contents: "Hello!",
         range: {
           start: 0,
-          end: 27
+          end: 27,
         },
         contentRange: {
           start: 10,
-          end: 16
+          end: 16,
         },
         startRange: {
           end: 10,
-          start: 0
+          start: 0,
         },
         endRange: {
           start: 16,
-          end: 27
-        }
+          end: 27,
+        },
       },
     ]);
   });
 
-  it("expression position", function() {
-    let p = new Preprocessor();
+  it("expression position", function () {
     let output = p.parse("const tpl = <template>Hello!</template>");
 
     expect(output).to.eql([
@@ -47,26 +47,25 @@ describe("parse", function() {
         contents: "Hello!",
         range: {
           start: 12,
-          end: 39
+          end: 39,
         },
         contentRange: {
           start: 22,
-          end: 28
+          end: 28,
         },
         startRange: {
           start: 12,
-          end: 22
+          end: 22,
         },
         endRange: {
           start: 28,
-          end: 39
-        }
+          end: 39,
+        },
       },
     ]);
   });
 
-  it("inside class body", function() {
-    let p = new Preprocessor();
+  it("inside class body", function () {
     let output = p.parse(`
       class A {
         <template>Hello!</template>
@@ -80,26 +79,25 @@ describe("parse", function() {
         contents: "Hello!",
         range: {
           start: 25,
-          end: 52
+          end: 52,
         },
         contentRange: {
           start: 35,
-          end: 41
+          end: 41,
         },
         startRange: {
           start: 25,
-          end: 35
+          end: 35,
         },
         endRange: {
           start: 41,
-          end: 52
-        }
+          end: 52,
+        },
       },
     ]);
   });
 
-  it("preceded by a slash character", function() {
-    let p = new Preprocessor();
+  it("preceded by a slash character", function () {
     // What is this testing?
     // Would a better test be:
     // `const divide = 1 / <template>Hello!</template>;`
@@ -115,26 +113,25 @@ describe("parse", function() {
         contents: "Hello!",
         range: {
           start: 41,
-          end: 68
+          end: 68,
         },
         contentRange: {
           start: 51,
-          end: 57
+          end: 57,
         },
         startRange: {
           start: 41,
-          end: 51
+          end: 51,
         },
         endRange: {
           start: 57,
-          end: 68
-        }
+          end: 68,
+        },
       },
     ]);
   });
 
-  it("/<template>/ inside a regexp", function() {
-    let p = new Preprocessor();
+  it("/<template>/ inside a regexp", function () {
     let output = p.parse(`
       const myregex = /<template>/;
       <template>Hello!</template>
@@ -147,34 +144,32 @@ describe("parse", function() {
         contents: "Hello!",
         range: {
           start: 43,
-          end: 70
+          end: 70,
         },
         contentRange: {
           start: 53,
-          end: 59
+          end: 59,
         },
         startRange: {
           start: 43,
-          end: 53
+          end: 53,
         },
         endRange: {
           start: 59,
-          end: 70
-        }
+          end: 70,
+        },
       },
     ]);
   });
 
-  it("no match", function() {
-    let p = new Preprocessor();
+  it("no match", function () {
     let output = p.parse("console.log('Hello world');");
 
     expect(output).to.eql([]);
   });
 
-  it("Emits parse errors", function() {
-    let p = new Preprocessor();
-    expect(function() {
+  it("Emits parse errors", function () {
+    expect(function () {
       p.process(
         `const thing = "face";
   <template>Hi`,
@@ -184,10 +179,9 @@ describe("parse", function() {
   });
 });
 
-describe("process", function() {
-  it("works for a basic example", function() {
-    let p = new Preprocessor();
-    let output = p.process('<template>Hi</template>');
+describe("process", function () {
+  it("works for a basic example", function () {
+    let output = p.process("<template>Hi</template>");
 
     expect(output).to
       .equalCode(`import { template } from "@ember/template-compiler";
@@ -198,17 +192,15 @@ describe("process", function() {
     });`);
   });
 
-  it("Emits parse errors with anonymous file", function() {
-    let p = new Preprocessor();
-    expect(function() {
+  it("Emits parse errors with anonymous file", function () {
+    expect(function () {
       p.process(`const thing = "face";
   <template>Hi`);
     }).to.throw(`Parse Error at <anon>:2:15: 2:15`);
   });
 
-  it("Emits parse errors with real file", function() {
-    let p = new Preprocessor();
-    expect(function() {
+  it("Emits parse errors with real file", function () {
+    expect(function () {
       p.process(
         `const thing = "face";
   <template>Hi`,
@@ -217,8 +209,7 @@ describe("process", function() {
     }).to.throw(`Parse Error at path/to/my/component.gjs:2:15: 2:15`);
   });
 
-  it("Offers source_code snippet on parse errors", function() {
-    let p = new Preprocessor();
+  it("Offers source_code snippet on parse errors", function () {
     let parseError;
     try {
       p.process(`class {`);
@@ -230,8 +221,7 @@ describe("process", function() {
       .matches(/Expected ident.*class \{/s);
   });
 
-  it("Offers source_code_color snippet on parse errors", function() {
-    let p = new Preprocessor();
+  it("Offers source_code_color snippet on parse errors", function () {
     let parseError;
     try {
       p.process(`class {`);
