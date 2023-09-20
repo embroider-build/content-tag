@@ -97,6 +97,8 @@ impl Visit for ContentTagVisitor {
             }
             _ => {}
         }
+
+        n.visit_children_with(self);
     }
 
     fn visit_class_member(&mut self, n: &ClassMember) {
@@ -117,11 +119,8 @@ impl Visit for ContentTagVisitor {
             }
             _ => {}
         }
-    }
 
-    // FIXME: is this already covered by visit_class_member?
-    fn visit_class_members(&mut self, n: &[ClassMember]) {
-        swc_ecma_visit::visit_class_members(self, n)
+        n.visit_children_with(self);
     }
 }
 
@@ -532,6 +531,26 @@ mod parser_tests {
             .unwrap();
 
         assert_eq!(output, vec![]);
+    }
+
+    #[test]
+    fn test_inner_expression() {
+        let p = Preprocessor::new();
+        let src = r#"let x = doIt(<template>Hello</template>)"#;
+        let output = p.parse(src, Default::default()).unwrap();
+
+        assert_eq!(
+            output,
+            vec![Occurrence {
+                range: Range { start: 13, end: 39 },
+                content_range: Range { start: 23, end: 28 },
+                contents: "Hello".into(),
+                end_range: Range { start: 28, end: 39 },
+                start_range: Range { start: 13, end: 23 },
+                tag_name: "template".into(),
+                kind: ContentTagKind::Expression
+            }]
+        );
     }
 }
 
