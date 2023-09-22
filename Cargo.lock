@@ -282,6 +282,8 @@ dependencies = [
  "difference",
  "js-sys",
  "lazy_static",
+ "serde",
+ "serde_json",
  "swc",
  "swc_common",
  "swc_core",

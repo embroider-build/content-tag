@@ -12,11 +12,18 @@ use wasm_bindgen::prelude::*;
 extern "C" {
     #[wasm_bindgen(js_name = Error)]
     fn js_error(message: JsValue) -> JsValue;
+
+    #[wasm_bindgen(js_namespace = JSON, js_name = parse)]
+    fn json_parse(value: JsValue) -> JsValue;
 }
 
 #[wasm_bindgen]
 pub struct Preprocessor {
-    core: Box<CorePreprocessor>,
+    // TODO: reusing this between calls result in incorrect spans; there may
+    // be value in reusing some part of the stack but we will have to figure
+    // out how to combine the APIs correctly to ensure we are not hanging on
+    // to the states unexpectedly
+    // core: Box<CorePreprocessor>,
 }
 
 #[derive(Clone, Default)]
@@ -72,13 +79,16 @@ fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<Sourc
 impl Preprocessor {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
-        Self {
-            core: Box::new(CorePreprocessor::new()),
-        }
+        // TODO: investigate reuse
+        // Self {
+        //     core: Box::new(CorePreprocessor::new()),
+        // }
+        Self {}
     }
 
     pub fn process(&self, src: String, filename: Option<String>) -> Result<String, JsValue> {
-        let result = self.core.process(
+        let preprocessor = CorePreprocessor::new();
+        let result = preprocessor.process(
             &src,
             Options {
                 filename: filename.map(|f| f.into()),
@@ -88,7 +98,23 @@ impl Preprocessor {
 
         match result {
             Ok(output) => Ok(output),
-            Err(err) => Err(as_javascript_error(err, self.core.source_map()).into()),
+            Err(err) => Err(as_javascript_error(err, preprocessor.source_map()).into()),
         }
+    }
+
+    pub fn parse(&self, src: String, filename: Option<String>) -> Result<JsValue, JsValue> {
+        let preprocessor = CorePreprocessor::new();
+        let result = preprocessor
+            .parse(
+                &src,
+                Options {
+                    filename: filename.as_ref().map(|f| f.into()),
+                    inline_source_map: false,
+                },
+            )
+            .map_err(|_err| self.process(src, filename).unwrap_err())?;
+        let serialized = serde_json::to_string(&result)
+            .map_err(|err| js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))?;
+        Ok(json_parse(serialized.into()))
     }
 }
