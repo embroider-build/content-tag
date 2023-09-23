@@ -192,6 +192,35 @@ describe("process", function () {
     });`);
   });
 
+  it("escapes backticks", function () {
+    let input = `
+      class Foo extends Component {
+        greeting = 'Hello';
+
+        <template>{{this.greeting}}, \`lifeform\`!</template>
+      }
+    `;
+
+    let output = p.process(input);
+
+    expect(output).to.eql(
+      `import { template } from "@ember/template-compiler";
+let Foo = class Foo extends Component {
+    greeting = 'Hello';
+    static{
+        template(\`{{this.greeting}}, \\\`lifeform\\\`!\`, {
+            component: this,
+            eval () {
+                return eval(arguments[0]);
+            }
+        });
+    }
+};`
+    );
+
+  });
+
+
   it("Emits parse errors with anonymous file", function () {
     expect(function () {
       p.process(`const thing = "face";
