@@ -219,3 +219,14 @@ test!(
     r#"let x = doIt(<template>Hello</template>)"#,
     r#"let x = doIt(template(`Hello`, { eval() { return eval(arguments[0]) }}))"#
 );
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    backtick_in_template,
+    r#"let x = doIt(<template>He`llo</template>)"#,
+    r#"let x = doIt(template(`He\`llo`, { eval() { return eval(arguments[0]) }}))"#
+);
