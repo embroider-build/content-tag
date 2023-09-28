@@ -25,7 +25,7 @@ mod snippets;
 mod transform;
 mod locate;
 
-#[derive(Default, Clone, Copy)]
+#[derive(Default)]
 pub struct Options {
     pub inline_source_map: bool,
 }
@@ -33,7 +33,7 @@ pub struct Options {
 pub struct Preprocessor {
     source_map: Lrc<SourceMap>,
     comments: SingleThreadedComments,
-    options: Options,
+    options: Lrc<Options>,
 }
 
 struct SourceMapConfig;
@@ -49,7 +49,7 @@ impl SourceMapGenConfig for SourceMapConfig {
 
 
 impl Preprocessor {
-    pub fn new(options: Options) -> Self {
+    pub fn new(options: Lrc<Options>) -> Self {
         Self {
             source_map: Default::default(),
             comments: SingleThreadedComments::default(),

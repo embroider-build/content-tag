@@ -3,6 +3,7 @@ use std::env;
 use std::fs;
 use std::path::PathBuf;
 use std::process::exit;
+use std::sync::Arc;
 
 use swc_common::errors::{ColorConfig, Handler};
 
@@ -16,9 +17,9 @@ fn main() {
 
     let src = fs::read_to_string(filename.clone()).unwrap();
 
-    let p = Preprocessor::new(Options {
+    let p = Preprocessor::new(Arc::new(Options {
         inline_source_map: true,
-    });
+    }));
 
     let result = p.process(&src, Some(filename));
 

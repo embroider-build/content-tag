@@ -33,7 +33,7 @@ extern "C" {
 
 #[wasm_bindgen]
 pub struct Preprocessor {
-    options: Options    
+    options: Lrc<Options>    
 }
 
 #[derive(Clone, Default)]
@@ -85,9 +85,9 @@ fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<Sourc
     return js_err;
 }
 
-impl Into<Options> for JsOptions {
-    fn into(self) -> Options {
-        Options { inline_source_map: self.inline_source_map() }
+impl Into<Lrc<Options>> for JsOptions {
+    fn into(self) -> Lrc<Options> {
+        Lrc::new(Options { inline_source_map: self.inline_source_map() })
     }
 }
 
@@ -104,7 +104,7 @@ impl Preprocessor {
     }
 
     pub fn process(&self, src: String, filename: Option<String>) -> Result<String, JsValue> {
-        let preprocessor = CorePreprocessor::new(self.options);
+        let preprocessor = CorePreprocessor::new(self.options.clone());
         let result = preprocessor.process(&src, filename.map(|f| f.into()));
 
         match result {
@@ -114,7 +114,7 @@ impl Preprocessor {
     }
 
     pub fn parse(&self, src: String, filename: Option<String>) -> Result<JsValue, JsValue> {
-        let preprocessor = CorePreprocessor::new(self.options);
+        let preprocessor = CorePreprocessor::new(self.options.clone());
         let result = preprocessor
             .parse(&src, filename.as_ref().map(|f| f.into()))
             .map_err(|_err| self.process(src, filename).unwrap_err())?;
