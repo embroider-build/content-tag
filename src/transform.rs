@@ -227,6 +227,17 @@ test!(
         None,
     )),
     backtick_in_template,
-    r#"let x = doIt(<template>He`llo</template>)"#,
-    r#"let x = doIt(template(`He\`llo`, { eval() { return eval(arguments[0]) }}))"#
+    r#"let x = <template>He`llo</template>"#,
+    r#"let x = template(`He\`llo`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    dollar_in_template,
+    r#"let x = <template>He${ll}o</template>"#,
+    r#"let x = template(`He\${ll}o`, { eval() { return eval(arguments[0]) }})"#
 );
