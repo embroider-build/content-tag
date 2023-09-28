@@ -68,7 +68,7 @@ impl<'a> TransformVisitor<'a> {
 }
 
 fn escape_template_literal(input: &JsWord) -> Atom {
-    input.replace("`", "\\`").replace("$", "\\$").into()
+    input.replace("\\", "\\\\").replace("`", "\\`").replace("$", "\\$").into()
 }
 
 impl<'a> VisitMut for TransformVisitor<'a> {
@@ -247,4 +247,15 @@ test!(
     dollar_in_template,
     r#"let x = <template>He${ll}o</template>"#,
     r#"let x = template(`He\${ll}o`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    do_not_interpret_js_escapes_in_hbs,
+    r#"let x = <template>Hello\nWorld\u1234</template>"#,
+    r#"let x = template(`Hello\\nWorld\\u1234`, { eval() { return eval(arguments[0]) }})"#
 );
