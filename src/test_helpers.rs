@@ -7,7 +7,7 @@ use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
 use crate::Preprocessor;
 
 pub fn testcase(input: &str, expected: &str) -> Result<(), swc_ecma_parser::error::Error> {
-    let p = Preprocessor::new();
+    let p = Preprocessor::new(Default::default());
     let actual = p.process(input, Default::default())?;
     let normalized_expected = normalize(expected);
     if actual != normalized_expected {

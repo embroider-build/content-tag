@@ -27,13 +27,13 @@ mod locate;
 
 #[derive(Default)]
 pub struct Options {
-    pub filename: Option<PathBuf>,
     pub inline_source_map: bool,
 }
 
 pub struct Preprocessor {
     source_map: Lrc<SourceMap>,
     comments: SingleThreadedComments,
+    options: Options,
 }
 
 struct SourceMapConfig;
@@ -49,19 +49,20 @@ impl SourceMapGenConfig for SourceMapConfig {
 
 
 impl Preprocessor {
-    pub fn new() -> Self {
+    pub fn new(options: Options) -> Self {
         Self {
             source_map: Default::default(),
             comments: SingleThreadedComments::default(),
+            options
         }
     }
 
     pub fn parse(
         &self,
         src: &str,
-        options: Options,
+        filename: Option<PathBuf>,
     ) -> Result<Vec<locate::Occurrence>, swc_ecma_parser::error::Error> {
-        let filename = match options.filename {
+        let filename = match filename {
             Some(name) => FileName::Real(name),
             None => FileName::Anon,
         };
@@ -92,11 +93,11 @@ impl Preprocessor {
     pub fn process(
         &self,
         src: &str,
-        options: Options,
+        filename: Option<PathBuf>,
     ) -> Result<String, swc_ecma_parser::error::Error> {
         let target_specifier = "template";
         let target_module = "@ember/template-compiler";
-        let filename = match options.filename {
+        let filename = match filename {
             Some(name) => FileName::Real(name),
             None => FileName::Anon,
         };
@@ -144,7 +145,7 @@ impl Preprocessor {
 
             simplify_imports(&mut parsed_module);
 
-            Ok(self.print(&parsed_module, options.inline_source_map))
+            Ok(self.print(&parsed_module, self.options.inline_source_map))
         })
     }
 

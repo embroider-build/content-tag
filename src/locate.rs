@@ -123,7 +123,7 @@ use crate::Preprocessor;
 
 #[test]
 fn test_basic_example() {
-    let p = Preprocessor::new();
+    let p = Preprocessor::new(Default::default());
     let output = p
         .parse("<template>Hello!</template>", Default::default())
         .unwrap();
@@ -141,7 +141,7 @@ fn test_basic_example() {
 
 #[test]
 fn test_expression_position() {
-    let p = Preprocessor::new();
+    let p = Preprocessor::new(Default::default());
     let output = p
         .parse(
             "const tpl = <template>Hello!</template>",
@@ -164,7 +164,7 @@ fn test_expression_position() {
 
 #[test]
 fn test_inside_class_body() {
-    let p = Preprocessor::new();
+    let p = Preprocessor::new(Default::default());
     let output = p
         .parse(
             r#"
@@ -191,7 +191,7 @@ fn test_inside_class_body() {
 
 #[test]
 fn test_preceded_by_a_slash_character() {
-    let p = Preprocessor::new();
+    let p = Preprocessor::new(Default::default());
     // What is this testing?
     // Would a better test be:
     // `const divide = 1 / <template>Hello!</template>;`
@@ -220,7 +220,7 @@ fn test_preceded_by_a_slash_character() {
 
 #[test]
 fn test_template_inside_a_regexp() {
-    let p = Preprocessor::new();
+    let p = Preprocessor::new(Default::default());
     let output = p
         .parse(
             r#"
@@ -246,7 +246,7 @@ fn test_template_inside_a_regexp() {
 
 #[test]
 fn test_no_match() {
-    let p = Preprocessor::new();
+    let p = Preprocessor::new(Default::default());
     let output = p
         .parse("console.log('Hello world');", Default::default())
         .unwrap();
@@ -256,7 +256,7 @@ fn test_no_match() {
 
 #[test]
 fn test_inner_expression() {
-    let p = Preprocessor::new();
+    let p = Preprocessor::new(Default::default());
     let src = r#"let x = doIt(<template>Hello</template>)"#;
     let output = p.parse(src, Default::default()).unwrap();
 

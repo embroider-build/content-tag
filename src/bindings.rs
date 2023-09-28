@@ -1,4 +1,4 @@
-use crate::{Options, Preprocessor as CorePreprocessor};
+use crate::Preprocessor as CorePreprocessor;
 use std::{fmt, str};
 use swc_common::{
     errors::Handler,
@@ -81,20 +81,14 @@ impl Preprocessor {
     pub fn new() -> Self {
         // TODO: investigate reuse
         // Self {
-        //     core: Box::new(CorePreprocessor::new()),
+        //     core: Box::new(CorePreprocessor::new(Default::default())),
         // }
         Self {}
     }
 
     pub fn process(&self, src: String, filename: Option<String>) -> Result<String, JsValue> {
-        let preprocessor = CorePreprocessor::new();
-        let result = preprocessor.process(
-            &src,
-            Options {
-                filename: filename.map(|f| f.into()),
-                inline_source_map: false,
-            },
-        );
+        let preprocessor = CorePreprocessor::new(Default::default());
+        let result = preprocessor.process(&src, filename.map(|f| f.into()));
 
         match result {
             Ok(output) => Ok(output),
@@ -103,15 +97,9 @@ impl Preprocessor {
     }
 
     pub fn parse(&self, src: String, filename: Option<String>) -> Result<JsValue, JsValue> {
-        let preprocessor = CorePreprocessor::new();
+        let preprocessor = CorePreprocessor::new(Default::default());
         let result = preprocessor
-            .parse(
-                &src,
-                Options {
-                    filename: filename.as_ref().map(|f| f.into()),
-                    inline_source_map: false,
-                },
-            )
+            .parse(&src, filename.as_ref().map(|f| f.into()))
             .map_err(|_err| self.process(src, filename).unwrap_err())?;
         let serialized = serde_json::to_string(&result)
             .map_err(|err| js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))?;
