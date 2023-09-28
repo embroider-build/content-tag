@@ -25,7 +25,7 @@ mod snippets;
 mod transform;
 mod locate;
 
-#[derive(Default)]
+#[derive(Default, Clone, Copy)]
 pub struct Options {
     pub inline_source_map: bool,
 }

@@ -1,4 +1,4 @@
-use content_tag::Preprocessor;
+use content_tag::{Options, Preprocessor};
 use std::env;
 use std::fs;
 use std::path::PathBuf;
@@ -16,7 +16,9 @@ fn main() {
 
     let src = fs::read_to_string(filename.clone()).unwrap();
 
-    let p = Preprocessor::new(Default::default());
+    let p = Preprocessor::new(Options {
+        inline_source_map: true,
+    });
 
     let result = p.process(&src, Some(filename));
 

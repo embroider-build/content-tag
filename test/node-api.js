@@ -262,4 +262,10 @@ describe("process", function () {
       .to.have.property("source_code_color")
       .matches(/Expected ident.*[\u001b].*class \{/s);
   });
+
+  it("can optionally include sourcemap", function () {
+    let p = new Preprocessor({ inline_source_map: true });
+    let output = p.process("<template>Hi</template>");
+    expect(output).to.contain('sourceMappingURL');
+  });
 });

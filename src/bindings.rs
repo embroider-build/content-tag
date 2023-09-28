@@ -1,4 +1,4 @@
-use crate::Preprocessor as CorePreprocessor;
+use crate::{Preprocessor as CorePreprocessor, Options};
 use std::{fmt, str};
 use swc_common::{
     errors::Handler,
@@ -15,15 +15,25 @@ extern "C" {
 
     #[wasm_bindgen(js_namespace = JSON, js_name = parse)]
     fn json_parse(value: JsValue) -> JsValue;
+
+    #[wasm_bindgen(js_namespace = Reflect, js_name = get)]
+    fn js_get(obj: JsValue, field_name: &str) -> JsValue;
+
+    #[wasm_bindgen(js_name = Boolean)]
+    fn js_boolean(value: JsValue) -> bool;
+}
+
+#[wasm_bindgen]
+extern "C" {
+    pub type JsOptions;
+
+    #[wasm_bindgen(method, getter, structural)]
+    fn inline_source_map(this: &JsOptions) -> bool;
 }
 
 #[wasm_bindgen]
 pub struct Preprocessor {
-    // TODO: reusing this between calls result in incorrect spans; there may
-    // be value in reusing some part of the stack but we will have to figure
-    // out how to combine the APIs correctly to ensure we are not hanging on
-    // to the states unexpectedly
-    // core: Box<CorePreprocessor>,
+    options: Options    
 }
 
 #[derive(Clone, Default)]
@@ -75,19 +85,26 @@ fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<Sourc
     return js_err;
 }
 
+impl Into<Options> for JsOptions {
+    fn into(self) -> Options {
+        Options { inline_source_map: self.inline_source_map() }
+    }
+}
+
 #[wasm_bindgen]
 impl Preprocessor {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Self {
-        // TODO: investigate reuse
-        // Self {
-        //     core: Box::new(CorePreprocessor::new(Default::default())),
-        // }
-        Self {}
+    pub fn new(options: Option<JsOptions>) -> Self {
+        Self {
+            options: match options {
+                Some(o) => o.into(),
+                None => Default::default()
+            }
+        }
     }
 
     pub fn process(&self, src: String, filename: Option<String>) -> Result<String, JsValue> {
-        let preprocessor = CorePreprocessor::new(Default::default());
+        let preprocessor = CorePreprocessor::new(self.options);
         let result = preprocessor.process(&src, filename.map(|f| f.into()));
 
         match result {
@@ -97,7 +114,7 @@ impl Preprocessor {
     }
 
     pub fn parse(&self, src: String, filename: Option<String>) -> Result<JsValue, JsValue> {
-        let preprocessor = CorePreprocessor::new(Default::default());
+        let preprocessor = CorePreprocessor::new(self.options);
         let result = preprocessor
             .parse(&src, filename.as_ref().map(|f| f.into()))
             .map_err(|_err| self.process(src, filename).unwrap_err())?;
