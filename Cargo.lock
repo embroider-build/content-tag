@@ -285,6 +285,7 @@ dependencies = [
  "serde",
  "serde_json",
  "swc",
+ "swc_atoms",
  "swc_common",
  "swc_core",
  "swc_ecma_ast",

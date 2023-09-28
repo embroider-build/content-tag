@@ -12,6 +12,9 @@ use swc_ecma_ast::{
     ContentTagContent, ExportDefaultExpr, ExprOrSpread, ModuleDecl, ModuleItem, Tpl, TplElement,
 };
 
+use swc_atoms::{Atom, JsWord};
+
+
 pub struct TransformVisitor<'a> {
     template_identifier: Ident,
     found_it: Option<&'a mut bool>,
@@ -56,12 +59,16 @@ impl<'a> TransformVisitor<'a> {
             quasis: vec![TplElement {
                 span: contents.span,
                 cooked: None,
-                raw: contents.value.clone().into(),
+                raw: escape_template_literal(&contents.value),
                 tail: false,
             }],
         }))
         .into()
     }
+}
+
+fn escape_template_literal(input: &JsWord) -> Atom {
+    input.replace("`", "\\`").replace("$", "\\$").into()
 }
 
 impl<'a> VisitMut for TransformVisitor<'a> {
@@ -218,4 +225,26 @@ test!(
     inner_expression,
     r#"let x = doIt(<template>Hello</template>)"#,
     r#"let x = doIt(template(`Hello`, { eval() { return eval(arguments[0]) }}))"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    backtick_in_template,
+    r#"let x = <template>He`llo</template>"#,
+    r#"let x = template(`He\`llo`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    dollar_in_template,
+    r#"let x = <template>He${ll}o</template>"#,
+    r#"let x = template(`He\${ll}o`, { eval() { return eval(arguments[0]) }})"#
 );
