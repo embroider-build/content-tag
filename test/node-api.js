@@ -203,19 +203,19 @@ describe("process", function () {
 
     let output = p.process(input);
 
-    expect(output).to.eql(
+    expect(output).to.equalCode(
       `import { template } from "@ember/template-compiler";
-let Foo = class Foo extends Component {
-    greeting = 'Hello';
-    static{
-        template(\`{{this.greeting}}, \\\`lifeform\\\`!\`, {
-            component: this,
-            eval () {
-                return eval(arguments[0]);
-            }
-        });
-    }
-};`
+       let Foo = class Foo extends Component {
+           greeting = 'Hello';
+           static{
+               template(\`{{this.greeting}}, \\\`lifeform\\\`!\`, {
+                   component: this,
+                   eval () {
+                       return eval(arguments[0]);
+                   }
+               });
+           }
+       };`
     );
 
   });
