@@ -12,6 +12,9 @@ use swc_ecma_ast::{
     ContentTagContent, ExportDefaultExpr, ExprOrSpread, ModuleDecl, ModuleItem, Tpl, TplElement,
 };
 
+use swc_atoms::{Atom, JsWord};
+
+
 pub struct TransformVisitor<'a> {
     template_identifier: Ident,
     found_it: Option<&'a mut bool>,
@@ -56,12 +59,16 @@ impl<'a> TransformVisitor<'a> {
             quasis: vec![TplElement {
                 span: contents.span,
                 cooked: None,
-                raw: contents.value.clone().into(),
+                raw: escape_template_literal(&contents.value),
                 tail: false,
             }],
         }))
         .into()
     }
+}
+
+fn escape_template_literal(input: &JsWord) -> Atom {
+    input.replace("`", "\\`").replace("$", "\\$").into()
 }
 
 impl<'a> VisitMut for TransformVisitor<'a> {
