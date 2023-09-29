@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use swc_core::ecma::{
     ast::{
         BlockStmt, CallExpr, Callee, ClassMember, ContentTagExpression, ContentTagMember, Expr,
@@ -17,13 +19,15 @@ use swc_atoms::Atom;
 pub struct TransformVisitor<'a> {
     template_identifier: Ident,
     found_it: Option<&'a mut bool>,
+    options: Arc<Options>,
 }
 
 impl<'a> TransformVisitor<'a> {
-    pub fn new(id: &Ident, found_it: Option<&'a mut bool>) -> Self {
+    pub fn new(id: &Ident, found_it: Option<&'a mut bool>, options: Arc<Options>) -> Self {
         TransformVisitor {
             template_identifier: id.clone(),
             found_it,
+            options,
         }
     }
     fn set_found_it(&mut self) {
@@ -52,13 +56,17 @@ impl<'a> TransformVisitor<'a> {
     }
 
     fn content_literal(&self, contents: &Box<ContentTagContent>) -> ExprOrSpread {
+        let content = match &self.options.transformer {
+            Some(t) => (t)(contents.value.to_string()),
+            None => contents.value.to_string(),
+        };
         Box::new(Expr::Tpl(Tpl {
             span: contents.span,
             exprs: vec![],
             quasis: vec![TplElement {
                 span: contents.span,
                 cooked: None,
-                raw: escape_template_literal(&contents.value),
+                raw: escape_template_literal(content),
                 tail: false,
             }],
         }))
@@ -66,7 +74,7 @@ impl<'a> TransformVisitor<'a> {
     }
 }
 
-fn escape_template_literal(input: &Atom) -> Atom {
+fn escape_template_literal(input: String) -> Atom {
     input.replace("\\", "\\\\").replace("`", "\\`").replace("$", "\\$").into()
 }
 
@@ -148,12 +156,15 @@ fn content_tag_expression_statement(item: &ModuleItem) -> Option<&ContentTagExpr
 #[cfg(test)]
 use swc_core::ecma::visit::as_folder;
 
+use crate::Options;
+
 test!(
     Default::default(),
     |_| {
         as_folder(TransformVisitor::new(
             &Ident::new("template".into(), Default::default()),
             None,
+            Default::default(),
         ))
     },
     content_tag_template_expression,
@@ -166,6 +177,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        Default::default()
     )),
     content_tag_template_member,
     r#"class X { <template>Hello</template> } "#,
@@ -181,6 +193,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        Default::default()
     )),
     expression_inside_class_member,
     r#"class X { thing = <template>Hello</template> } "#,
@@ -194,6 +207,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        Default::default()
     )),
     class_member_inside_expression,
     r#"let x = class { <template>Hello</template> } "#,
@@ -209,6 +223,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        Default::default()
     )),
     content_tag_export_default,
     r#"<template>Hello</template>"#,
@@ -220,6 +235,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        Default::default()
     )),
     inner_expression,
     r#"let x = doIt(<template>Hello</template>)"#,
@@ -231,6 +247,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        Default::default()
     )),
     backtick_in_template,
     r#"let x = <template>He`llo</template>"#,
@@ -242,6 +259,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        Default::default()
     )),
     dollar_in_template,
     r#"let x = <template>He${ll}o</template>"#,
@@ -253,6 +271,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        Default::default()
     )),
     do_not_interpret_js_escapes_in_hbs,
     r#"let x = <template>Hello\nWorld\u1234</template>"#,

@@ -19,6 +19,7 @@ fn main() {
 
     let p = Preprocessor::new(Arc::new(Options {
         inline_source_map: true,
+        transformer: None,
     }));
 
     let result = p.process(&src, Some(filename));

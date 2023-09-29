@@ -268,4 +268,17 @@ describe("process", function () {
     let output = p.process("<template>Hi</template>");
     expect(output).to.contain('sourceMappingURL');
   });
+
+  it("can invoke custom transformer", function () {
+    let p = new Preprocessor({ transformer: (s) => s + '!' });
+    let output = p.process("<template>Hi</template>");
+    expect(output).to.equalCode(`
+    import { template } from "@ember/template-compiler";
+    export default template(\`Hi!\`, {
+        eval () {
+            return eval(arguments[0]);
+        }
+    });
+    `)
+  });
 });

@@ -1,4 +1,4 @@
-use crate::{Preprocessor as CorePreprocessor, Options};
+use crate::{Options, Preprocessor as CorePreprocessor};
 use std::{fmt, str};
 use swc_common::{
     errors::Handler,
@@ -29,11 +29,14 @@ extern "C" {
 
     #[wasm_bindgen(method, getter, structural)]
     fn inline_source_map(this: &JsOptions) -> bool;
+
+    #[wasm_bindgen(method, getter, structural)]
+    fn transformer(this: &JsOptions) -> Option<js_sys::Function>;
 }
 
 #[wasm_bindgen]
 pub struct Preprocessor {
-    options: Lrc<Options>    
+    options: Lrc<Options>,
 }
 
 #[derive(Clone, Default)]
@@ -87,8 +90,30 @@ fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<Sourc
 
 impl Into<Lrc<Options>> for JsOptions {
     fn into(self) -> Lrc<Options> {
-        Lrc::new(Options { inline_source_map: self.inline_source_map() })
+        Lrc::new(Options {
+            inline_source_map: self.inline_source_map(),
+            transformer: self.transformer().map(convert_js_transformer),
+        })
     }
+}
+
+fn convert_js_transformer(js_function: js_sys::Function) -> Box<dyn Fn(String) -> String> {
+    let null = JsValue::null();
+    Box::new(move |s: String| -> String {
+        let js_in_string = JsValue::from(s);
+        let result = js_function
+            .call1(&null, &js_in_string)
+            .and_then(|v| {
+                v.as_string().ok_or(js_error(
+                    "transformer function didn't return a string".into(),
+                ))
+            });
+
+        match result {
+            Ok(js_string) => js_string.into(),
+            Err(err) => panic!("nope")
+        }
+    })
 }
 
 #[wasm_bindgen]
@@ -98,8 +123,8 @@ impl Preprocessor {
         Self {
             options: match options {
                 Some(o) => o.into(),
-                None => Default::default()
-            }
+                None => Default::default(),
+            },
         }
     }
 

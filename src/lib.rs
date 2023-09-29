@@ -28,6 +28,7 @@ mod locate;
 #[derive(Default)]
 pub struct Options {
     pub inline_source_map: bool,
+    pub transformer: Option<Box<dyn Fn(String) -> String>>
 }
 
 pub struct Preprocessor {
@@ -124,6 +125,7 @@ impl Preprocessor {
             parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
                 &id,
                 Some(&mut needs_import),
+                self.options.clone()
             )));
 
             if !had_id_already && needs_import {
