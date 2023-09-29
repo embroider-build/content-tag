@@ -12,8 +12,7 @@ use swc_ecma_ast::{
     ContentTagContent, ExportDefaultExpr, ExprOrSpread, ModuleDecl, ModuleItem, Tpl, TplElement,
 };
 
-use swc_atoms::{Atom, JsWord};
-
+use swc_atoms::Atom;
 
 pub struct TransformVisitor<'a> {
     template_identifier: Ident,
@@ -67,7 +66,7 @@ impl<'a> TransformVisitor<'a> {
     }
 }
 
-fn escape_template_literal(input: &JsWord) -> Atom {
+fn escape_template_literal(input: &Atom) -> Atom {
     input.replace("\\", "\\\\").replace("`", "\\`").replace("$", "\\$").into()
 }
 
