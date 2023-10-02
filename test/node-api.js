@@ -14,6 +14,7 @@ describe("parse", function () {
 
     expect(output).to.eql([]);
   });
+
   it("handles arbitrary js", function () {
     let output = p.parse('export let identifier = 123`;');
 

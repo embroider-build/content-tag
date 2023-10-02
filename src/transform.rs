@@ -163,6 +163,32 @@ test!(
 
 test!(
     Default::default(),
+    |_| {
+        as_folder(TransformVisitor::new(
+            &Ident::new("template".into(), Default::default()),
+            None,
+        ))
+    },
+    missing_template_tag,
+    r#"export let identifier = 123`;"#,
+    r#"export let identifier = 123`;"#
+);
+
+test!(
+    Default::default(),
+    |_| {
+        as_folder(TransformVisitor::new(
+            &Ident::new("template".into(), Default::default()),
+            None,
+        ))
+    },
+    empty_file,
+    r#""#,
+    r#""#
+);
+
+test!(
+    Default::default(),
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
