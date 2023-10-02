@@ -19,5 +19,11 @@ jobs:
 
     # remove scope or update it once we decide exactly where we want to deploy this thing
     - run: wasm-pack build --target nodejs
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 20
+        registry-url: https://registry.npmjs.org
     - run: npm publish
       working-directory: pkg
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
