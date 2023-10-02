@@ -1,8 +1,8 @@
 # Release Process
 
-Releases are mostly automated using
-[release-it](https://github.com/release-it/release-it/) and
-[lerna-changelog](https://github.com/lerna/lerna-changelog/).
+Updating the Changelog and the Cargo.toml version are mostly automated using [release-it](https://github.com/release-it/release-it/) and [lerna-changelog](https://github.com/lerna/lerna-changelog/).
+
+The deployment to npm is **automatic** and will happen when you push a tag to GitHub.
 
 ## Preparation
 
@@ -24,17 +24,19 @@ When reviewing merged PR's the labels to be used are:
 * internal - Used for internal changes that still require a mention in the
   changelog/release notes.
 
-## Release
+## Prepare the changelog
 
 Once the prep work is completed, the actual release is straight forward:
 
-* First, ensure that you have installed your projects dependencies:
+* Make sure that you are on a branch other than `main`. The changelog and version bump should be done as a PR, reviewed, and merged before the tag is created and the release is pushed to npm.
+
+* ensure that you have installed your projects dependencies:
 
 ```sh
 npm install
 ```
 
-* Second, ensure that you have obtained a
+* ensure that you have obtained a
   [GitHub personal access token][generate-token] with the `repo` scope (no
   other permissions are needed). Make sure the token is available as the
   `GITHUB_AUTH` environment variable.
@@ -47,7 +49,7 @@ npm install
 
 [generate-token]: https://github.com/settings/tokens/new?scopes=repo&description=GITHUB_AUTH+env+variable
 
-* And last (but not least 😁) do your release.
+* Update the changelog and bump the version:
 
 ```sh
 npx release-it
@@ -55,6 +57,22 @@ npx release-it
 
 [release-it](https://github.com/release-it/release-it/) manages the actual
 release process. It will prompt you to to choose the version number after which
-you will have the chance to hand tweak the changelog to be used (for the
-`CHANGELOG.md` and GitHub release), then `release-it` continues on to tagging,
-pushing the tag and commits, etc.
+you will have the chance to hand tweak the changelog to be used.
+
+## Tag and Release
+
+Once your PR that updates the Changelog and bumps the version is released you need to tag that commit and push that tag to github.
+
+```sh
+git checkout main
+git pull
+git tag v[version-number]
+```
+
+remember to replace `[version-number]` with the release you are doing.
+
+then push that tag: 
+
+```sh
+git push --tags
+```
