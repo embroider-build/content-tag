@@ -88,13 +88,13 @@ checksum = "96d30a06541fbafbc7f82ed10c06164cfbd2c401138f6addd8404629c4b16711"
 [[package]]
 name = "ast_node"
 version = "0.9.5"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "pmutil",
  "proc-macro2",
  "quote",
  "swc_macros_common",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -156,7 +156,7 @@ checksum = "9ba43ea6f343b788c8764558649e08df62f86c6ef251fdaeb1ffd010a9ae50a2"
 [[package]]
 name = "better_scoped_tls"
 version = "0.1.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "scoped-tls",
 ]
@@ -276,7 +276,7 @@ dependencies = [
 
 [[package]]
 name = "content-tag"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "base64 0.21.4",
  "difference",
@@ -363,7 +363,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "978747c1d849a7d2ee5e8adc0159961c48fb7e5db2f06af6723b80123bb53856"
 dependencies = [
  "cfg-if",
- "hashbrown 0.14.0",
+ "hashbrown 0.14.1",
  "lock_api",
  "once_cell",
  "parking_lot_core",
@@ -436,7 +436,7 @@ checksum = "eecf8589574ce9b895052fa12d69af7a233f99e6107f5cb8dd1044f2a17bfdcb"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -447,9 +447,9 @@ checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
 name = "errno"
-version = "0.3.3"
+version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "136526188508e25c6fef639d7927dfb3e0e3084488bf202267829cf7fc23dbdd"
+checksum = "add4f07d43996f76ef320709726a556a9d4f965d9410d8d0271132d2f8293480"
 dependencies = [
  "errno-dragonfly",
  "libc",
@@ -490,12 +490,12 @@ dependencies = [
 [[package]]
 name = "from_variant"
 version = "0.1.6"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "pmutil",
  "proc-macro2",
  "swc_macros_common",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -562,9 +562,9 @@ dependencies = [
 
 [[package]]
 name = "hashbrown"
-version = "0.14.0"
+version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c6201b9ff9fd90a5a3bac2e56a830d0caa509576f0e503818ee82c181b3437a"
+checksum = "7dfda62a12f55daeae5015f81b0baea145391cb4520f86c248fc615d72640d12"
 
 [[package]]
 name = "hermit-abi"
@@ -639,12 +639,12 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "2.0.1"
+version = "2.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad227c3af19d4914570ad36d30409928b75967c298feb9ea1969db3a610bb14e"
+checksum = "8adf3ddd720272c6ea8bf59463c04e0f93d0bbf7c5439b691bca2987e0270897"
 dependencies = [
  "equivalent",
- "hashbrown 0.14.0",
+ "hashbrown 0.14.1",
 ]
 
 [[package]]
@@ -657,7 +657,7 @@ dependencies = [
  "pmutil",
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -713,9 +713,9 @@ checksum = "9cdc71e17332e86d2e1d38c1f99edcb6288ee11b815fb1a4b049eaa2114d369b"
 
 [[package]]
 name = "linux-raw-sys"
-version = "0.4.7"
+version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a9bad9f94746442c783ca431b22403b519cd7fbeed0533fdd6328b2f2212128"
+checksum = "3852614a3bd9ca9804678ba6be5e3b8ce76dfc902cae004e3e0c44051b6e88db"
 
 [[package]]
 name = "lock_api"
@@ -753,9 +753,9 @@ dependencies = [
 
 [[package]]
 name = "memchr"
-version = "2.6.3"
+version = "2.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f232d6ef707e1956a43342693d2a31e72989554d58299d7a88738cc95b0d35c"
+checksum = "f665ee40bc4a3c5590afb1e9677db74a508659dfd71e126420da8274909a0167"
 
 [[package]]
 name = "memoffset"
@@ -963,7 +963,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e1d3afd2628e69da2be385eb6f2fd57c8ac7977ceeff6dc166ff1657b0e386a9"
 dependencies = [
  "fixedbitset",
- "indexmap 2.0.1",
+ "indexmap 2.0.2",
 ]
 
 [[package]]
@@ -1024,7 +1024,7 @@ checksum = "52a40bc70c2c58040d2d8b167ba9a5ff59fc9dab7ad44771cfde3dcfde7a09c6"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -1042,7 +1042,7 @@ checksum = "925383efa346730478fb4838dbe9137d2a47675ad789c546d150a6e1dd4ab31c"
 [[package]]
 name = "preset_env_base"
 version = "0.4.5"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "ahash",
  "anyhow",
@@ -1098,9 +1098,9 @@ checksum = "dc375e1527247fe1a97d8b7156678dfe7c1af2fc075c9a4db3690ecd2a148068"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.67"
+version = "1.0.68"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d433d9f1a3e8c1263d9456598b16fec66f4acc9a74dacffd35c7bb09b3a1328"
+checksum = "5b1106fec09662ec6dd98ccac0f81cef56984d0b49f75c92d8cbad76e20c005c"
 dependencies = [
  "unicode-ident",
 ]
@@ -1190,13 +1190,13 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.9.5"
+version = "1.9.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "697061221ea1b4a94a624f67d0ae2bfe4e22b8a17b6a192afb11046542cc8c47"
+checksum = "ebee201405406dbf528b8b672104ae6d6d63e6d118cb10e4d51abbc7b58044ff"
 dependencies = [
  "aho-corasick",
  "memchr",
- "regex-automata 0.3.8",
+ "regex-automata 0.3.9",
  "regex-syntax 0.7.5",
 ]
 
@@ -1211,9 +1211,9 @@ dependencies = [
 
 [[package]]
 name = "regex-automata"
-version = "0.3.8"
+version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2f401f4955220693b56f8ec66ee9c78abffd8d1c4f23dc41a23839eb88f0795"
+checksum = "59b23e92ee4318893fa3fe3e6fb365258efbfe6ac6ab30f090cdcbb7aa37efa9"
 dependencies = [
  "aho-corasick",
  "memchr",
@@ -1261,9 +1261,9 @@ dependencies = [
 
 [[package]]
 name = "rustix"
-version = "0.38.14"
+version = "0.38.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "747c788e9ce8e92b12cd485c49ddf90723550b654b32508f979b71a7b1ecda4f"
+checksum = "f25469e9ae0f3d0047ca8b93fc56843f38e6774f0914a107ff8b41be8be8e0b7"
 dependencies = [
  "bitflags 2.4.0",
  "errno",
@@ -1354,7 +1354,7 @@ checksum = "4eca7ac642d82aa35b60049a6eccb4be6be75e599bd2e9adb5f875a737654af2"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -1381,9 +1381,9 @@ dependencies = [
 
 [[package]]
 name = "sharded-slab"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1b21f559e07218024e7e9f90f96f601825397de0e25420135f7f952453fed0b"
+checksum = "f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6"
 dependencies = [
  "lazy_static",
 ]
@@ -1471,7 +1471,7 @@ dependencies = [
  "pmutil",
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -1509,13 +1509,13 @@ dependencies = [
 [[package]]
 name = "string_enum"
 version = "0.4.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "pmutil",
  "proc-macro2",
  "quote",
  "swc_macros_common",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -1548,8 +1548,8 @@ dependencies = [
 
 [[package]]
 name = "swc"
-version = "0.265.7"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.266.38"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "anyhow",
  "base64 0.13.1",
@@ -1569,6 +1569,7 @@ dependencies = [
  "swc_atoms",
  "swc_cached",
  "swc_common",
+ "swc_compiler_base",
  "swc_config",
  "swc_ecma_ast",
  "swc_ecma_codegen",
@@ -1595,7 +1596,7 @@ dependencies = [
 [[package]]
 name = "swc_atoms"
 version = "0.5.9"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "once_cell",
  "rustc-hash",
@@ -1608,7 +1609,7 @@ dependencies = [
 [[package]]
 name = "swc_cached"
 version = "0.3.17"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "ahash",
  "anyhow",
@@ -1620,8 +1621,8 @@ dependencies = [
 
 [[package]]
 name = "swc_common"
-version = "0.32.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.32.2"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "ahash",
  "ast_node",
@@ -1649,9 +1650,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_compiler_base"
+version = "0.1.11"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
+dependencies = [
+ "anyhow",
+ "base64 0.13.1",
+ "pathdiff",
+ "serde",
+ "sourcemap",
+ "swc_atoms",
+ "swc_common",
+ "swc_config",
+ "swc_ecma_ast",
+ "swc_ecma_codegen",
+ "swc_ecma_minifier",
+ "swc_ecma_parser",
+ "swc_ecma_visit",
+ "swc_timer",
+]
+
+[[package]]
 name = "swc_config"
 version = "0.1.7"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "indexmap 1.9.3",
  "serde",
@@ -1662,19 +1684,19 @@ dependencies = [
 [[package]]
 name = "swc_config_macro"
 version = "0.1.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "pmutil",
  "proc-macro2",
  "quote",
  "swc_macros_common",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
 name = "swc_core"
-version = "0.82.7"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.83.41"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "swc_atoms",
  "swc_common",
@@ -1687,8 +1709,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_ast"
-version = "0.109.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.109.2"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "bitflags 2.4.0",
  "is-macro",
@@ -1703,8 +1725,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_codegen"
-version = "0.144.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.145.7"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "memchr",
  "num-bigint",
@@ -1722,19 +1744,19 @@ dependencies = [
 [[package]]
 name = "swc_ecma_codegen_macros"
 version = "0.7.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "pmutil",
  "proc-macro2",
  "quote",
  "swc_macros_common",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
 name = "swc_ecma_ext_transforms"
-version = "0.108.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.109.3"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "phf",
  "swc_atoms",
@@ -1746,8 +1768,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_lints"
-version = "0.87.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.88.10"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "auto_impl",
  "dashmap",
@@ -1765,8 +1787,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_loader"
-version = "0.44.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.44.5"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "anyhow",
  "dashmap",
@@ -1785,8 +1807,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_minifier"
-version = "0.186.5"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.187.31"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "arrayvec",
  "indexmap 1.9.3",
@@ -1818,8 +1840,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_parser"
-version = "0.139.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.140.1"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "either",
  "num-bigint",
@@ -1837,8 +1859,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_preset_env"
-version = "0.200.4"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.201.31"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "anyhow",
  "dashmap",
@@ -1861,8 +1883,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_testing"
-version = "0.21.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.21.2"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "anyhow",
  "hex",
@@ -1873,8 +1895,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms"
-version = "0.223.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.224.28"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "swc_atoms",
  "swc_common",
@@ -1892,8 +1914,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_base"
-version = "0.132.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.133.9"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "better_scoped_tls",
  "bitflags 2.4.0",
@@ -1914,8 +1936,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_classes"
-version = "0.121.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.122.9"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "swc_atoms",
  "swc_common",
@@ -1927,8 +1949,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_compat"
-version = "0.158.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.159.17"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "arrayvec",
  "indexmap 1.9.3",
@@ -1952,19 +1974,19 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_macros"
 version = "0.5.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "pmutil",
  "proc-macro2",
  "quote",
  "swc_macros_common",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
 name = "swc_ecma_transforms_module"
-version = "0.175.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.176.21"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -1989,8 +2011,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_optimization"
-version = "0.192.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.193.28"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "dashmap",
  "indexmap 1.9.3",
@@ -2012,8 +2034,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_proposal"
-version = "0.166.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.167.21"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "either",
  "rustc-hash",
@@ -2031,8 +2053,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_react"
-version = "0.178.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.179.21"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "base64 0.13.1",
  "dashmap",
@@ -2054,8 +2076,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_testing"
-version = "0.135.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.136.8"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "ansi_term",
  "anyhow",
@@ -2079,9 +2101,10 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_typescript"
-version = "0.182.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.183.27"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
+ "ryu-js",
  "serde",
  "swc_atoms",
  "swc_common",
@@ -2094,8 +2117,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_usage_analyzer"
-version = "0.18.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.19.3"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "indexmap 1.9.3",
  "rustc-hash",
@@ -2110,8 +2133,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_utils"
-version = "0.122.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.123.3"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "indexmap 1.9.3",
  "num_cpus",
@@ -2127,8 +2150,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_visit"
-version = "0.95.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.95.2"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "num-bigint",
  "swc_atoms",
@@ -2141,18 +2164,18 @@ dependencies = [
 [[package]]
 name = "swc_eq_ignore_macros"
 version = "0.1.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "pmutil",
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
 name = "swc_error_reporters"
-version = "0.16.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.16.2"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "anyhow",
  "miette",
@@ -2163,8 +2186,8 @@ dependencies = [
 
 [[package]]
 name = "swc_fast_graph"
-version = "0.20.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.20.2"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "indexmap 1.9.3",
  "petgraph",
@@ -2175,18 +2198,18 @@ dependencies = [
 [[package]]
 name = "swc_macros_common"
 version = "0.3.8"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "pmutil",
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
 name = "swc_node_comments"
-version = "0.19.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.19.2"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "dashmap",
  "swc_atoms",
@@ -2195,8 +2218,8 @@ dependencies = [
 
 [[package]]
 name = "swc_timer"
-version = "0.20.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.20.2"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "tracing",
 ]
@@ -2204,17 +2227,17 @@ dependencies = [
 [[package]]
 name = "swc_trace_macro"
 version = "0.1.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
 name = "swc_visit"
 version = "0.5.7"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "either",
  "swc_visit_macros",
@@ -2223,14 +2246,14 @@ dependencies = [
 [[package]]
 name = "swc_visit_macros"
 version = "0.5.8"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "Inflector",
  "pmutil",
  "proc-macro2",
  "quote",
  "swc_macros_common",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -2246,9 +2269,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.37"
+version = "2.0.38"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7303ef2c05cd654186cb250d29049a24840ca25d2747c25c0381c8d9e2f582e8"
+checksum = "e96b79aaa137db8f61e26363a0c9b47d8b4ec75da28b7d1d614c2303e232408b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2289,8 +2312,8 @@ dependencies = [
 
 [[package]]
 name = "testing"
-version = "0.34.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+version = "0.34.2"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "ansi_term",
  "cargo_metadata",
@@ -2309,7 +2332,7 @@ dependencies = [
 [[package]]
 name = "testing_macros"
 version = "0.2.11"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#5477f2aab663c68ef6e5ce75a7803dc7406a9a43"
+source = "git+https://github.com/ef4/swc.git?branch=content-tag#ac6123fd8b5d931de21ae0b8b5689e4cc285ce36"
 dependencies = [
  "anyhow",
  "glob",
@@ -2319,7 +2342,7 @@ dependencies = [
  "quote",
  "regex",
  "relative-path",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -2350,7 +2373,7 @@ checksum = "10712f02019e9288794769fba95cd6847df9874d49d871d062172f9dd41bc4cc"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -2426,7 +2449,7 @@ checksum = "5f4f31f56159e98206da9efd823404b79b6ef3143b4a7ab76e67b1751b25a4ab"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -2600,7 +2623,7 @@ dependencies = [
  "once_cell",
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
  "wasm-bindgen-shared",
 ]
 
@@ -2622,7 +2645,7 @@ checksum = "54681b18a46765f095758388f2d0cf16eb8d4169b639ab575a8f5693af210c7b"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.37",
+ "syn 2.0.38",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]
