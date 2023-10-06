@@ -1,4 +1,13 @@
 
+
+## 1.1.2 (2023-10-06)
+
+#### :bug: Bug Fix
+* [#36](https://github.com/embroider-build/content-tag/pull/36) Updating swc ([@ef4](https://github.com/ef4))
+
+#### Committers: 1
+- Edward Faulkner ([@ef4](https://github.com/ef4))
+
 ## 1.1.1 (2023-10-02)
 
 #### :bug: Bug Fix
