@@ -27,10 +27,6 @@ const manifest = {
       types: "./standalone/standalone.d.ts",
       import: "./standalone/standalone.js",
     },
-    "./standalone/*": {
-      types: "./standalone/*.d.ts",
-      import: "./standalone/*.js",
-    },
   },
 };
 

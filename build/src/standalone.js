@@ -1,6 +1,6 @@
-export * from "./content-tag.js";
+export * from "./content_tag.js";
 
-import init, { Preprocessor } from "./content-tag.js";
+import init, { Preprocessor } from "./content_tag.js";
 
 export async function createPreprocessor() {
   // This no-ops if it's already ran

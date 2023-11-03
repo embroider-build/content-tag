@@ -9,20 +9,7 @@
 
     async function run() {
       const p = await createPreprocessor();
-      const output = p.process('<template>Hi</template>');
-
-      document.querySelector('#output').innerHTML = output;
-    }
-
-    run();
-  </script>
-  <script type="module">
-    import init, {Preprocessor} from './pkg/standalone/content_tag.js';
-
-    async function run() {
-      await init();
-      const p = new Preprocessor();
-      const output = p.process('<template>Hi</template>');
+      const output = p.process('<template>Hi from createPreprocessor</template>');
 
       document.querySelector('#output').innerHTML = output;
     }
@@ -33,7 +20,6 @@
 
 <body>
   <pre id="output"></pre>
-  <pre id="output2"></pre>
 </body>
 
 </html>
