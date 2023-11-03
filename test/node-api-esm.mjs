@@ -1,4 +1,3 @@
-import { createRequire } from "node:module";
 import chai from "chai";
 import { codeEquality } from "code-equality-assertions/chai";
 
@@ -6,9 +5,7 @@ chai.use(codeEquality);
 
 const { expect } = chai;
 
-const require = createRequire(import.meta.url);
-
-const { Preprocessor } = require("content-tag");
+import { Preprocessor } from "content-tag";
 const p = new Preprocessor();
 
 describe("Node ESM", function () {
