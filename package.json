@@ -6,6 +6,7 @@
   },
   "scripts": {
     "web": "npx html-pages . --no-cache",
+    "build": "./build.sh",
     "test": "mocha"
   },
   "devDependencies": {

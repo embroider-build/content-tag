@@ -18,7 +18,7 @@ Tests:
 
 Build wasm package:
 
-`wasm-pack build --target=nodejs`
+`npm run build`
 
 which will output your wasm package in `./pkg`
 

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# we need npm packages for the post-wasm phase
+npm install
+
 rm -rf pkg
 
 # wasm-pack knows to use wasm-opt, when present
