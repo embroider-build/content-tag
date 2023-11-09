@@ -258,3 +258,27 @@ test!(
     r#"let x = <template>Hello\nWorld\u1234</template>"#,
     r#"let x = template(`Hello\\nWorld\\u1234`, { eval() { return eval(arguments[0]) }})"#
 );
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    handles_missing_semicolon_in_class,
+    r#"class X {
+      get whatever() {}
+
+      <template>hi</template>
+      (oops) => {}
+    }
+    "#,
+    r#"class X {
+        static {
+            template(`hi`, { component: this, eval() { return eval(arguments[0]) }},);
+        }
+        get whatever() {}
+    }
+    "#
+);
+
