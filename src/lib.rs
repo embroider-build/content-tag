@@ -56,6 +56,34 @@ impl Preprocessor {
         }
     }
 
+    pub fn ast(
+            &self,
+            src: &str,
+            options: Options,
+        ) -> Result<Module, swc_ecma_parser::error::Error> {
+            let filename = match options.filename {
+                Some(name) => FileName::Real(name),
+                None => FileName::Anon,
+            };
+
+            let source_file = self.source_map.new_source_file(filename, src.to_string());
+
+            let lexer = Lexer::new(
+                Syntax::Typescript(TsConfig {
+                    decorators: true,
+                    ..Default::default()
+                }),
+                Default::default(),
+                StringInput::from(&*source_file),
+                Some(&self.comments),
+            );
+            let mut parser = Parser::new_from(lexer);
+            GLOBALS.set(&Default::default(), || {
+                let parsed_module = parser.parse_module()?;
+                Ok(parsed_module)
+            })
+        }
+
     pub fn parse(
         &self,
         src: &str,

@@ -21,7 +21,7 @@ swc_core = { git = "https://github.com/ef4/swc.git", branch = "content-tag", fea
 swc_atoms = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
 swc_ecma_parser = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
 swc_ecma_codegen = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
-swc_ecma_ast = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
+swc_ecma_ast = { git = "https://github.com/ef4/swc.git", branch = "content-tag", features = ["serde-impl"] }
 swc_ecma_visit = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
 swc_ecma_utils = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
 swc_ecma_transforms = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
