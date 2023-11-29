@@ -1,7 +1,7 @@
 [package]
 name = "content-tag"
-description = "A rust program that uses a fork of swc to parse and transform Javascript containing the content-tag proposal"
-repository = "https://github.com/embroider-build/content-tag"
+description = "A rust program that uses a fork of swc to parse and transform Javascript containing the babelify proposal"
+repository = "https://github.com/embroider-build/babelify"
 license = "MIT"
 version = "1.1.2"
 edition = "2021"
@@ -10,22 +10,24 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-swc_common = { git = "https://github.com/ef4/swc.git", branch = "content-tag", features=["tty-emitter"] }
-swc = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
+swc_common = { git = "https://github.com/patricklx/swc.git", branch = "babelify", features=["tty-emitter"] }
+swc = { git = "https://github.com/patricklx/swc.git", branch = "babelify" }
 # The feature set here needs to be chosen carefully to not accidentally enable
 # "plugin_mode" and the related stuff, because with that enabled, wasm32 builds
 # expect swc plugin-runner specific environment that we don't use. When that
 # happens, the javascript shims try to do "require('env')" to find the missing
 # stuff, which is nonsense and blows up.
-swc_core = { git = "https://github.com/ef4/swc.git", branch = "content-tag", features = ["ecma_ast", "common", "ecma_visit", "ecma_transforms", "__testing_transform"] }
-swc_atoms = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
-swc_ecma_parser = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
-swc_ecma_codegen = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
-swc_ecma_ast = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
-swc_ecma_visit = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
-swc_ecma_utils = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
-swc_ecma_transforms = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
-swc_error_reporters = { git = "https://github.com/ef4/swc.git", branch = "content-tag" }
+swc_core = { git = "https://github.com/patricklx/swc.git", branch = "babelify", features = ["ecma_ast", "common", "ecma_visit", "ecma_transforms", "__testing_transform"] }
+swc_atoms = { git = "https://github.com/patricklx/swc.git", branch = "babelify" }
+swc_ecma_parser = { git = "https://github.com/patricklx/swc.git", branch = "babelify" }
+swc_ecma_codegen = { git = "https://github.com/patricklx/swc.git", branch = "babelify" }
+swc_ecma_ast = { git = "https://github.com/patricklx/swc.git", branch = "babelify", features = ["serde-impl"] }
+swc_estree_ast = { git = "https://github.com/patricklx/swc.git", branch = "babelify", features = ["serde-impl"] }
+swc_ecma_visit = { git = "https://github.com/patricklx/swc.git", branch = "babelify" }
+swc_ecma_utils = { git = "https://github.com/patricklx/swc.git", branch = "babelify" }
+swc_ecma_transforms = { git = "https://github.com/patricklx/swc.git", branch = "babelify" }
+swc_error_reporters = { git = "https://github.com/patricklx/swc.git", branch = "babelify" }
+swc_estree_compat = { git = "https://github.com/patricklx/swc.git", branch = "babelify" }
 lazy_static = "1.4.0"
 base64 = "0.21.4"
 serde = { version = "1.0", features = ["derive"] }

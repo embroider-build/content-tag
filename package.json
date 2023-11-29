@@ -44,5 +44,8 @@
       "publish": false,
       "ignoreVersion": true
     }
+  },
+  "dependencies": {
+    "wasm-pack": "^0.12.1"
   }
 }

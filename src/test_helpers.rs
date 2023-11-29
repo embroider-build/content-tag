@@ -9,6 +9,7 @@ use crate::Preprocessor;
 pub fn testcase(input: &str, expected: &str) -> Result<(), swc_ecma_parser::error::Error> {
     let p = Preprocessor::new();
     let actual = p.process(input, Default::default())?;
+    p.ast(input, Default::default())?;
     let normalized_expected = normalize(expected);
     if actual != normalized_expected {
         panic!(

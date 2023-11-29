@@ -117,4 +117,20 @@ impl Preprocessor {
             .map_err(|err| js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))?;
         Ok(json_parse(serialized.into()))
     }
+
+    pub fn ast(&self, src: String, filename: Option<String>) -> Result<JsValue, JsValue> {
+            let preprocessor = CorePreprocessor::new();
+            let result = preprocessor
+                .ast(
+                    &src,
+                    Options {
+                        filename: filename.as_ref().map(|f| f.into()),
+                        inline_source_map: false,
+                    },
+                )
+                .map_err(|_err| self.process(src, filename).unwrap_err())?;
+            let serialized = serde_json::to_string(&result)
+                .map_err(|err| js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))?;
+            Ok(json_parse(serialized.into()))
+        }
 }

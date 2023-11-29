@@ -8,6 +8,68 @@ const { expect } = chai;
 
 const p = new Preprocessor();
 
+describe("ast", function () {
+  it("basic example", function () {
+    let output = p.ast(`export default <template>
+    Hello!
+    </template>
+    `);
+
+    expect(output).to.eql({
+      "body": [
+        {
+          "expression": {
+            "closing": {
+              "span": {
+                "ctxt": 0,
+                "end": 53,
+                "start": 42
+              },
+              "type": "ContentTagEnd"
+            },
+            "contents": {
+              "span": {
+                "ctxt": 0,
+                "end": 42,
+                "start": 26
+              },
+              "type": "ContentTagContent",
+              "value": "\n    Hello!\n    "
+            },
+            "opening": {
+              "span": {
+                "ctxt": 0,
+                "end": 26,
+                "start": 16
+              },
+              "type": "ContentTagStart"
+            },
+            "span": {
+              "ctxt": 0,
+              "end": 53,
+              "start": 16
+            },
+            "type": "ContentTagExpression"
+          },
+          "span": {
+            "ctxt": 0,
+            "end": 53,
+            "start": 1
+          },
+          "type": "ExportDefaultExpression"
+        }
+      ],
+      "interpreter": null,
+      "span": {
+        "ctxt": 0,
+        "end": 53,
+        "start": 1
+      },
+      "type": "Module"
+    });
+  });
+});
+
 describe("parse", function () {
   it("basic example", function () {
     let output = p.parse("<template>Hello!</template>");

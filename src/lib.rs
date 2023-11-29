@@ -5,20 +5,24 @@ extern crate lazy_static;
 
 use base64::{engine::general_purpose, Engine as _};
 use std::path::PathBuf;
+use std::sync::Arc;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::source_map::SourceMapGenConfig;
+use swc_common::FilePathMapping;
 use swc_common::{self, sync::Lrc, FileName, SourceMap, Mark};
 use swc_core::common::GLOBALS;
 use swc_ecma_ast::{
     Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl,
     ModuleExportName, ModuleItem,
 };
+use swc_estree_ast::Program;
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
 use swc_ecma_transforms::hygiene::hygiene_with_config;
 use swc_ecma_transforms::resolver;
 use swc_ecma_utils::private_ident;
 use swc_ecma_visit::{as_folder, VisitMutWith, VisitWith};
+use swc_estree_compat::babelify::{Babelify, Context};
 
 mod bindings;
 mod snippets;
@@ -47,6 +51,12 @@ impl SourceMapGenConfig for SourceMapConfig {
     }
 }
 
+fn mk() -> swc::Compiler {
+    let cm = Arc::new(SourceMap::new(FilePathMapping::empty()));
+
+    swc::Compiler::new(cm)
+}
+
 
 impl Preprocessor {
     pub fn new() -> Self {
@@ -55,6 +65,41 @@ impl Preprocessor {
             comments: SingleThreadedComments::default(),
         }
     }
+
+    pub fn ast(
+            &self,
+            src: &str,
+            options: Options,
+        ) -> Result<Program, swc_ecma_parser::error::Error> {
+            let filename = match options.filename {
+                Some(name) => FileName::Real(name),
+                None => FileName::Anon,
+            };
+
+            let source_file = self.source_map.new_source_file(filename, src.to_string());
+
+            let lexer = Lexer::new(
+                Syntax::Typescript(TsConfig {
+                    decorators: true,
+                    ..Default::default()
+                }),
+                Default::default(),
+                StringInput::from(&*source_file),
+                Some(&self.comments),
+            );
+            let mut parser = Parser::new_from(lexer);
+            GLOBALS.set(&Default::default(), || {
+                let c = mk();
+                let parsed_module = parser.parse_module()?;
+                let ctx = Context {
+                  fm: source_file.clone(),
+                  cm: c.cm.clone(),
+                  comments: c.comments().clone(),
+                };
+                //Ok(parsed_module)
+                Ok(parsed_module.babelify(&ctx))
+            })
+        }
 
     pub fn parse(
         &self,
