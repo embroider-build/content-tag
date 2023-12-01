@@ -20,7 +20,7 @@ Build the package:
 
 `npm run build`
 
-which will output your wasm package in `./pkg`, which is its own workspace, used for local testing as well as the publishable assets.
+which will output your wasm package in `./pkg` 
 
 ## Running against a local copy of SWC
 

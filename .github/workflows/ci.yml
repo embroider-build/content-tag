@@ -42,3 +42,5 @@ jobs:
         cache: 'npm'
     - run: ./build.sh
     - run: npm test
+    - run: npm run lint:package
+    - run: npm run lint:published-types

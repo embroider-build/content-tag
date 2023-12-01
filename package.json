@@ -9,32 +9,48 @@
     "url": "git@github.com:embroider-build/content-tag.git"
   },
   "files": [
-    "pkg"
+    "pkg/*",
+    "pkg/node/*",
+    "pkg/standalone/*",
+    "index.d.ts",
+    "index.d.cts"
   ],
   "exports": {
     ".": {
-      "types": "index.d.ts",
       "browser": {
         "import": "./pkg/standalone.js"
       },
-      "default": "./pkg/node/content_tag.cjs"
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./pkg/node/content_tag.cjs"
+      },
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./pkg/node/content_tag.cjs"
+      }
     }
   },
   "scripts": {
     "build": "./build.sh",
+    "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\"",
+    "lint:package": "publint",
+    "lint:published-types": "attw --pack --ignore-rules cjs-resolves-to-esm",
     "start": "vite",
     "test": "npm run ci:node",
     "ci:node": "mocha",
     "ci:browser": "vitest"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.13.2",
     "@release-it-plugins/lerna-changelog": "^6.0.0",
     "@release-it/bumper": "^5.1.0",
     "@vitest/browser": "^0.34.6",
     "chai": "^4.3.7",
     "code-equality-assertions": "github:mansona/code-equality-assertions#add-chai-build",
+    "concurrently": "^8.2.2",
     "eslint": "^8.44.0",
     "mocha": "^10.2.0",
+    "publint": "^0.2.6",
     "release-it": "^16.2.1",
     "toml": "^3.0.0",
     "vite": "^5.0.4",
