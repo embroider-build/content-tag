@@ -16,11 +16,11 @@ Tests:
 
 `cargo test`:
 
-Build wasm package:
+Build the package:
 
-`wasm-pack build --target=nodejs`
+`npm run build`
 
-which will output your wasm package in `./pkg`
+which will output your wasm package in `./pkg`, which is its own workspace, used for local testing as well as the publishable assets.
 
 ## Running against a local copy of SWC
 

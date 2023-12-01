@@ -1,0 +1,21 @@
+<html>
+
+<!-- View this file with `npm run web` -->
+
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+  <script type="module">
+    import {Preprocessor} from 'content-tag';
+
+    const p = new Preprocessor();
+    const output = p.process('<template>Hi from createPreprocessor</template>');
+
+    document.querySelector('#output').innerHTML = output;
+  </script>
+</head>
+
+<body>
+  <pre id="output"></pre>
+</body>
+
+</html>

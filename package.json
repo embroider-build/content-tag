@@ -1,20 +1,45 @@
 {
+  "name": "content-tag",
+  "description": "A rust program that uses a fork of swc to parse and transform Javascript containing the content-tag proposal",
+  "license": "MIT",
   "version": "1.1.2",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git@github.com:embroider-build/content-tag.git"
   },
+  "files": [
+    "pkg"
+  ],
+  "exports": {
+    ".": {
+      "types": "index.d.ts",
+      "browser": {
+        "import": "./pkg/standalone.js"
+      },
+      "default": "./pkg/node/content_tag.cjs"
+    }
+  },
   "scripts": {
-    "test": "mocha"
+    "build": "./build.sh",
+    "start": "vite",
+    "test": "npm run ci:node",
+    "ci:node": "mocha",
+    "ci:browser": "vitest"
   },
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^6.0.0",
     "@release-it/bumper": "^5.1.0",
+    "@vitest/browser": "^0.34.6",
     "chai": "^4.3.7",
     "code-equality-assertions": "github:mansona/code-equality-assertions#add-chai-build",
     "eslint": "^8.44.0",
     "mocha": "^10.2.0",
-    "release-it": "^16.2.1"
+    "release-it": "^16.2.1",
+    "toml": "^3.0.0",
+    "vite": "^5.0.4",
+    "vitest": "^0.34.6",
+    "webdriverio": "^8.24.6"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
