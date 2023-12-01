@@ -5,8 +5,9 @@
     "url": "git@github.com:embroider-build/content-tag.git"
   },
   "scripts": {
-    "build": "./build.sh",
-    "test": "pnpm --filter '*' test"
+    "test": "pnpm --filter '*' test",
+    "prepare": "./build.sh",
+    "build": "./build.sh"
   },
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^6.0.0",

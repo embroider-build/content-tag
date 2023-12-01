@@ -34,13 +34,14 @@ jobs:
       run: cargo test --verbose
     - name: Install wasm-pack
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-    - run: wasm-pack build --target nodejs
     - uses: pnpm/action-setup@v2
       with:
         version: 8
+    - name: Install wasm-opt
+      run: cargo install wasm-opt
     - uses: actions/setup-node@v3
       with:
         node-version: 16
         cache: 'pnpm'
-    - run: pnpm install
+    - run: ./build.sh
     - run: pnpm test

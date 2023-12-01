@@ -1,0 +1,11 @@
+{
+  "name": "@embroider-build/content-tag-browser-tests",
+  "private": true,
+  "scripts": {
+    "start": "vite"
+  },
+  "devDependencies": {
+    "content-tag": "workspace:^",
+    "vite": "^5.0.4"
+  }
+}

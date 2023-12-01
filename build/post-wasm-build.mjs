@@ -16,11 +16,14 @@ const manifest = {
     type: "git",
     url: "https://github.com/embroider-build/content-tag",
   },
-  files: ["node"],
+  files: ["standalone", "node"],
   type: "module",
   exports: {
     ".": {
-      types: "index.d.ts",
+      types: "./index.d.ts",
+      browser: {
+        import: "./standalone/standalone.js",
+      },
       default: "./node/content_tag.cjs",
     },
   },
