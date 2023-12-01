@@ -8,10 +8,13 @@
     "url": "https://github.com/embroider-build/content-tag"
   },
   "files": [
-    "content_tag_bg.wasm",
-    "content_tag.js",
-    "content_tag.d.ts"
+    "node"
   ],
-  "main": "content_tag.js",
-  "types": "content_tag.d.ts"
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "index.d.ts",
+      "default": "./node/content_tag.cjs"
+    }
+  }
 }

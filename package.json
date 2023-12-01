@@ -5,14 +5,16 @@
     "url": "git@github.com:embroider-build/content-tag.git"
   },
   "scripts": {
-    "build": "wasm-pack build --target=nodejs && rm pkg/.gitignore",
-    "test": "pnpm --filter '*' test"
+    "build": "./build.sh",
+    "test": "pnpm --filter '*' test",
+    "prepare": "./build.sh"
   },
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^6.0.0",
     "@release-it/bumper": "^5.1.0",
     "eslint": "^8.44.0",
-    "release-it": "^16.2.1"
+    "release-it": "^16.2.1",
+    "toml": "^3.0.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
