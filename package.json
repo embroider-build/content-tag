@@ -6,8 +6,7 @@
   },
   "scripts": {
     "build": "./build.sh",
-    "test": "pnpm --filter '*' test",
-    "prepare": "./build.sh"
+    "test": "pnpm --filter '*' test"
   },
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^6.0.0",
