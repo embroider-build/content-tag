@@ -35,9 +35,12 @@ jobs:
     - name: Install wasm-pack
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
     - run: wasm-pack build --target nodejs
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 8
     - uses: actions/setup-node@v3
       with:
         node-version: 16
-        cache: 'npm'
-    - run: npm ci
-    - run: npm test
+        cache: 'pnpm'
+    - run: pnpm install
+    - run: pnpm test

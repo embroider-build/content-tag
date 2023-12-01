@@ -1,2 +1,5 @@
 /target
-/node_modules
+node_modules/
+
+# omit the big files from git
+pkg/**/*.wasm

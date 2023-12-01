@@ -1,0 +1,13 @@
+{
+  "name": "@embroider-build/content-tag-node-tests",
+  "private": true,
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "content-tag": "workspace:^",
+    "chai": "^4.3.7",
+    "code-equality-assertions": "github:mansona/code-equality-assertions#add-chai-build",
+    "mocha": "^10.2.0"
+  }
+}

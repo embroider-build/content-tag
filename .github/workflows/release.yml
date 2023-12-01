@@ -19,11 +19,16 @@ jobs:
 
     # remove scope or update it once we decide exactly where we want to deploy this thing
     - run: wasm-pack build --target nodejs
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 8
     - uses: actions/setup-node@v3
       with:
         node-version: 20
+        cache: 'pnpm'
         registry-url: https://registry.npmjs.org
-    - run: npm publish
+    - run: pnpm install
+    - run: pnpm publish
       working-directory: pkg
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
