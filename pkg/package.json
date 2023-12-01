@@ -7,6 +7,11 @@
     "type": "git",
     "url": "https://github.com/embroider-build/content-tag"
   },
+  "scripts": {
+    "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\"",
+    "lint:package": "publint",
+    "lint:published-types": "attw --pack --ignore-rules cjs-resolves-to-esm"
+  },
   "files": [
     "index.d.ts",
     "index.d.cts",
@@ -18,16 +23,22 @@
   "exports": {
     ".": {
       "browser": {
+        "types": "./index.d.ts",
         "import": "./standalone.js"
       },
       "import": {
         "types": "./index.d.ts",
-        "default": "./pkg/node/content_tag.cjs"
+        "default": "./node/content_tag.cjs"
       },
       "require": {
         "types": "./index.d.cts",
-        "default": "./pkg/node/content_tag.cjs"
+        "default": "./node/content_tag.cjs"
       }
     }
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.13.2",
+    "concurrently": "^8.2.2",
+    "publint": "^0.2.6"
   }
 }
