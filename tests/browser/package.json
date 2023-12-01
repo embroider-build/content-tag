@@ -2,10 +2,13 @@
   "name": "@embroider-build/content-tag-browser-tests",
   "private": true,
   "scripts": {
-    "start": "vite"
+    "start": "vite",
+    "test": "vitest"
   },
   "devDependencies": {
     "content-tag": "workspace:^",
-    "vite": "^5.0.4"
+    "vite": "^5.0.4",
+    "vitest": "^0.34.6",
+    "webdriverio": "^8.24.6"
   }
 }

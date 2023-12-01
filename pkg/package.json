@@ -8,17 +8,26 @@
     "url": "https://github.com/embroider-build/content-tag"
   },
   "files": [
-    "standalone",
-    "node"
+    "index.d.ts",
+    "index.d.cts",
+    "standalone.js",
+    "standalone/*",
+    "node/*"
   ],
   "type": "module",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
       "browser": {
-        "import": "./standalone/standalone.js"
+        "import": "./standalone.js"
       },
-      "default": "./node/content_tag.cjs"
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./pkg/node/content_tag.cjs"
+      },
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./pkg/node/content_tag.cjs"
+      }
     }
   }
 }
