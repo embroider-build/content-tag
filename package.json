@@ -7,7 +7,6 @@
   "scripts": {
     "test": "pnpm --filter '*' test",
     "lint": "pnpm --filter '*' lint",
-    "prepare": "./build.sh",
     "build": "./build.sh"
   },
   "devDependencies": {
