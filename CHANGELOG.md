@@ -1,4 +1,4 @@
-
+# `content-tag` Changelog
 
 ## 1.1.2 (2023-10-06)
 
