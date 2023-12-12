@@ -1,0 +1,36 @@
+name: Setup
+description: Setup node, rust, and install dependencies
+runs:
+  using: 'composite'
+  steps:
+    ##############
+    # Rust / Cargo
+    ##############
+    - name: Cache Crates
+      uses: actions/cache@v3
+      with:
+        path: |
+          ./target
+          ~/.cargo
+        key: debug-${{ runner.os }}-${{ hashFiles('rust-toolchain') }}-${{ hashFiles('Cargo.lock') }}
+        restore-keys: |
+          debug-${{ runner.os }}-${{ hashFiles('rust-toolchain') }}-
+          debug-${{ runner.os }}-
+    - name: Install wasm-pack
+      shell: 'bash'
+      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+    - name: Install wasm-opt
+      shell: 'bash'
+      run: cargo install wasm-opt
+
+    ##############
+    # Node
+    ##############
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    - name: Install node dependencies
+      shell: 'bash'
+      run: npm ci
