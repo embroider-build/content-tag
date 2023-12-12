@@ -1,4 +1,4 @@
-const { Preprocessor } = require("../pkg");
+const { Preprocessor } = require("content-tag");
 const chai = require("chai");
 const { codeEquality } = require("code-equality-assertions/chai");
 
@@ -217,9 +217,7 @@ describe("process", function () {
            }
        };`
     );
-
   });
-
 
   it("Emits parse errors with anonymous file", function () {
     expect(function () {
