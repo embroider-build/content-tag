@@ -266,12 +266,16 @@ test!(
         None,
     )),
     handles_missing_semicolon_in_class,
-    r#"class X {
-      get whatever() {}
-
-      <template>hi</template>
-      (oops) => {}
-    }
+    r#"
+    const ListItem = <template><li>My Item</li></template> // no semi
+  
+    <template>
+      <ul>
+        <ListItem />
+        <ListItem />
+        <ListItem />
+      </ul>
+    </template>
     "#,
     r#"class X {
         static {
