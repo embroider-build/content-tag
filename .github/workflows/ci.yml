@@ -34,10 +34,13 @@ jobs:
       run: cargo test --verbose
     - name: Install wasm-pack
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-    - run: wasm-pack build --target nodejs
+    - name: Install wasm-opt
+      run: cargo install wasm-opt
     - uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 18
         cache: 'npm'
-    - run: npm ci
+    - run: ./build.sh
     - run: npm test
+    - run: npm run lint:package
+    - run: npm run lint:published-types

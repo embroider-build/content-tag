@@ -12,10 +12,34 @@ npm install content-tag
 
 ## Usage
 
-```js
+### Node (CommonJS)
+
+```js 
 let { Preprocessor } = require('content-tag');
 let p = new Preprocessor();
 let output = p.process('<template>Hi</template>');
+
+console.log(output);
+```
+
+
+### Node (ESM)
+
+```js
+import { Preprocessor } from 'content-tag';
+let p = new Preprocessor();
+let output = p.process('<template>Hi</template>');
+
+console.log(output);
+```
+
+### Browser (ESM)
+
+```js
+import { Preprocessor } from 'content-tag';
+let p = new Preprocessor();
+let output = p.process('<template>Hi</template>');
+
 console.log(output);
 ```
 
