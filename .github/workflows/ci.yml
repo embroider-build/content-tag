@@ -19,28 +19,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Cache Crates
-      uses: actions/cache@v3
-      with:
-        path: |
-          ./target
-          ~/.cargo
-        key: debug-${{ runner.os }}-${{ hashFiles('rust-toolchain') }}-${{ hashFiles('Cargo.lock') }}
-        restore-keys: |
-          debug-${{ runner.os }}-${{ hashFiles('rust-toolchain') }}-
-          debug-${{ runner.os }}-
-    - name: Run tests
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/setup
+
+    - name: Rust Tests
       run: cargo test --verbose
-    - name: Install wasm-pack
-      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-    - name: Install wasm-opt
-      run: cargo install wasm-opt
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-        cache: 'npm'
-    - run: ./build.sh
-    - run: npm test
+
+    - name: Build Rust Package
+      run: ./build.sh
+
+    - name: Node Tests
+      run: npm test
+
     - run: npm run lint:package
     - run: npm run lint:published-types

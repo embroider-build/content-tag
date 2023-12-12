@@ -18,7 +18,8 @@ Tests:
 
 Build the package:
 
-`npm run build`
+- `npm install`
+- `npm run build`
 
 which will output your wasm package in `./pkg` 
 

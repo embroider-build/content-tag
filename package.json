@@ -1,20 +1,13 @@
 {
   "name": "content-tag",
-  "description": "A rust program that uses a fork of swc to parse and transform Javascript containing the content-tag proposal",
-  "license": "MIT",
   "version": "1.1.2",
-  "type": "module",
+  "description": "A rust program that uses a fork of swc to parse and transform Javascript containing the content-tag proposal",
   "repository": {
     "type": "git",
     "url": "git@github.com:embroider-build/content-tag.git"
   },
-  "files": [
-    "pkg/*",
-    "pkg/node/*",
-    "pkg/standalone/*",
-    "index.d.ts",
-    "index.d.cts"
-  ],
+  "license": "MIT",
+  "type": "module",
   "exports": {
     ".": {
       "browser": {
@@ -30,19 +23,25 @@
       }
     }
   },
+  "files": [
+    "pkg/*",
+    "pkg/node/*",
+    "pkg/standalone/*",
+    "index.d.ts",
+    "index.d.cts"
+  ],
   "scripts": {
     "build": "./build.sh",
+    "prepack": "./build.sh",
+    "ci:node": "mocha",
     "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\"",
     "lint:package": "publint",
     "lint:published-types": "attw --pack --ignore-rules cjs-resolves-to-esm",
     "start": "vite",
-    "test": "npm run ci:node",
-    "ci:node": "mocha"
+    "test": "npm run ci:node"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.13.2",
-    "@release-it-plugins/lerna-changelog": "^6.0.0",
-    "@release-it/bumper": "^5.1.0",
     "@vitest/browser": "^0.34.6",
     "chai": "^4.3.7",
     "code-equality-assertions": "github:mansona/code-equality-assertions#add-chai-build",
@@ -50,37 +49,11 @@
     "eslint": "^8.44.0",
     "mocha": "^10.2.0",
     "publint": "^0.2.6",
-    "release-it": "^16.2.1",
+    "release-plan": "^0.5.0",
     "toml": "^3.0.0",
     "vite": "^5.0.4"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
-  },
-  "release-it": {
-    "plugins": {
-      "@release-it-plugins/lerna-changelog": {
-        "infile": "CHANGELOG.md",
-        "launchEditor": true
-      },
-      "@release-it/bumper": {
-        "in": {
-          "file": "Cargo.toml",
-          "type": "text/plain"
-        },
-        "out": {
-          "file": "Cargo.toml",
-          "type": "text/plain"
-        }
-      }
-    },
-    "git": {
-      "requireUpstream": false,
-      "tag": false
-    },
-    "npm": {
-      "publish": false,
-      "ignoreVersion": true
-    }
   }
 }

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# we need npm packages for the post-wasm phase
-npm install
-
 rm -rf pkg/node
 rm -rf pkg/standalone
 
