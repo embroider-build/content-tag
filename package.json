@@ -15,6 +15,7 @@
       },
       "import": {
         "types": "./index.d.ts",
+        "import": "./pkg/standalone.js",
         "default": "./pkg/node/content_tag.cjs"
       },
       "require": {
