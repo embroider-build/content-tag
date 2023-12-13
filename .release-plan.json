@@ -1,13 +1,13 @@
 {
   "solution": {
     "content-tag": {
-      "impact": "minor",
-      "oldVersion": "1.1.2",
-      "newVersion": "1.2.0",
+      "impact": "patch",
+      "oldVersion": "1.2.0",
+      "newVersion": "1.2.1",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
         },
         {
           "impact": "patch",
@@ -17,5 +17,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2023-12-13)\n\ncontent-tag 1.2.0 (minor)\n\n#### :rocket: Enhancement\n* [#44](https://github.com/embroider-build/content-tag/pull/44) Standalone content-tag implemented via conditional exports in package.json ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* [#47](https://github.com/embroider-build/content-tag/pull/47) Give the changelog a title ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n* [#46](https://github.com/embroider-build/content-tag/pull/46) Setup release-plan for automated release ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2023-12-13)\n\ncontent-tag 1.2.1 (patch)\n\n#### :bug: Bug Fix\n* [#52](https://github.com/embroider-build/content-tag/pull/52) Remove extraneous gitignores which interfere with packing ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n* [#50](https://github.com/embroider-build/content-tag/pull/50) Add .npmignore to not ignore pkg/* folders ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* [#52](https://github.com/embroider-build/content-tag/pull/52) Remove extraneous gitignores which interfere with packing ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n* [#49](https://github.com/embroider-build/content-tag/pull/49) npm pkg fix ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }

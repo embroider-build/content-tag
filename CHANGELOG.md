@@ -1,6 +1,20 @@
 # `content-tag` Changelog
 ## Release (2023-12-13)
 
+content-tag 1.2.1 (patch)
+
+#### :bug: Bug Fix
+* [#52](https://github.com/embroider-build/content-tag/pull/52) Remove extraneous gitignores which interfere with packing ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+* [#50](https://github.com/embroider-build/content-tag/pull/50) Add .npmignore to not ignore pkg/* folders ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* [#52](https://github.com/embroider-build/content-tag/pull/52) Remove extraneous gitignores which interfere with packing ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+* [#49](https://github.com/embroider-build/content-tag/pull/49) npm pkg fix ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+## Release (2023-12-13)
+
 content-tag 1.2.0 (minor)
 
 #### :rocket: Enhancement
