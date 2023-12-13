@@ -1,4 +1,17 @@
 # `content-tag` Changelog
+## Release (2023-12-13)
+
+content-tag 1.2.0 (minor)
+
+#### :rocket: Enhancement
+* [#44](https://github.com/embroider-build/content-tag/pull/44) Standalone content-tag implemented via conditional exports in package.json ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* [#47](https://github.com/embroider-build/content-tag/pull/47) Give the changelog a title ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+* [#46](https://github.com/embroider-build/content-tag/pull/46) Setup release-plan for automated release ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
 
 ## 1.1.2 (2023-10-06)
 
