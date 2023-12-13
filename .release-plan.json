@@ -1,0 +1,21 @@
+{
+  "solution": {
+    "content-tag": {
+      "impact": "minor",
+      "oldVersion": "1.1.2",
+      "newVersion": "1.2.0",
+      "constraints": [
+        {
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :house: Internal"
+        }
+      ],
+      "pkgJSONPath": "./package.json"
+    }
+  },
+  "description": "## Release (2023-12-13)\n\ncontent-tag 1.2.0 (minor)\n\n#### :rocket: Enhancement\n* [#44](https://github.com/embroider-build/content-tag/pull/44) Standalone content-tag implemented via conditional exports in package.json ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* [#47](https://github.com/embroider-build/content-tag/pull/47) Give the changelog a title ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n* [#46](https://github.com/embroider-build/content-tag/pull/46) Setup release-plan for automated release ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+}
