@@ -12,3 +12,6 @@ wasm-pack build --target nodejs --out-dir pkg/node --weak-refs --no-pack --relea
 
 # Rename the node js file to cjs, because we emit type=module
 mv pkg/node/content_tag.js pkg/node/content_tag.cjs
+
+rm pkg/node/.gitignore
+rm pkg/standalone/.gitignore
