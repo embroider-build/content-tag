@@ -10,11 +10,9 @@
   "type": "module",
   "exports": {
     ".": {
-      "browser": {
-        "import": "./pkg/standalone.js"
-      },
       "import": {
         "types": "./index.d.ts",
+        "browser": "./pkg/standalone.js",
         "default": "./pkg/node/content_tag.cjs"
       },
       "require": {
@@ -36,7 +34,7 @@
     "ci:node": "mocha",
     "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\"",
     "lint:package": "publint",
-    "lint:published-types": "attw --pack --ignore-rules cjs-resolves-to-esm --ignore-rules false-esm",
+    "lint:published-types": "attw --pack",
     "start": "vite",
     "test": "npm run ci:node"
   },

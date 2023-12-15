@@ -26,7 +26,10 @@ interface Parsed {
   };
 }
 
-class Preprocessor {
+
+/**
+*/
+export class Preprocessor {
   free(): void;
 /**
 */
@@ -42,7 +45,5 @@ class Preprocessor {
 * @param {string | undefined} filename
 * @returns {any}
 */
-  parse(src: string, filename?: string): Parsed;
+  parse(src: string, filename?: string): Parsed[];
 }
-
-module.exports = { Preprocessor };
