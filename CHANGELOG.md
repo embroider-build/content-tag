@@ -1,4 +1,13 @@
 # `content-tag` Changelog
+## Release (2023-12-18)
+
+content-tag 1.2.2 (patch)
+
+#### :bug: Bug Fix
+* [#54](https://github.com/embroider-build/content-tag/pull/54) fix package.json#exports for types ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
 ## Release (2023-12-13)
 
 content-tag 1.2.1 (patch)
