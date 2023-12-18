@@ -45,5 +45,5 @@ export class Preprocessor {
 * @param {string | undefined} filename
 * @returns {any}
 */
-  parse(src: string, filename?: string): Parsed;
+  parse(src: string, filename?: string): Parsed[];
 }
