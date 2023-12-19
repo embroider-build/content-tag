@@ -62,4 +62,17 @@ export default template(\`Hi\`, {
       .to.have.property("source_code_color")
       .matches(/Expected ident.*[\u001b].*class \{/s);
   });
+
+  it("Offers line on parse errors", function () {
+    let parseError;
+    try {
+      p.process(`class {`);
+    } catch (err) {
+      parseError = err;
+    }
+    // eslint-disable-next-line no-control-regex
+    expect(parseError)
+      .to.have.property("line")
+      .matches(/Expected ident.*[\u001b].*class \{/s);
+  });
 });

@@ -69,9 +69,19 @@ fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<Sourc
     js_sys::Reflect::set(
         &js_err,
         &"source_code_color".into(),
-        &capture_err_detail(err, source_map, GraphicalTheme::unicode()),
+        &capture_err_detail(err.clone(), source_map.clone(), GraphicalTheme::unicode()),
     )
     .unwrap();
+
+    let line = source_map.lookup_char_pos_adj(err.span().lo).line;
+
+    js_sys::Reflect::set(
+        &js_err,
+        &"start_line".into(),
+        &line.into(),
+    )
+    .unwrap();
+
     return js_err;
 }
 
