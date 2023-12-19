@@ -63,7 +63,7 @@ export interface ParseError {
    */
   start_line: number;
   /**
-   * 0-indexed starting character-based column of the error
+   * 0-indexed starting byte-based column of the error
    */
   start_column: number;
   /**
@@ -71,7 +71,7 @@ export interface ParseError {
    */
   end_line: number;
   /**
-   * 0-indexed ending character-based column of the error
+   * 0-indexed ending byte-based column of the error
    */
   end_column: number;
 }

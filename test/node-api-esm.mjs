@@ -94,8 +94,8 @@ const Foo = <template>{{foo}}</template>
     // Unexpected eof
     // column 14 is the EOF
     expect(parseError.start_line).to.equal(6, "start_line");
-    expect(parseError.start_column).to.equal(14, "start_column");
+    expect(parseError.start_column).to.equal(18, "start_column");
     expect(parseError.end_line).to.equal(6, "end_line");
-    expect(parseError.end_column).to.equal(14, "end_column");
+    expect(parseError.end_column).to.equal(18, "end_column");
   });
 });
