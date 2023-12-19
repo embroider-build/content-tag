@@ -70,9 +70,11 @@ export default template(\`Hi\`, {
     } catch (err) {
       parseError = err;
     }
+
     // eslint-disable-next-line no-control-regex
-    expect(parseError)
-      .to.have.property("line")
-      .matches(/Expected ident.*[\u001b].*class \{/s);
+    expect(parseError.start_line).to.equal(1);
+    expect(parseError.start_column).to.equal(6);
+    expect(parseError.end_line).to.equal(1);
+    expect(parseError.end_column).to.equal(7);
   });
 });
