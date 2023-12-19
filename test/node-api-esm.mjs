@@ -71,10 +71,31 @@ export default template(\`Hi\`, {
       parseError = err;
     }
 
-    // eslint-disable-next-line no-control-regex
-    expect(parseError.start_line).to.equal(1);
-    expect(parseError.start_column).to.equal(6);
-    expect(parseError.end_line).to.equal(1);
-    expect(parseError.end_column).to.equal(7);
+    expect(parseError.start_line).to.equal(1, "start_line");
+    expect(parseError.start_column).to.equal(6, "start_column");
+    expect(parseError.end_line).to.equal(1, "end_line");
+    expect(parseError.end_column).to.equal(7, "end_column");
+  });
+
+  it("Offers line on <template> parse errors", function () {
+    let parseError;
+    try {
+      p.process(`let foo = 2;
+
+const Foo = <template>{{foo}}</template>
+
+<template>
+  <Foo />
+`);
+    } catch (err) {
+      parseError = err;
+    }
+
+    // Unexpected eof
+    // column 10 is the EOF
+    expect(parseError.start_line).to.equal(6, "start_line");
+    expect(parseError.start_column).to.equal(10, "start_column");
+    expect(parseError.end_line).to.equal(6, "end_line");
+    expect(parseError.end_column).to.equal(10, "end_column");
   });
 });
