@@ -49,7 +49,13 @@ export class Preprocessor {
 }
 
 export interface ParseError {
+  /**
+   * Formatted output for CLI
+   */
   source_code: string;
+  /**
+   * Color-Formatted output for CLI
+   */
   source_code_color: string;
 
   /**
