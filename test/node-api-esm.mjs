@@ -62,4 +62,40 @@ export default template(\`Hi\`, {
       .to.have.property("source_code_color")
       .matches(/Expected ident.*[\u001b].*class \{/s);
   });
+
+  it("Offers line on parse errors", function () {
+    let parseError;
+    try {
+      p.process(`class {`);
+    } catch (err) {
+      parseError = err;
+    }
+
+    expect(parseError.start_line).to.equal(1, "start_line");
+    expect(parseError.start_column).to.equal(6, "start_column");
+    expect(parseError.end_line).to.equal(1, "end_line");
+    expect(parseError.end_column).to.equal(7, "end_column");
+  });
+
+  it("Offers line on <template> parse errors", function () {
+    let parseError;
+    try {
+      p.process(`let foo = 2;
+
+const Foo = <template>{{foo}}</template>
+
+<template>
+  🥳🥳🥳🥳<Foo />
+`);
+    } catch (err) {
+      parseError = err;
+    }
+
+    // Unexpected eof
+    // column 14 is the EOF
+    expect(parseError.start_line).to.equal(6, "start_line");
+    expect(parseError.start_column).to.equal(18, "start_column");
+    expect(parseError.end_line).to.equal(6, "end_line");
+    expect(parseError.end_column).to.equal(18, "end_column");
+  });
 });
