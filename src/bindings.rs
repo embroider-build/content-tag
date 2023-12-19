@@ -73,14 +73,18 @@ fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<Sourc
     )
     .unwrap();
 
-    let line = source_map.lookup_char_pos_adj(err.span().lo).line;
+    let lo = source_map.lookup_char_pos_adj(err.span().lo);
+    let hi = source_map.lookup_char_pos_adj(err.span().hi);
 
-    js_sys::Reflect::set(
-        &js_err,
-        &"start_line".into(),
-        &line.into(),
-    )
-    .unwrap();
+    let start_line = lo.line;
+    let start_column = lo.col.0;
+    let end_line = hi.line;
+    let end_column = hi.col.0;
+
+    js_sys::Reflect::set(&js_err, &"start_line".into(), &start_line.into()).unwrap();
+    js_sys::Reflect::set(&js_err, &"start_column".into(), &start_column.into()).unwrap();
+    js_sys::Reflect::set(&js_err, &"end_line".into(), &end_line.into()).unwrap();
+    js_sys::Reflect::set(&js_err, &"end_column".into(), &end_column.into()).unwrap();
 
     return js_err;
 }
