@@ -47,3 +47,25 @@ export class Preprocessor {
 */
   parse(src: string, filename?: string): Parsed[];
 }
+
+export interface ParseError {
+  source_code: string;
+  source_code_color: string;
+
+  /**
+   * 0-indexed starting line of the error
+   */
+  start_line: number;
+  /**
+   * 0-indexed starting character-based column of the error
+   */
+  start_column: number;
+  /**
+   * 0-indexed ending line of the error
+   */
+  end_line: number;
+  /**
+   * 0-indexed ending character-based column of the error
+   */
+  end_column: number;
+}
