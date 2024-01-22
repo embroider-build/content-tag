@@ -1,24 +1,51 @@
 import chai from "chai";
 import { codeEquality } from "code-equality-assertions/chai";
+import { Preprocessor } from "content-tag";
 
 chai.use(codeEquality);
 
 const { expect } = chai;
 
-import { Preprocessor } from "content-tag";
 const p = new Preprocessor();
 
-describe("Node ESM", function () {
+describe(`process`, function () {
   it("works for a basic example", function () {
     let output = p.process("<template>Hi</template>");
 
     expect(output).to
       .equalCode(`import { template } from "@ember/template-compiler";
-export default template(\`Hi\`, {
-    eval () {
-        return eval(arguments[0]);
+  export default template(\`Hi\`, {
+      eval () {
+          return eval(arguments[0]);
+      }
+  });`);
+  });
+
+  it("escapes backticks", function () {
+    let input = `
+    class Foo extends Component {
+      greeting = 'Hello';
+
+      <template>{{this.greeting}}, \`lifeform\`!</template>
     }
-});`);
+  `;
+
+    let output = p.process(input);
+
+    expect(output).to.equalCode(
+      `import { template } from "@ember/template-compiler";
+     let Foo = class Foo extends Component {
+         greeting = 'Hello';
+         static{
+             template(\`{{this.greeting}}, \\\`lifeform\\\`!\`, {
+                 component: this,
+                 eval () {
+                     return eval(arguments[0]);
+                 }
+             });
+         }
+     };`,
+    );
   });
 
   it("Emits parse errors with anonymous file", function () {
@@ -33,7 +60,7 @@ export default template(\`Hi\`, {
       p.process(
         `const thing = "face";
   <template>Hi`,
-        "path/to/my/component.gjs"
+        "path/to/my/component.gjs",
       );
     }).to.throw(`Parse Error at path/to/my/component.gjs:2:15: 2:15`);
   });

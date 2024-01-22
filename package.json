@@ -31,7 +31,7 @@
   "scripts": {
     "build": "./build.sh",
     "prepack": "./build.sh",
-    "ci:node": "mocha",
+    "ci:node": "mocha 'test/*.{js,cjs}'",
     "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\"",
     "lint:package": "publint",
     "lint:published-types": "attw --pack --ignore-rules false-esm",
