@@ -1,5 +1,9 @@
 use crate::{Options, Preprocessor as CorePreprocessor};
-use std::{fmt, str};
+use std::{
+    fmt,
+    str,
+    path::PathBuf,
+};
 use swc_common::{
     errors::Handler,
     sync::{Lock, Lrc},
@@ -7,6 +11,8 @@ use swc_common::{
 };
 use swc_error_reporters::{GraphicalReportHandler, GraphicalTheme, PrettyEmitter};
 use wasm_bindgen::prelude::*;
+use serde::{Serialize, Deserialize};
+use serde_wasm_bindgen::from_value;
 
 #[wasm_bindgen]
 extern "C" {
@@ -24,6 +30,12 @@ pub struct Preprocessor {
     // out how to combine the APIs correctly to ensure we are not hanging on
     // to the states unexpectedly
     // core: Box<CorePreprocessor>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct ProcessOptions {
+    filename: Option<String>,
+    inline_source_map: bool,
 }
 
 #[derive(Clone, Default)]
@@ -86,13 +98,16 @@ impl Preprocessor {
         Self {}
     }
 
-    pub fn process(&self, src: String, filename: Option<String>, inline_source_map: bool) -> Result<String, JsValue> {
+    pub fn process(&self, src: String, options: JsValue) -> Result<String, JsValue> {
+        let options: ProcessOptions = from_value(options)
+            .map_err(|e| js_error(format!("Options parsing error: {:?}", e).into()))?;
+
         let preprocessor = CorePreprocessor::new();
         let result = preprocessor.process(
             &src,
             Options {
-                filename: filename.map(|f| f.into()),
-                inline_source_map,
+                filename: options.filename.map(|f| PathBuf::from(f)),
+                inline_source_map: options.inline_source_map,
             },
         );
 
@@ -102,17 +117,20 @@ impl Preprocessor {
         }
     }
 
-    pub fn parse(&self, src: String, filename: Option<String>) -> Result<JsValue, JsValue> {
+    pub fn parse(&self, src: String, options: JsValue) -> Result<JsValue, JsValue> {
+        let parse_options: ProcessOptions = from_value(options.clone())
+            .map_err(|e| js_error(format!("Options parsing error: {:?}", e).into()))?;
+
         let preprocessor = CorePreprocessor::new();
         let result = preprocessor
             .parse(
                 &src,
                 Options {
-                    filename: filename.as_ref().map(|f| f.into()),
-                    inline_source_map: false,
+                    filename: parse_options.filename.map(|f| PathBuf::from(f)),
+                    inline_source_map: parse_options.inline_source_map,
                 },
             )
-            .map_err(|_err| self.process(src, filename, false).unwrap_err())?;
+            .map_err(|_err| self.process(src, options).unwrap_err())?;
         let serialized = serde_json::to_string(&result)
             .map_err(|err| js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))?;
         Ok(json_parse(serialized.into()))

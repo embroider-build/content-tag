@@ -13,11 +13,11 @@
       "import": {
         "types": "./index.d.ts",
         "browser": "./pkg/standalone.js",
-        "default": "./pkg/node/content_tag.cjs"
+        "default": "./pkg/node.cjs"
       },
       "require": {
         "types": "./index.d.ts",
-        "default": "./pkg/node/content_tag.cjs"
+        "default": "./pkg/node.cjs"
       }
     }
   },
