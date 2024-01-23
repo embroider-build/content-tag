@@ -86,13 +86,13 @@ impl Preprocessor {
         Self {}
     }
 
-    pub fn process(&self, src: String, filename: Option<String>) -> Result<String, JsValue> {
+    pub fn process(&self, src: String, filename: Option<String>, inline_source_map: bool) -> Result<String, JsValue> {
         let preprocessor = CorePreprocessor::new();
         let result = preprocessor.process(
             &src,
             Options {
                 filename: filename.map(|f| f.into()),
-                inline_source_map: false,
+                inline_source_map,
             },
         );
 
@@ -112,7 +112,7 @@ impl Preprocessor {
                     inline_source_map: false,
                 },
             )
-            .map_err(|_err| self.process(src, filename).unwrap_err())?;
+            .map_err(|_err| self.process(src, filename, false).unwrap_err())?;
         let serialized = serde_json::to_string(&result)
             .map_err(|err| js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))?;
         Ok(json_parse(serialized.into()))
