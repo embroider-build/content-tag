@@ -1,4 +1,4 @@
-import init from "./node/content_tag.js";
+import init from "./standalone/content_tag.js";
 import { Preprocessor as WasmPreprocessor } from "./standalone/content_tag.js";
 
 await init();
