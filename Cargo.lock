@@ -283,6 +283,7 @@ dependencies = [
  "js-sys",
  "lazy_static",
  "serde",
+ "serde-wasm-bindgen",
  "serde_json",
  "swc",
  "swc_atoms",

@@ -44,7 +44,7 @@ describe(`process`, function () {
                  }
              });
          }
-     };`,
+     };`
     );
   });
 
@@ -60,7 +60,7 @@ describe(`process`, function () {
       p.process(
         `const thing = "face";
   <template>Hi`,
-        "path/to/my/component.gjs",
+        { filename: "path/to/my/component.gjs" }
       );
     }).to.throw(`Parse Error at path/to/my/component.gjs:2:15: 2:15`);
   });
@@ -88,5 +88,19 @@ describe(`process`, function () {
     expect(parseError)
       .to.have.property("source_code_color")
       .matches(/Expected ident.*[\u001b].*class \{/s);
+  });
+
+  it("Provides inline source maps if inline_source_map option is set to true", function () {
+    let output = p.process(`<template>Hi</template>`, { inline_source_map: true });
+
+    expect(output).to.equalCode(
+      `import { template } from "@ember/template-compiler";
+      export default template(\`Hi\`, {
+          eval () {
+              return eval(arguments[0]);
+          }
+      });
+      //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjxhbm9uPiJdLCJzb3VyY2VzQ29udGVudCI6WyI8dGVtcGxhdGU-SGk8L3RlbXBsYXRlPiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsZUFBQSxTQUFVLENBQUEsRUFBRSxDQUFBLEVBQUE7SUFBQTtRQUFBLE9BQUEsS0FBQSxTQUFBLENBQUEsRUFBVztJQUFEO0FBQUEsR0FBQyJ9`
+    );
   });
 });

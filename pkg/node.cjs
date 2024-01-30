@@ -1,14 +1,11 @@
-import init from "./standalone/content_tag.js";
-import { Preprocessor as WasmPreprocessor } from "./standalone/content_tag.js";
-
-await init();
+const { Preprocessor: WasmPreprocessor } = require("./node/content_tag.cjs");
 
 const defaultOptions = {
   inline_source_map: false,
   filename: null
 };
 
-export class Preprocessor {
+class Preprocessor {
   #preprocessor;
 
   constructor() {
@@ -23,3 +20,5 @@ export class Preprocessor {
     return this.#preprocessor.parse(str, { ...defaultOptions, ...options });
   }
 }
+
+module.exports.Preprocessor = Preprocessor;

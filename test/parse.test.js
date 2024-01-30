@@ -173,7 +173,7 @@ describe(`parse`, function () {
       p.process(
         `const thing = "face";
   <template>Hi`,
-        "path/to/my/component.gjs",
+        { filename: 'path/to/my/component.gjs' }
       );
     }).to.throw(`Parse Error at path/to/my/component.gjs:2:15: 2:15`);
   });
