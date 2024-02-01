@@ -1,6 +1,15 @@
 # `content-tag` Changelog
 ## Release (2024-02-01)
 
+content-tag 2.0.1 (patch)
+
+#### :bug: Bug Fix
+* [#64](https://github.com/embroider-build/content-tag/pull/64) Update type declaration file with latest API ([@vstefanovic97](https://github.com/vstefanovic97))
+
+#### Committers: 1
+- Vuk ([@vstefanovic97](https://github.com/vstefanovic97))
+## Release (2024-02-01)
+
 content-tag 2.0.0 (major)
 
 #### :boom: Breaking Change
