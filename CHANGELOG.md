@@ -1,4 +1,22 @@
 # `content-tag` Changelog
+## Release (2024-02-01)
+
+content-tag 2.0.0 (major)
+
+#### :boom: Breaking Change
+* [#62](https://github.com/embroider-build/content-tag/pull/62) Add js/rust bindings for inline source map generation ([@vstefanovic97](https://github.com/vstefanovic97))
+
+#### :memo: Documentation
+* [#63](https://github.com/embroider-build/content-tag/pull/63) Update docs with API changes ([@vstefanovic97](https://github.com/vstefanovic97))
+* [#57](https://github.com/embroider-build/content-tag/pull/57) Document API methods (Closes [#45](https://github.com/embroider-build/content-tag/issues/45)) ([@gitKrystan](https://github.com/gitKrystan))
+
+#### :house: Internal
+* [#59](https://github.com/embroider-build/content-tag/pull/59) Simplify testing situation to assure import and require works ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 3
+- Krystan HuffMenne ([@gitKrystan](https://github.com/gitKrystan))
+- Vuk ([@vstefanovic97](https://github.com/vstefanovic97))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
 ## Release (2023-12-18)
 
 content-tag 1.2.2 (patch)
