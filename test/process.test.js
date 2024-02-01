@@ -91,7 +91,9 @@ describe(`process`, function () {
   });
 
   it("Provides inline source maps if inline_source_map option is set to true", function () {
-    let output = p.process(`<template>Hi</template>`, { inline_source_map: true });
+    let output = p.process(`<template>Hi</template>`, {
+      inline_source_map: true,
+    });
 
     expect(output).to.equalCode(
       `import { template } from "@ember/template-compiler";
@@ -102,5 +104,21 @@ describe(`process`, function () {
       });
       //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjxhbm9uPiJdLCJzb3VyY2VzQ29udGVudCI6WyI8dGVtcGxhdGU-SGk8L3RlbXBsYXRlPiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsZUFBQSxTQUFVLENBQUEsRUFBRSxDQUFBLEVBQUE7SUFBQTtRQUFBLE9BQUEsS0FBQSxTQUFBLENBQUEsRUFBVztJQUFEO0FBQUEsR0FBQyJ9`
     );
+  });
+
+  it("handles 'declarative shadow-dom'", function () {
+    // https://developer.chrome.com/docs/css-ui/declarative-shadow-dom
+    let input = `
+<template>
+  <template shadowrootmode="open">
+      <slot></slot>
+  </template>
+  <h2>Light content<h2>
+</template>
+`;
+
+    let output = p.process(input);
+
+    expect(output).to.equalCode();
   });
 });
