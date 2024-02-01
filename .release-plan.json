@@ -1,25 +1,17 @@
 {
   "solution": {
     "content-tag": {
-      "impact": "major",
-      "oldVersion": "1.2.2",
-      "newVersion": "2.0.0",
+      "impact": "patch",
+      "oldVersion": "2.0.0",
+      "newVersion": "2.0.1",
       "constraints": [
         {
-          "impact": "major",
-          "reason": "Appears in changelog section :boom: Breaking Change"
-        },
-        {
           "impact": "patch",
-          "reason": "Appears in changelog section :memo: Documentation"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :house: Internal"
+          "reason": "Appears in changelog section :bug: Bug Fix"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-02-01)\n\ncontent-tag 2.0.0 (major)\n\n#### :boom: Breaking Change\n* [#62](https://github.com/embroider-build/content-tag/pull/62) Add js/rust bindings for inline source map generation ([@vstefanovic97](https://github.com/vstefanovic97))\n\n#### :memo: Documentation\n* [#63](https://github.com/embroider-build/content-tag/pull/63) Update docs with API changes ([@vstefanovic97](https://github.com/vstefanovic97))\n* [#57](https://github.com/embroider-build/content-tag/pull/57) Document API methods (Closes [#45](https://github.com/embroider-build/content-tag/issues/45)) ([@gitKrystan](https://github.com/gitKrystan))\n\n#### :house: Internal\n* [#59](https://github.com/embroider-build/content-tag/pull/59) Simplify testing situation to assure import and require works ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 3\n- Krystan HuffMenne ([@gitKrystan](https://github.com/gitKrystan))\n- Vuk ([@vstefanovic97](https://github.com/vstefanovic97))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-02-01)\n\ncontent-tag 2.0.1 (patch)\n\n#### :bug: Bug Fix\n* [#64](https://github.com/embroider-build/content-tag/pull/64) Update type declaration file with latest API ([@vstefanovic97](https://github.com/vstefanovic97))\n\n#### Committers: 1\n- Vuk ([@vstefanovic97](https://github.com/vstefanovic97))\n"
 }
