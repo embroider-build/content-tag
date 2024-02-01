@@ -26,6 +26,14 @@ interface Parsed {
   };
 }
 
+interface PreprocessorOptions {
+
+  /** Default is `false` */
+  inline_source_map?: boolean;
+
+  filename?: string;
+
+}
 
 /**
 */
@@ -36,14 +44,14 @@ export class Preprocessor {
   constructor();
 /**
 * @param {string} src
-* @param {string | undefined} filename
+* @param {PreprocessorOptions | undefined} options
 * @returns {string}
 */
-  process(src: string, filename?: string): string;
+  process(src: string, options?: PreprocessorOptions): string;
 /**
 * @param {string} src
-* @param {string | undefined} filename
+* @param {PreprocessorOptions | undefined} options
 * @returns {any}
 */
-  parse(src: string, filename?: string): Parsed[];
+  parse(src: string, options?: PreprocessorOptions): Parsed[];
 }
