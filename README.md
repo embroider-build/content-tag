@@ -49,7 +49,7 @@ console.log(output);
 
 All `content-tag` public API lives on the `Preprocessor` object.
 
-### `Preprocessor.process(src: string, filename?: string): string;`
+### `Preprocessor.process(src: string, options?: PreprocessorOptions): string;`
 
 Parses a given source code string using the `content-tag` spec into standard
 JavaScript.
@@ -60,7 +60,7 @@ let p = new Preprocessor();
 let output = p.process('<template>Hi</template>');
 ```
 
-### `Preprocessor.parse(src: string, filename?: string): Parsed[];`
+### `Preprocessor.parse(src: string, options?: PreprocessorOptions): Parsed[];`
 
 Parses a given source code string using the `content-tag` spec into an array of
 `Parsed` content tag objects.
@@ -70,6 +70,19 @@ import { Preprocessor } from 'content-tag';
 let p = new Preprocessor();
 let output = p.parse('<template>Hi</template>');
 ```
+
+#### `PreprocessorOptions`
+
+````ts
+interface PreprocessorOptions {
+
+  /** Default is `false` */
+  inline_source_map?: boolean;
+
+  filename?: string;
+
+}
+````
 
 #### `Parsed`
 
