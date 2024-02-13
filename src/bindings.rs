@@ -1,4 +1,5 @@
 use crate::{Options, Preprocessor as CorePreprocessor};
+use js_sys::Reflect;
 use std::{fmt, path::PathBuf, str};
 use swc_common::{
     errors::Handler,
@@ -7,7 +8,6 @@ use swc_common::{
 };
 use swc_error_reporters::{GraphicalReportHandler, GraphicalTheme, PrettyEmitter};
 use wasm_bindgen::prelude::*;
-use js_sys::Reflect;
 
 #[wasm_bindgen]
 extern "C" {
@@ -27,14 +27,22 @@ extern "C" {
 impl Options {
     pub fn new(options: JsValue) -> Self {
         if js_boolean(&options) {
+            // unwrapping here beacuse we already checked truthiness of
+            // `options`, so the normal case of not passing any options has been
+            // handled and this will only fail in unusual cases (like a
+            // Javascript getter throwing)
             let option_filename = Reflect::get(&options, &"filename".into()).unwrap();
             let filename = if js_boolean(&option_filename) {
                 Some(PathBuf::from(js_string(&option_filename)))
             } else {
                 None
             };
+
             Self {
-                inline_source_map: false,
+                // unwrap is justified here for the same reasons as commented above
+                inline_source_map: js_boolean(
+                    &Reflect::get(&options, &"inline_source_map".into()).unwrap(),
+                ),
                 filename,
             }
         } else {
