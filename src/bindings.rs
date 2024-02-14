@@ -1,9 +1,6 @@
 use crate::{Options, Preprocessor as CorePreprocessor};
-use std::{
-    fmt,
-    str,
-    path::PathBuf,
-};
+use js_sys::Reflect;
+use std::{fmt, path::PathBuf, str};
 use swc_common::{
     errors::Handler,
     sync::{Lock, Lrc},
@@ -11,8 +8,6 @@ use swc_common::{
 };
 use swc_error_reporters::{GraphicalReportHandler, GraphicalTheme, PrettyEmitter};
 use wasm_bindgen::prelude::*;
-use serde::{Serialize, Deserialize};
-use serde_wasm_bindgen::from_value;
 
 #[wasm_bindgen]
 extern "C" {
@@ -21,6 +16,42 @@ extern "C" {
 
     #[wasm_bindgen(js_namespace = JSON, js_name = parse)]
     fn json_parse(value: JsValue) -> JsValue;
+
+    #[wasm_bindgen(js_name = Boolean)]
+    fn js_boolean(value: &JsValue) -> bool;
+
+    #[wasm_bindgen(js_name = String)]
+    fn js_string(value: &JsValue) -> String;
+}
+
+impl Options {
+    pub fn new(options: JsValue) -> Self {
+        if js_boolean(&options) {
+            // unwrapping here beacuse we already checked truthiness of
+            // `options`, so the normal case of not passing any options has been
+            // handled and this will only fail in unusual cases (like a
+            // Javascript getter throwing)
+            let option_filename = Reflect::get(&options, &"filename".into()).unwrap();
+            let filename = if js_boolean(&option_filename) {
+                Some(PathBuf::from(js_string(&option_filename)))
+            } else {
+                None
+            };
+
+            Self {
+                // unwrap is justified here for the same reasons as commented above
+                inline_source_map: js_boolean(
+                    &Reflect::get(&options, &"inline_source_map".into()).unwrap(),
+                ),
+                filename,
+            }
+        } else {
+            Self {
+                inline_source_map: false,
+                filename: None,
+            }
+        }
+    }
 }
 
 #[wasm_bindgen]
@@ -30,12 +61,6 @@ pub struct Preprocessor {
     // out how to combine the APIs correctly to ensure we are not hanging on
     // to the states unexpectedly
     // core: Box<CorePreprocessor>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ProcessOptions {
-    filename: Option<String>,
-    inline_source_map: bool,
 }
 
 #[derive(Clone, Default)]
@@ -99,17 +124,9 @@ impl Preprocessor {
     }
 
     pub fn process(&self, src: String, options: JsValue) -> Result<String, JsValue> {
-        let options: ProcessOptions = from_value(options)
-            .map_err(|e| js_error(format!("Options parsing error: {:?}", e).into()))?;
-
+        let options = Options::new(options);
         let preprocessor = CorePreprocessor::new();
-        let result = preprocessor.process(
-            &src,
-            Options {
-                filename: options.filename.map(|f| PathBuf::from(f)),
-                inline_source_map: options.inline_source_map,
-            },
-        );
+        let result = preprocessor.process(&src, options);
 
         match result {
             Ok(output) => Ok(output),
@@ -118,21 +135,18 @@ impl Preprocessor {
     }
 
     pub fn parse(&self, src: String, options: JsValue) -> Result<JsValue, JsValue> {
-        let parse_options: ProcessOptions = from_value(options.clone())
-            .map_err(|e| js_error(format!("Options parsing error: {:?}", e).into()))?;
-
+        let options = Options::new(options);
         let preprocessor = CorePreprocessor::new();
-        let result = preprocessor
-            .parse(
-                &src,
-                Options {
-                    filename: parse_options.filename.map(|f| PathBuf::from(f)),
-                    inline_source_map: parse_options.inline_source_map,
-                },
-            )
-            .map_err(|_err| self.process(src, options).unwrap_err())?;
-        let serialized = serde_json::to_string(&result)
-            .map_err(|err| js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))?;
-        Ok(json_parse(serialized.into()))
+        let result = preprocessor.parse(&src, options);
+
+        match result {
+            Ok(parsed) => {
+                match serde_json::to_string(&parsed) {
+                    Ok(serialized) => Ok(json_parse(serialized.into())),
+                    Err(err) =>  Err(js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))
+                }
+            },
+            Err(err) => Err(as_javascript_error(err, preprocessor.source_map()))
+        }
     }
 }
