@@ -90,8 +90,7 @@ describe(`process`, function () {
       .matches(/Expected ident.*[\u001b].*class \{/s);
   });
 
-  // TODO: this wasn't really testing because the comment is ignored
-  it.skip("Provides inline source maps if inline_source_map option is set to true", function () {
+  it("Provides inline source maps if inline_source_map option is set to true", function () {
     let output = p.process(`<template>Hi</template>`, { inline_source_map: true });
 
     expect(output).to.match(
