@@ -7,23 +7,21 @@ use base64::{engine::general_purpose, Engine as _};
 use std::path::PathBuf;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::source_map::SourceMapGenConfig;
-use swc_common::{self, sync::Lrc, FileName, SourceMap, Mark};
+use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_core::common::GLOBALS;
-use swc_ecma_ast::{
-    Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl,
-    ModuleExportName, ModuleItem,
-};
+use swc_ecma_ast::Module;
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
-use swc_ecma_transforms::hygiene::hygiene_with_config;
-use swc_ecma_transforms::resolver;
-use swc_ecma_utils::private_ident;
-use swc_ecma_visit::{as_folder, VisitMutWith, VisitWith};
+use swc_ecma_visit::VisitWith;
 
 mod bindings;
-mod snippets;
-mod transform;
+mod importer;
 mod locate;
+mod snippets;
+mod transformer;
+
+use importer::Importer;
+use transformer::Transformer;
 
 #[derive(Default)]
 pub struct Options {
@@ -46,7 +44,6 @@ impl SourceMapGenConfig for SourceMapConfig {
         true
     }
 }
-
 
 impl Preprocessor {
     pub fn new() -> Self {
@@ -116,33 +113,29 @@ impl Preprocessor {
         GLOBALS.set(&Default::default(), || {
             let mut parsed_module = parser.parse_module()?;
 
-            let found_id = find_existing_import(&parsed_module, target_module, target_specifier);
-            let had_id_already = found_id.is_some();
-            let id = found_id.unwrap_or_else(|| private_ident!(target_specifier));
-            let mut needs_import = false;
-            parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
-                &id,
-                Some(&mut needs_import),
-            )));
+            // Prepare to insert the import statement later if needed. This
+            // expects a "clean" AST so needs to be run right after parsing.
+            //
+            // This step also gives us the identifier to use in the transform.
+            // Typically, it'd be `template(...)`, but if the existing code
+            // already imported the function under a different name, we'll
+            // stick with it.
+            let import = Importer::prepare(&mut parsed_module, target_module, target_specifier);
 
-            if !had_id_already && needs_import {
-                insert_import(&mut parsed_module, target_module, target_specifier, &id)
+            // Run the actual code that transforms the `<template>` syntax into
+            // `template(...)`.
+            let mut transformer = Transformer::new(import.id());
+            transformer.transform(&mut parsed_module);
+
+            // If the transform didn't find any occurrences, then we did not do
+            // anything, and do not need to do anything else. (Do we even need
+            // source map in that case?)
+            if transformer.has_template_tags {
+                // If we did find `<template>` tags, we will need to insert the
+                // import statement for it, unless the existing code already
+                // have it imported for some reason
+                import.insert(&mut parsed_module);
             }
-
-            let unresolved_mark = Mark::new();
-            let top_level_mark = Mark::new();
-
-            parsed_module.visit_mut_with(&mut resolver(unresolved_mark, top_level_mark, false));
-
-            let mut h = hygiene_with_config(swc_ecma_transforms::hygiene::Config {
-                keep_class_names: true,
-                top_level_mark,
-                safari_10: false,
-                ignore_eval: false,
-            });
-            parsed_module.visit_mut_with(&mut h);
-
-            simplify_imports(&mut parsed_module);
 
             Ok(self.print(&parsed_module, options.inline_source_map))
         })
@@ -192,100 +185,8 @@ impl Preprocessor {
     }
 }
 
-fn find_existing_import(
-    parsed_module: &Module,
-    target_module: &str,
-    target_specifier: &str,
-) -> Option<Ident> {
-    for item in parsed_module.body.iter() {
-        match item {
-            ModuleItem::ModuleDecl(ModuleDecl::Import(import_declaration)) => {
-                if import_declaration.src.value.to_string() == target_module {
-                    for specifier in import_declaration.specifiers.iter() {
-                        match specifier {
-                            ImportSpecifier::Named(s) => {
-                                let imported = match &s.imported {
-                                    Some(ModuleExportName::Ident(i)) => i.sym.to_string(),
-                                    Some(ModuleExportName::Str(s)) => s.value.to_string(),
-                                    None => s.local.sym.to_string(),
-                                };
-                                if imported == target_specifier {
-                                    return Some(s.local.clone());
-                                }
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-            }
-            _ => {}
-        }
-    }
-    None
-}
-
-fn insert_import(
-    parsed_module: &mut Module,
-    target_module: &str,
-    target_specifier: &str,
-    local: &Ident,
-) {
-    parsed_module.body.insert(
-        0,
-        ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
-            span: Default::default(),
-            specifiers: vec![ImportSpecifier::Named(ImportNamedSpecifier {
-                span: Default::default(),
-                local: local.clone(),
-                imported: Some(ModuleExportName::Ident(Ident::new(
-                    target_specifier.into(),
-                    Default::default(),
-                ))),
-                is_type_only: false,
-            })],
-            src: Box::new(target_module.into()),
-            type_only: false,
-            with: None,
-        })),
-    );
-}
-
-// It's not until after the hygiene pass that we know what local name is being
-// used for our import. If it turns out to equal the imported name, we can
-// implify from "import { template as template } from..." down to  "import {
-// template } from ...".
-fn simplify_imports(parsed_module: &mut Module) {
-    for item in parsed_module.body.iter_mut() {
-        match item {
-            ModuleItem::ModuleDecl(ModuleDecl::Import(import_declaration)) => {
-                for specifier in import_declaration.specifiers.iter_mut() {
-                    match specifier {
-                        ImportSpecifier::Named(specifier) => {
-                            if let ImportNamedSpecifier {
-                                imported: Some(ModuleExportName::Ident(imported)),
-                                local,
-                                ..
-                            } = specifier
-                            {
-                                if local.sym == imported.sym {
-                                    specifier.imported = None;
-                                }
-                            }
-                        }
-                        _ => {}
-                    }
-                }
-            }
-            _ => {}
-        }
-    }
-}
-
-
-
 #[cfg(test)]
 mod test_helpers;
-
 
 macro_rules! testcase {
     ($test_name:ident, $input:expr, $expected:expr) => {
