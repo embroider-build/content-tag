@@ -246,6 +246,7 @@ fn insert_import(
             src: Box::new(target_module.into()),
             type_only: false,
             with: None,
+            phase: Default::default(),
         })),
     );
 }
