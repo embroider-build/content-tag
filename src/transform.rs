@@ -17,13 +17,19 @@ use swc_atoms::Atom;
 pub struct TransformVisitor<'a> {
     template_identifier: Ident,
     found_it: Option<&'a mut bool>,
+    transform: Option<js_sys::Function>,
 }
 
 impl<'a> TransformVisitor<'a> {
-    pub fn new(id: &Ident, found_it: Option<&'a mut bool>) -> Self {
+    pub fn new(
+        id: &Ident,
+        found_it: Option<&'a mut bool>,
+        transform: Option<js_sys::Function>,
+    ) -> Self {
         TransformVisitor {
             template_identifier: id.clone(),
             found_it,
+            transform,
         }
     }
     fn set_found_it(&mut self) {
@@ -39,6 +45,22 @@ impl<'a> TransformVisitor<'a> {
             closing,
             ..
         } = expr;
+
+        // Replace the entirety of the <template>...</template> expression
+        // with the results of the transform call
+        if let Some(transform) = self.transform.as_ref() {
+            let content = transform
+                .call2(
+                    &wasm_bindgen::JsValue::NULL,
+                    &wasm_bindgen::JsValue::from(&contents.value.to_string()),
+                    &wasm_bindgen::JsValue::from("expression"),
+                    /* utils ( for bindImport )*/
+                )
+                .unwrap();
+
+            // TODO: error if content is not a string
+            return Expr::Lit(content.as_string().unwrap().into());
+        }
 
         Expr::Call(CallExpr {
             span: *span,
@@ -67,7 +89,11 @@ impl<'a> TransformVisitor<'a> {
 }
 
 fn escape_template_literal(input: &Atom) -> Atom {
-    input.replace("\\", "\\\\").replace("`", "\\`").replace("$", "\\$").into()
+    input
+        .replace("\\", "\\\\")
+        .replace("`", "\\`")
+        .replace("$", "\\$")
+        .into()
 }
 
 impl<'a> VisitMut for TransformVisitor<'a> {
