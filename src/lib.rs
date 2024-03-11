@@ -7,11 +7,11 @@ use base64::{engine::general_purpose, Engine as _};
 use std::path::PathBuf;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::source_map::SourceMapGenConfig;
-use swc_common::{self, sync::Lrc, FileName, SourceMap, Mark};
+use swc_common::{self, sync::Lrc, FileName, Mark, SourceMap};
 use swc_core::common::GLOBALS;
 use swc_ecma_ast::{
-    Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl,
-    ModuleExportName, ModuleItem,
+    Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl, ModuleExportName,
+    ModuleItem,
 };
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
@@ -21,14 +21,15 @@ use swc_ecma_utils::private_ident;
 use swc_ecma_visit::{as_folder, VisitMutWith, VisitWith};
 
 mod bindings;
+mod locate;
 mod snippets;
 mod transform;
-mod locate;
 
 #[derive(Default)]
 pub struct Options {
     pub filename: Option<PathBuf>,
     pub inline_source_map: bool,
+    pub transform: Option<js_sys::Function>,
 }
 
 pub struct Preprocessor {
@@ -46,7 +47,6 @@ impl SourceMapGenConfig for SourceMapConfig {
         true
     }
 }
-
 
 impl Preprocessor {
     pub fn new() -> Self {
@@ -123,6 +123,7 @@ impl Preprocessor {
             parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
                 &id,
                 Some(&mut needs_import),
+                options.transform,
             )));
 
             if !had_id_already && needs_import {
@@ -281,11 +282,8 @@ fn simplify_imports(parsed_module: &mut Module) {
     }
 }
 
-
-
 #[cfg(test)]
 mod test_helpers;
-
 
 macro_rules! testcase {
     ($test_name:ident, $input:expr, $expected:expr) => {

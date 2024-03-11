@@ -8,7 +8,15 @@
     import {Preprocessor} from 'content-tag';
 
     const p = new Preprocessor();
-    const output = p.process('<template>Hi from createPreprocessor</template>');
+    const output = p.process(`
+      <template>
+        Hello World, from Vite!
+      </template>
+    `, {
+      transform: (src, type) => {
+        return `hi: ${type} src: ${src}`;
+      }
+    });
 
     document.querySelector('#output').innerHTML = output;
   </script>

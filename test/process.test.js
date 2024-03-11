@@ -9,6 +9,35 @@ const { expect } = chai;
 const p = new Preprocessor();
 
 describe(`process`, function () {
+  it("tmp", function () {
+    let output = p.process("<template>Hi</template>", {
+      transform: (src, type, utils) => {
+        console.log("Did it run?");
+        let t = "todo";
+        // let t = utils.bindImport("@ember/template-compiler", "template");
+
+        if (type === "expression") {
+          return `${t}("${utils.escapeStringLiteral(
+            src
+          )}", { eval() { console.log("hi"); return eval(arguments[0]) } }`;
+        } else {
+          return `static {
+            ${t}("${utils.escapeStringLiteral(src)}", {
+              eval() { return eval(arguments[0]) },
+              component: this,
+            })
+          }`;
+        }
+      },
+    });
+
+    expect(output).to
+      .equalCode(`import { template } from "@ember/template-compiler";
+  export default template(\`Hi\`, {
+      eval () { console.log("hi"); return eval(arguments[0]) }
+  });`);
+  });
+
   it("works for a basic example", function () {
     let output = p.process("<template>Hi</template>");
 
@@ -91,7 +120,9 @@ describe(`process`, function () {
   });
 
   it("Provides inline source maps if inline_source_map option is set to true", function () {
-    let output = p.process(`<template>Hi</template>`, { inline_source_map: true });
+    let output = p.process(`<template>Hi</template>`, {
+      inline_source_map: true,
+    });
 
     expect(output).to.match(
       /sourceMappingURL=data:application\/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjxhbm9uPiJdLCJzb3VyY2VzQ29udGVudCI6WyI8dGVtcGxhdGU-SGk8L3RlbXBsYXRlPiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsZUFBQSxTQUFVLENBQUEsRUFBRSxDQUFBLEVBQUE7SUFBQTtRQUFBLE9BQUEsS0FBQSxTQUFBLENBQUEsRUFBVztJQUFEO0FBQUEsR0FBQyJ9/
