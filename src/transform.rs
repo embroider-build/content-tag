@@ -180,6 +180,7 @@ test!(
         as_folder(TransformVisitor::new(
             &Ident::new("template".into(), Default::default()),
             None,
+            None,
         ))
     },
     content_tag_template_expression,
@@ -191,6 +192,7 @@ test!(
     Default::default(),
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
+        None,
         None,
     )),
     content_tag_template_member,
@@ -207,6 +209,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        None,
     )),
     expression_inside_class_member,
     r#"class X { thing = <template>Hello</template> } "#,
@@ -219,6 +222,7 @@ test!(
     Default::default(),
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
+        None,
         None,
     )),
     class_member_inside_expression,
@@ -235,6 +239,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        None,
     )),
     content_tag_export_default,
     r#"<template>Hello</template>"#,
@@ -245,6 +250,7 @@ test!(
     Default::default(),
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
+        None,
         None,
     )),
     inner_expression,
@@ -257,6 +263,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        None,
     )),
     backtick_in_template,
     r#"let x = <template>He`llo</template>"#,
@@ -268,6 +275,7 @@ test!(
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
         None,
+        None,
     )),
     dollar_in_template,
     r#"let x = <template>He${ll}o</template>"#,
@@ -278,6 +286,7 @@ test!(
     Default::default(),
     |_| as_folder(TransformVisitor::new(
         &Ident::new("template".into(), Default::default()),
+        None,
         None,
     )),
     do_not_interpret_js_escapes_in_hbs,
