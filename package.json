@@ -10,13 +10,12 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": {
+      "browser": {
         "types": "./index.d.ts",
-        "browser": "./pkg/standalone.js",
-        "default": "./pkg/node.cjs"
+        "default": "./pkg/standalone.js"
       },
-      "require": {
-        "types": "./index.d.ts",
+      "default": {
+        "types": "./index.d.cts",
         "default": "./pkg/node.cjs"
       }
     }
@@ -34,13 +33,12 @@
     "ci:node": "mocha 'test/*.{js,cjs}'",
     "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\"",
     "lint:package": "publint",
-    "lint:published-types": "attw --pack --ignore-rules false-esm",
+    "lint:published-types": "attw --pack",
     "start": "vite",
     "test": "npm run ci:node"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.13.2",
-    "@vitest/browser": "^0.34.6",
     "chai": "^4.3.7",
     "code-equality-assertions": "github:mansona/code-equality-assertions#add-chai-build",
     "concurrently": "^8.2.2",
