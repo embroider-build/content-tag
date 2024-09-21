@@ -2,16 +2,20 @@
   "solution": {
     "content-tag": {
       "impact": "patch",
-      "oldVersion": "2.0.0",
-      "newVersion": "2.0.1",
+      "oldVersion": "2.0.1",
+      "newVersion": "2.0.2",
       "constraints": [
         {
           "impact": "patch",
           "reason": "Appears in changelog section :bug: Bug Fix"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :house: Internal"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-02-01)\n\ncontent-tag 2.0.1 (patch)\n\n#### :bug: Bug Fix\n* [#64](https://github.com/embroider-build/content-tag/pull/64) Update type declaration file with latest API ([@vstefanovic97](https://github.com/vstefanovic97))\n\n#### Committers: 1\n- Vuk ([@vstefanovic97](https://github.com/vstefanovic97))\n"
+  "description": "## Release (2024-09-21)\n\ncontent-tag 2.0.2 (patch)\n\n#### :bug: Bug Fix\n* `content-tag`\n  * [#79](https://github.com/embroider-build/content-tag/pull/79) Provide correct types when using cjs with moduleResolution:nodenext ([@ef4](https://github.com/ef4))\n\n#### :house: Internal\n* `content-tag`\n  * [#69](https://github.com/embroider-build/content-tag/pull/69) Refactor options handling ([@ef4](https://github.com/ef4))\n  * [#67](https://github.com/embroider-build/content-tag/pull/67) Fix sourcemap test ([@ef4](https://github.com/ef4))\n\n#### Committers: 1\n- Edward Faulkner ([@ef4](https://github.com/ef4))\n"
 }
