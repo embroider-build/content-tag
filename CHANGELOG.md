@@ -1,4 +1,19 @@
 # `content-tag` Changelog
+## Release (2024-09-21)
+
+content-tag 2.0.2 (patch)
+
+#### :bug: Bug Fix
+* `content-tag`
+  * [#79](https://github.com/embroider-build/content-tag/pull/79) Provide correct types when using cjs with moduleResolution:nodenext ([@ef4](https://github.com/ef4))
+
+#### :house: Internal
+* `content-tag`
+  * [#69](https://github.com/embroider-build/content-tag/pull/69) Refactor options handling ([@ef4](https://github.com/ef4))
+  * [#67](https://github.com/embroider-build/content-tag/pull/67) Fix sourcemap test ([@ef4](https://github.com/ef4))
+
+#### Committers: 1
+- Edward Faulkner ([@ef4](https://github.com/ef4))
 ## Release (2024-02-01)
 
 content-tag 2.0.1 (patch)
