@@ -10,13 +10,12 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": {
+      "browser": {
         "types": "./index.d.ts",
-        "browser": "./pkg/standalone.js",
-        "default": "./pkg/node.cjs"
+        "default": "./pkg/standalone.js"
       },
-      "require": {
-        "types": "./index.d.ts",
+      "default": {
+        "types": "./index.d.cts",
         "default": "./pkg/node.cjs"
       }
     }

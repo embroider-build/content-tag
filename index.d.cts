@@ -1,7 +1,9 @@
 /*
  * wasm-pack doesn't give us correct enough types.
- * this file must be manually kept in sync with ./index.d.cts
+* this file must be manually kept in sync with ./index.d.ts
  */
+
+
 
 interface Parsed {
   type: 'expression' | 'class-member';
