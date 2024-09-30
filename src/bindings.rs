@@ -38,17 +38,28 @@ impl Options {
                 None
             };
 
+            let option_transform = Reflect::get(&options, &"transform".into()).unwrap();
+            // NOTE: That this will be None if this value was passed but not as a valid transform
+            // We probably want to error here.
+            let transform = option_transform.dyn_into::<js_sys::Function>().ok();
+            // transform
+            //     .call1(&JsValue::NULL, &JsValue::from("hi"))
+            //     .unwrap();
+
             Self {
                 // unwrap is justified here for the same reasons as commented above
                 inline_source_map: js_boolean(
                     &Reflect::get(&options, &"inline_source_map".into()).unwrap(),
                 ),
                 filename,
+                transform,
             }
         } else {
             Self {
                 inline_source_map: false,
                 filename: None,
+                // transform: Default?
+                transform: None,
             }
         }
     }

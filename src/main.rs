@@ -23,6 +23,7 @@ fn main() {
         Options {
             filename: Some(filename),
             inline_source_map: true,
+            transform: None,
         },
     );
 
