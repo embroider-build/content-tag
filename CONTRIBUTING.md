@@ -21,7 +21,7 @@ Build the package:
 - `npm install`
 - `npm run build`
 
-which will output your wasm package in `./pkg` 
+which will output your wasm package in `./pkg`
 
 ## Running against a local copy of SWC
 
