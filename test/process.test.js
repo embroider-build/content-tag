@@ -97,4 +97,29 @@ describe(`process`, function () {
       /sourceMappingURL=data:application\/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjxhbm9uPiJdLCJzb3VyY2VzQ29udGVudCI6WyI8dGVtcGxhdGU-SGk8L3RlbXBsYXRlPiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsZUFBQSxTQUFVLENBQUEsRUFBRSxDQUFBLEVBQUE7SUFBQTtRQUFBLE9BQUEsS0FBQSxTQUFBLENBQUEsRUFBVztJQUFEO0FBQUEsR0FBQyJ9/
     );
   });
+
+  it("Does not transform this param from TS", function () {
+    let output = p.process(
+      `function f(this: Context, ...args: unknown[]) {
+        function t(this: Context, ...args: unknown[]) {};
+        <template></template>
+      }`,
+      { filename: "path/to/my/component.gts" }
+    );
+
+    expect(output).to
+      .equalCode(
+        `import { template } from "@ember/template-compiler";
+function f(this: Context, ...args: unknown[]) {
+    function t(this: Context, ...args1: unknown[]) {}
+    ;
+    template(\`\`, {
+        eval () {
+            return eval(arguments[0]);
+        }
+    });
+}
+`
+      );
+  });
 });
