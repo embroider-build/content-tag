@@ -3,7 +3,6 @@
 #[macro_use]
 extern crate lazy_static;
 
-use std::ops::{Deref, DerefMut};
 use std::path::PathBuf;
 
 use base64::{Engine as _, engine::general_purpose};
