@@ -40,7 +40,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.13.2",
     "chai": "^4.3.7",
-    "code-equality-assertions": "github:mansona/code-equality-assertions#add-chai-build",
+    "code-equality-assertions": "1.0.1",
     "concurrently": "^8.2.2",
     "eslint": "^8.44.0",
     "mocha": "^10.2.0",
