@@ -1,4 +1,14 @@
 # `content-tag` Changelog
+## Release (2024-10-17)
+
+content-tag 2.0.3 (patch)
+
+#### :house: Internal
+* `content-tag`
+  * [#81](https://github.com/embroider-build/content-tag/pull/81) Update toolchain and some deps ([@wagenet](https://github.com/wagenet))
+
+#### Committers: 1
+- Peter Wagenet ([@wagenet](https://github.com/wagenet))
 ## Release (2024-09-21)
 
 content-tag 2.0.2 (patch)
