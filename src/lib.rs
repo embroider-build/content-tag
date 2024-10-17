@@ -361,3 +361,17 @@ testcase! {
          return template(`hello`, { eval() { return eval(arguments[0]) } });
        }"#
 }
+
+testcase! {
+  handles_typescript_this,
+  r#"function f(this: Context, ...args: unknown[]) {
+        function t(this: Context, ...args: unknown[]) {};
+        return <template></template>
+    }"#,
+  r#"import { template } from "@ember/template-compiler";
+       function f(this: Context, ...args: unknown[]) {
+         function t(this: Context, ...args1: unknown[]) {}
+         ;
+         return template(``, { eval() { return eval(arguments[0]) } });
+       }"#
+}
