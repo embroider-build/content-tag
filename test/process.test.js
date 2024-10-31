@@ -8,13 +8,17 @@ const { expect } = chai;
 
 const p = new Preprocessor();
 
+function normalizeOutput(output) {
+  return output.replace(/template_[0-9a-f]{32}/g, "template_UUID");
+}
+
 describe(`process`, function () {
   it("works for a basic example", function () {
     let output = p.process("<template>Hi</template>");
 
-    expect(output).to
-      .equalCode(`import { template } from "@ember/template-compiler";
-  export default template(\`Hi\`, {
+    expect(normalizeOutput(output)).to
+      .equalCode(`import { template as template_UUID } from "@ember/template-compiler";
+  export default template_UUID(\`Hi\`, {
       eval () {
           return eval(arguments[0]);
       }
@@ -32,12 +36,12 @@ describe(`process`, function () {
 
     let output = p.process(input);
 
-    expect(output).to.equalCode(
-      `import { template } from "@ember/template-compiler";
-     let Foo = class Foo extends Component {
+    expect(normalizeOutput(output)).to.equalCode(
+      `import { template as template_UUID } from "@ember/template-compiler";
+     class Foo extends Component {
          greeting = 'Hello';
          static{
-             template(\`{{this.greeting}}, \\\`lifeform\\\`!\`, {
+             template_UUID(\`{{this.greeting}}, \\\`lifeform\\\`!\`, {
                  component: this,
                  eval () {
                      return eval(arguments[0]);
@@ -94,7 +98,7 @@ describe(`process`, function () {
     let output = p.process(`<template>Hi</template>`, { inline_source_map: true });
 
     expect(output).to.match(
-      /sourceMappingURL=data:application\/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjxhbm9uPiJdLCJzb3VyY2VzQ29udGVudCI6WyI8dGVtcGxhdGU-SGk8L3RlbXBsYXRlPiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsZUFBQSxTQUFVLENBQUEsRUFBRSxDQUFBLEVBQUE7SUFBQTtRQUFBLE9BQUEsS0FBQSxTQUFBLENBQUEsRUFBVztJQUFEO0FBQUEsR0FBQyJ9/
+      /sourceMappingURL=data:application\/json;base64,/
     );
   });
 });
