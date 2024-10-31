@@ -1,4 +1,5 @@
 use difference::Changeset;
+use regex::Regex;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_ecma_codegen::Emitter;
@@ -7,13 +8,15 @@ use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
 use crate::Preprocessor;
 
 pub fn testcase(input: &str, expected: &str) -> Result<(), swc_ecma_parser::error::Error> {
+    let re = Regex::new(r"template_[0-9a-f]{32}").unwrap();
     let p = Preprocessor::new();
     let actual = p.process(input, Default::default())?;
+    let actual_santized = re.replace_all(&actual, "template_UUID");
     let normalized_expected = normalize(expected);
-    if actual != normalized_expected {
+    if actual_santized != normalized_expected {
         panic!(
             "code differs from expected:\n{}",
-            format!("{}", Changeset::new(&actual, &normalized_expected, "\n"))
+            format!("{}", Changeset::new(&actual_santized, &normalized_expected, "\n"))
         );
     }
     Ok(())
