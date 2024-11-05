@@ -15,10 +15,10 @@ use swc_ecma_ast::{
 };
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
-use swc_ecma_transforms::hygiene::hygiene_with_config;
 use swc_ecma_transforms::resolver;
 use swc_ecma_utils::private_ident;
 use swc_ecma_visit::{as_folder, VisitMutWith, VisitWith};
+use uuid::Uuid;
 
 mod bindings;
 mod snippets;
@@ -116,16 +116,14 @@ impl Preprocessor {
         GLOBALS.set(&Default::default(), || {
             let mut parsed_module = parser.parse_module()?;
 
-            let found_id = find_existing_import(&parsed_module, target_module, target_specifier);
-            let had_id_already = found_id.is_some();
-            let id = found_id.unwrap_or_else(|| private_ident!(target_specifier));
+            let id = private_ident!(format!("{}_{}", target_specifier, Uuid::new_v4().to_string().replace("-", "")));
             let mut needs_import = false;
             parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
                 &id,
                 Some(&mut needs_import),
             )));
 
-            if !had_id_already && needs_import {
+            if needs_import {
                 insert_import(&mut parsed_module, target_module, target_specifier, &id)
             }
 
@@ -133,16 +131,6 @@ impl Preprocessor {
             let top_level_mark = Mark::new();
 
             parsed_module.visit_mut_with(&mut resolver(unresolved_mark, top_level_mark, false));
-
-            let mut h = hygiene_with_config(swc_ecma_transforms::hygiene::Config {
-                keep_class_names: true,
-                top_level_mark,
-                safari_10: false,
-                ignore_eval: false,
-            });
-            parsed_module.visit_mut_with(&mut h);
-
-            simplify_imports(&mut parsed_module);
 
             Ok(self.print(&parsed_module, options.inline_source_map))
         })
@@ -192,38 +180,6 @@ impl Preprocessor {
     }
 }
 
-fn find_existing_import(
-    parsed_module: &Module,
-    target_module: &str,
-    target_specifier: &str,
-) -> Option<Ident> {
-    for item in parsed_module.body.iter() {
-        match item {
-            ModuleItem::ModuleDecl(ModuleDecl::Import(import_declaration)) => {
-                if import_declaration.src.value.to_string() == target_module {
-                    for specifier in import_declaration.specifiers.iter() {
-                        match specifier {
-                            ImportSpecifier::Named(s) => {
-                                let imported = match &s.imported {
-                                    Some(ModuleExportName::Ident(i)) => i.sym.to_string(),
-                                    Some(ModuleExportName::Str(s)) => s.value.to_string(),
-                                    None => s.local.sym.to_string(),
-                                };
-                                if imported == target_specifier {
-                                    return Some(s.local.clone());
-                                }
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-            }
-            _ => {}
-        }
-    }
-    None
-}
-
 fn insert_import(
     parsed_module: &mut Module,
     target_module: &str,
@@ -250,39 +206,6 @@ fn insert_import(
     );
 }
 
-// It's not until after the hygiene pass that we know what local name is being
-// used for our import. If it turns out to equal the imported name, we can
-// implify from "import { template as template } from..." down to  "import {
-// template } from ...".
-fn simplify_imports(parsed_module: &mut Module) {
-    for item in parsed_module.body.iter_mut() {
-        match item {
-            ModuleItem::ModuleDecl(ModuleDecl::Import(import_declaration)) => {
-                for specifier in import_declaration.specifiers.iter_mut() {
-                    match specifier {
-                        ImportSpecifier::Named(specifier) => {
-                            if let ImportNamedSpecifier {
-                                imported: Some(ModuleExportName::Ident(imported)),
-                                local,
-                                ..
-                            } = specifier
-                            {
-                                if local.sym == imported.sym {
-                                    specifier.imported = None;
-                                }
-                            }
-                        }
-                        _ => {}
-                    }
-                }
-            }
-            _ => {}
-        }
-    }
-}
-
-
-
 #[cfg(test)]
 mod test_helpers;
 
@@ -299,24 +222,26 @@ macro_rules! testcase {
 testcase! {
   no_preexisting_import,
   r#"let x = <template>hello</template>"#,
-  r#"import { template } from "@ember/template-compiler";
-     let x = template(`hello`, { eval() { return eval(arguments[0])} });"#
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+     let x = template_UUID(`hello`, { eval() { return eval(arguments[0])} });"#
 }
 
 testcase! {
-  uses_preexisting_import,
+  preexisting_import,
   r#"import { template } from "@ember/template-compiler";
      let x = <template>hello</template>"#,
-  r#"import { template } from "@ember/template-compiler";
-     let x = template(`hello`, { eval() { return eval(arguments[0])} });"#
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+     import { template } from "@ember/template-compiler";
+     let x = template_UUID(`hello`, { eval() { return eval(arguments[0])} });"#
 }
 
 testcase! {
-  uses_preexisting_renamed_import,
+  preexisting_renamed_import,
   r#"import { template as t } from "@ember/template-compiler";
      let x = <template>hello</template>"#,
-  r#"import { template as t } from "@ember/template-compiler";
-     let x = t(`hello`, { eval() { return eval(arguments[0])} })"#
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+     import { template as t } from "@ember/template-compiler";
+     let x = template_UUID(`hello`, { eval() { return eval(arguments[0])} })"#
 }
 
 testcase! {
@@ -330,10 +255,10 @@ testcase! {
   r#"function template() {};
      console.log(template());
      export default <template>Hi</template>"#,
-  r#"import { template as template1 } from "@ember/template-compiler";
+  r#"import { template as template_UUID } from "@ember/template-compiler";
      function template() {};
      console.log(template());
-     export default template1(`Hi`, { eval() { return eval(arguments[0])} });"#
+     export default template_UUID(`Hi`, { eval() { return eval(arguments[0])} });"#
 }
 
 testcase! {
@@ -342,10 +267,10 @@ testcase! {
          console.log(template);
          return <template>X</template>;
        };"#,
-  r#"import { template as template1 } from "@ember/template-compiler";
+  r#"import { template as template_UUID } from "@ember/template-compiler";
        export default function(template) {
          console.log(template);
-         return template1(`X`, { eval() { return eval(arguments[0])} });
+         return template_UUID(`X`, { eval() { return eval(arguments[0])} });
        };"#
 }
 
@@ -355,9 +280,23 @@ testcase! {
         console.log(message);
         return <template>hello</template>
     }"#,
-  r#"import { template } from "@ember/template-compiler";
+  r#"import { template as template_UUID } from "@ember/template-compiler";
        function makeComponent(message: string) {
          console.log(message);
-         return template(`hello`, { eval() { return eval(arguments[0]) } });
+         return template_UUID(`hello`, { eval() { return eval(arguments[0]) } });
+       }"#
+}
+
+testcase! {
+  handles_typescript_this,
+  r#"function f(this: Context, ...args: unknown[]) {
+        function t(this: Context, ...args: unknown[]) {};
+        return <template></template>
+    }"#,
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+       function f(this: Context, ...args: unknown[]) {
+         function t(this: Context, ...args: unknown[]) {}
+         ;
+         return template_UUID(``, { eval() { return eval(arguments[0]) } });
        }"#
 }

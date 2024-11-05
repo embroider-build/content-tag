@@ -9,13 +9,17 @@ const { Preprocessor } = require("content-tag");
 
 const p = new Preprocessor();
 
+function normalizeOutput(output) {
+  return output.replace(/template_[0-9a-f]{32}/g, "template_UUID");
+}
+
 describe("cjs/require", function () {
   it("can call process", function () {
     let output = p.process("<template>Hi</template>");
 
-    expect(output).to
-      .equalCode(`import { template } from "@ember/template-compiler";
-  export default template(\`Hi\`, {
+    expect(normalizeOutput(output)).to
+      .equalCode(`import { template as template_UUID } from "@ember/template-compiler";
+  export default template_UUID(\`Hi\`, {
       eval () {
           return eval(arguments[0]);
       }
