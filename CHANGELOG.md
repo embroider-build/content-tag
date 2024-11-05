@@ -1,4 +1,18 @@
 # `content-tag` Changelog
+## Release (2024-11-05)
+
+content-tag 2.0.3 (patch)
+
+#### :bug: Bug Fix
+* `content-tag`
+  * [#83](https://github.com/embroider-build/content-tag/pull/83) Strip hygiene code in favor of UUIDs ([@wagenet](https://github.com/wagenet))
+
+#### :house: Internal
+* `content-tag`
+  * [#81](https://github.com/embroider-build/content-tag/pull/81) Update toolchain and some deps ([@wagenet](https://github.com/wagenet))
+
+#### Committers: 1
+- Peter Wagenet ([@wagenet](https://github.com/wagenet))
 ## Release (2024-09-21)
 
 content-tag 2.0.2 (patch)
