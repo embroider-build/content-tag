@@ -2,8 +2,8 @@
   "solution": {
     "content-tag": {
       "impact": "patch",
-      "oldVersion": "2.0.1",
-      "newVersion": "2.0.2",
+      "oldVersion": "2.0.2",
+      "newVersion": "2.0.3",
       "constraints": [
         {
           "impact": "patch",
@@ -17,5 +17,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-09-21)\n\ncontent-tag 2.0.2 (patch)\n\n#### :bug: Bug Fix\n* `content-tag`\n  * [#79](https://github.com/embroider-build/content-tag/pull/79) Provide correct types when using cjs with moduleResolution:nodenext ([@ef4](https://github.com/ef4))\n\n#### :house: Internal\n* `content-tag`\n  * [#69](https://github.com/embroider-build/content-tag/pull/69) Refactor options handling ([@ef4](https://github.com/ef4))\n  * [#67](https://github.com/embroider-build/content-tag/pull/67) Fix sourcemap test ([@ef4](https://github.com/ef4))\n\n#### Committers: 1\n- Edward Faulkner ([@ef4](https://github.com/ef4))\n"
+  "description": "## Release (2024-11-05)\n\ncontent-tag 2.0.3 (patch)\n\n#### :bug: Bug Fix\n* `content-tag`\n  * [#83](https://github.com/embroider-build/content-tag/pull/83) Strip hygiene code in favor of UUIDs ([@wagenet](https://github.com/wagenet))\n\n#### :house: Internal\n* `content-tag`\n  * [#81](https://github.com/embroider-build/content-tag/pull/81) Update toolchain and some deps ([@wagenet](https://github.com/wagenet))\n\n#### Committers: 1\n- Peter Wagenet ([@wagenet](https://github.com/wagenet))\n"
 }
