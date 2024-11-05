@@ -10,13 +10,15 @@
   "type": "module",
   "exports": {
     ".": {
-      "browser": {
-        "types": "./index.d.ts",
-        "default": "./pkg/standalone.js"
+      "require": {
+        "node": {
+          "types": "./index.d.cts",
+          "default": "./pkg/node.cjs"
+        }
       },
       "default": {
-        "types": "./index.d.cts",
-        "default": "./pkg/node.cjs"
+        "types": "./index.d.ts",
+        "default": "./pkg/standalone.js"
       }
     }
   },
