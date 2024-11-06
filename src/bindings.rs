@@ -1,5 +1,6 @@
-use crate::{Options, Preprocessor as CorePreprocessor};
+use crate::{CodeMapPair, Options, Preprocessor as CorePreprocessor};
 use js_sys::Reflect;
+use serde_wasm_bindgen::to_value;
 use std::{fmt, path::PathBuf, str};
 use swc_common::{
     errors::Handler,
@@ -123,13 +124,13 @@ impl Preprocessor {
         Self {}
     }
 
-    pub fn process(&self, src: String, options: JsValue) -> Result<String, JsValue> {
+    pub fn process(&self, src: String, options: JsValue) -> Result<CodeMapPair, JsValue> {
         let options = Options::new(options);
         let preprocessor = CorePreprocessor::new();
         let result = preprocessor.process(&src, options);
 
         match result {
-            Ok(output) => Ok(output),
+            Ok(output) => Ok(to_value(&output).unwrap()),
             Err(err) => Err(as_javascript_error(err, preprocessor.source_map()).into()),
         }
     }
