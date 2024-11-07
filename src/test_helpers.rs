@@ -11,7 +11,7 @@ pub fn testcase(input: &str, expected: &str) -> Result<(), swc_ecma_parser::erro
     let re = Regex::new(r"template_[0-9a-f]{32}").unwrap();
     let p = Preprocessor::new();
     let actual = p.process(input, Default::default())?;
-    let actual_santized = re.replace_all(&actual, "template_UUID");
+    let actual_santized = re.replace_all(&actual.code, "template_UUID");
     let normalized_expected = normalize(expected);
     if actual_santized != normalized_expected {
         panic!(
