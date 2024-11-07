@@ -27,7 +27,7 @@ fn main() {
     );
 
     match result {
-        Ok(output) => println!("{}", output),
+        Ok(output) => println!("{}", output.code),
         Err(err) => {
             let handler =
                 Handler::with_tty_emitter(ColorConfig::Auto, true, false, Some(p.source_map()));

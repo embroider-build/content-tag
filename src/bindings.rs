@@ -1,6 +1,5 @@
 use crate::{Options, Preprocessor as CorePreprocessor};
 use js_sys::Reflect;
-use serde_wasm_bindgen::to_value;
 use std::{fmt, path::PathBuf, str};
 use swc_common::{
     errors::Handler,
@@ -55,7 +54,7 @@ impl Options {
     }
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(getter_with_clone)]
 pub struct CodeMapPair {
     pub code: String,
     pub map: String,
