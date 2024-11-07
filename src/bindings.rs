@@ -1,4 +1,4 @@
-use crate::{CodeMapPair, Options, Preprocessor as CorePreprocessor};
+use crate::{Options, Preprocessor as CorePreprocessor};
 use js_sys::Reflect;
 use serde_wasm_bindgen::to_value;
 use std::{fmt, path::PathBuf, str};
@@ -52,6 +52,20 @@ impl Options {
                 filename: None,
             }
         }
+    }
+}
+
+#[wasm_bindgen]
+pub struct CodeMapPair {
+    pub code: String,
+    pub map: String,
+}
+
+#[wasm_bindgen]
+impl CodeMapPair {
+    #[wasm_bindgen(constructor)]
+    pub fn new(code: String, map: String) -> Self {
+        Self { code, map }
     }
 }
 
@@ -130,7 +144,7 @@ impl Preprocessor {
         let result = preprocessor.process(&src, options);
 
         match result {
-            Ok(output) => Ok(to_value(&output).unwrap()),
+            Ok(output) => Ok(CodeMapPair::new(output.code, output.map)),
             Err(err) => Err(as_javascript_error(err, preprocessor.source_map()).into()),
         }
     }
