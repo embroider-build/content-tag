@@ -1,4 +1,14 @@
 # `content-tag` Changelog
+## Release (2024-11-08)
+
+content-tag 3.0.0 (major)
+
+#### :boom: Breaking Change
+* `content-tag`
+  * [#86](https://github.com/embroider-build/content-tag/pull/86) Change return type of process from string to { code, map } ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
 ## Release (2024-11-05)
 
 content-tag 2.0.3 (patch)
