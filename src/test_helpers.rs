@@ -19,6 +19,9 @@ pub fn testcase(input: &str, expected: &str) -> Result<(), swc_ecma_parser::erro
             format!("{}", Changeset::new(&actual_santized, &normalized_expected, "\n"))
         );
     }
+
+    assert!(!actual.map.is_empty(), "expected .map to not be empty");
+
     Ok(())
 }
 
