@@ -54,6 +54,20 @@ impl Options {
     }
 }
 
+#[wasm_bindgen(getter_with_clone)]
+pub struct CodeMapPair {
+    pub code: String,
+    pub map: String,
+}
+
+#[wasm_bindgen]
+impl CodeMapPair {
+    #[wasm_bindgen(constructor)]
+    pub fn new(code: String, map: String) -> Self {
+        Self { code, map }
+    }
+}
+
 #[wasm_bindgen]
 pub struct Preprocessor {
     // TODO: reusing this between calls result in incorrect spans; there may
@@ -123,13 +137,13 @@ impl Preprocessor {
         Self {}
     }
 
-    pub fn process(&self, src: String, options: JsValue) -> Result<String, JsValue> {
+    pub fn process(&self, src: String, options: JsValue) -> Result<CodeMapPair, JsValue> {
         let options = Options::new(options);
         let preprocessor = CorePreprocessor::new();
         let result = preprocessor.process(&src, options);
 
         match result {
-            Ok(output) => Ok(output),
+            Ok(output) => Ok(CodeMapPair::new(output.code, output.map)),
             Err(err) => Err(as_javascript_error(err, preprocessor.source_map()).into()),
         }
     }

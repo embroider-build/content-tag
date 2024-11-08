@@ -16,7 +16,7 @@ describe(`process`, function () {
   it("works for a basic example", function () {
     let output = p.process("<template>Hi</template>");
 
-    expect(normalizeOutput(output)).to
+    expect(normalizeOutput(output.code)).to
       .equalCode(`import { template as template_UUID } from "@ember/template-compiler";
   export default template_UUID(\`Hi\`, {
       eval () {
@@ -36,7 +36,7 @@ describe(`process`, function () {
 
     let output = p.process(input);
 
-    expect(normalizeOutput(output)).to.equalCode(
+    expect(normalizeOutput(output.code)).to.equalCode(
       `import { template as template_UUID } from "@ember/template-compiler";
      class Foo extends Component {
          greeting = 'Hello';
@@ -97,7 +97,7 @@ describe(`process`, function () {
   it("Provides inline source maps if inline_source_map option is set to true", function () {
     let output = p.process(`<template>Hi</template>`, { inline_source_map: true });
 
-    expect(output).to.match(
+    expect(output.code).to.match(
       /sourceMappingURL=data:application\/json;base64,/
     );
   });

@@ -7,11 +7,11 @@ use base64::{engine::general_purpose, Engine as _};
 use std::path::PathBuf;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::source_map::SourceMapGenConfig;
-use swc_common::{self, sync::Lrc, FileName, SourceMap, Mark};
+use swc_common::{self, sync::Lrc, FileName, Mark, SourceMap};
 use swc_core::common::GLOBALS;
 use swc_ecma_ast::{
-    Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl,
-    ModuleExportName, ModuleItem,
+    Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl, ModuleExportName,
+    ModuleItem,
 };
 use swc_ecma_codegen::Emitter;
 use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
@@ -21,9 +21,9 @@ use swc_ecma_visit::{as_folder, VisitMutWith, VisitWith};
 use uuid::Uuid;
 
 mod bindings;
+mod locate;
 mod snippets;
 mod transform;
-mod locate;
 
 #[derive(Default)]
 pub struct Options {
@@ -36,6 +36,11 @@ pub struct Preprocessor {
     comments: SingleThreadedComments,
 }
 
+pub struct CodeMapPair {
+    pub code: String,
+    pub map: String,
+}
+
 struct SourceMapConfig;
 impl SourceMapGenConfig for SourceMapConfig {
     fn file_name_to_source(&self, f: &swc_common::FileName) -> String {
@@ -46,7 +51,6 @@ impl SourceMapGenConfig for SourceMapConfig {
         true
     }
 }
-
 
 impl Preprocessor {
     pub fn new() -> Self {
@@ -93,7 +97,7 @@ impl Preprocessor {
         &self,
         src: &str,
         options: Options,
-    ) -> Result<String, swc_ecma_parser::error::Error> {
+    ) -> Result<CodeMapPair, swc_ecma_parser::error::Error> {
         let target_specifier = "template";
         let target_module = "@ember/template-compiler";
         let filename = match options.filename {
@@ -116,7 +120,11 @@ impl Preprocessor {
         GLOBALS.set(&Default::default(), || {
             let mut parsed_module = parser.parse_module()?;
 
-            let id = private_ident!(format!("{}_{}", target_specifier, Uuid::new_v4().to_string().replace("-", "")));
+            let id = private_ident!(format!(
+                "{}_{}",
+                target_specifier,
+                Uuid::new_v4().to_string().replace("-", "")
+            ));
             let mut needs_import = false;
             parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
                 &id,
@@ -132,13 +140,16 @@ impl Preprocessor {
 
             parsed_module.visit_mut_with(&mut resolver(unresolved_mark, top_level_mark, false));
 
-            Ok(self.print(&parsed_module, options.inline_source_map))
+            let codemap = self.print(&parsed_module, options.inline_source_map);
+
+            Ok(codemap)
         })
     }
 
-    fn print(&self, module: &Module, inline_source_map: bool) -> String {
+    fn print(&self, module: &Module, inline_source_map: bool) -> CodeMapPair {
         let mut buf = vec![];
         let mut srcmap = vec![];
+        let mut source_map_buffer = vec![];
         let mut emitter = Emitter {
             cfg: Default::default(),
             cm: self.source_map.clone(),
@@ -152,27 +163,30 @@ impl Preprocessor {
         };
         emitter.emit_module(module).unwrap();
 
-        if inline_source_map {
-            let mut source_map_buffer = vec![];
-            self.source_map()
-                .build_source_map_with_config(&srcmap, None, SourceMapConfig {})
-                .to_writer(&mut source_map_buffer)
-                .unwrap();
+        self.source_map()
+            .build_source_map_with_config(&srcmap, None, SourceMapConfig {})
+            .to_writer(&mut source_map_buffer)
+            .unwrap();
 
+        if inline_source_map {
             let mut comment = "//# sourceMappingURL=data:application/json;base64,"
                 .to_owned()
                 .into_bytes();
             buf.append(&mut comment);
 
             let mut encoded = general_purpose::URL_SAFE_NO_PAD
-                .encode(source_map_buffer)
+                .encode(source_map_buffer.clone())
                 .into_bytes();
 
             buf.append(&mut encoded);
         }
 
         let s = String::from_utf8_lossy(&buf);
-        s.to_string()
+
+        CodeMapPair {
+            code: s.to_string(),
+            map: String::from_utf8(source_map_buffer.clone()).unwrap(),
+        }
     }
 
     pub fn source_map(&self) -> Lrc<SourceMap> {
@@ -208,7 +222,6 @@ fn insert_import(
 
 #[cfg(test)]
 mod test_helpers;
-
 
 macro_rules! testcase {
     ($test_name:ident, $input:expr, $expected:expr) => {

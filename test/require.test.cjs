@@ -17,7 +17,7 @@ describe("cjs/require", function () {
   it("can call process", function () {
     let output = p.process("<template>Hi</template>");
 
-    expect(normalizeOutput(output)).to
+    expect(normalizeOutput(output.code)).to
       .equalCode(`import { template as template_UUID } from "@ember/template-compiler";
   export default template_UUID(\`Hi\`, {
       eval () {
