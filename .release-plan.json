@@ -1,21 +1,17 @@
 {
   "solution": {
     "content-tag": {
-      "impact": "patch",
-      "oldVersion": "2.0.2",
-      "newVersion": "2.0.3",
+      "impact": "major",
+      "oldVersion": "2.0.3",
+      "newVersion": "3.0.0",
       "constraints": [
         {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :house: Internal"
+          "impact": "major",
+          "reason": "Appears in changelog section :boom: Breaking Change"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-11-05)\n\ncontent-tag 2.0.3 (patch)\n\n#### :bug: Bug Fix\n* `content-tag`\n  * [#83](https://github.com/embroider-build/content-tag/pull/83) Strip hygiene code in favor of UUIDs ([@wagenet](https://github.com/wagenet))\n\n#### :house: Internal\n* `content-tag`\n  * [#81](https://github.com/embroider-build/content-tag/pull/81) Update toolchain and some deps ([@wagenet](https://github.com/wagenet))\n\n#### Committers: 1\n- Peter Wagenet ([@wagenet](https://github.com/wagenet))\n"
+  "description": "## Release (2024-11-08)\n\ncontent-tag 3.0.0 (major)\n\n#### :boom: Breaking Change\n* `content-tag`\n  * [#86](https://github.com/embroider-build/content-tag/pull/86) Change return type of process from string to { code, map } ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
