@@ -16,7 +16,10 @@ pub fn testcase(input: &str, expected: &str) -> Result<(), swc_ecma_parser::erro
     if actual_santized != normalized_expected {
         panic!(
             "code differs from expected:\n{}",
-            format!("{}", Changeset::new(&actual_santized, &normalized_expected, "\n"))
+            format!(
+                "{}",
+                Changeset::new(&actual_santized, &normalized_expected, "\n")
+            )
         );
     }
 
@@ -31,7 +34,7 @@ fn normalize(src: &str) -> String {
     let source_map: Lrc<SourceMap> = Default::default();
     let comments: SingleThreadedComments = Default::default();
 
-    let source_file = source_map.new_source_file(FileName::Real(filename), src.to_string());
+    let source_file = source_map.new_source_file(FileName::Real(filename).into(), src.to_string());
 
     let lexer = Lexer::new(
         Syntax::Typescript(TsConfig {
