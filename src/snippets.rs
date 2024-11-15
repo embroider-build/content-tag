@@ -2,7 +2,7 @@ use swc_common::comments::SingleThreadedComments;
 use swc_common::Span;
 use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_ecma_ast::{Expr, Module};
-use swc_ecma_parser::{lexer::Lexer, EsConfig, Parser, StringInput, Syntax};
+use swc_ecma_parser::{lexer::Lexer, EsSyntax, Parser, StringInput, Syntax};
 use swc_ecma_visit::{visit_mut_pass, VisitMut, VisitMutWith};
 
 lazy_static! {
@@ -22,7 +22,7 @@ fn parse(src: &str) -> Module {
     let source_file = source_map.new_source_file(FileName::Real(filename).into(), src.to_string());
 
     let lexer = Lexer::new(
-        Syntax::Es(EsConfig {
+        Syntax::Es(EsSyntax {
             decorators: true,
             ..Default::default()
         }),

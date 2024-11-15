@@ -3,7 +3,7 @@ use regex::Regex;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::{self, sync::Lrc, FileName, SourceMap};
 use swc_ecma_codegen::Emitter;
-use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
+use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsSyntax};
 
 use crate::Preprocessor;
 
@@ -37,7 +37,7 @@ fn normalize(src: &str) -> String {
     let source_file = source_map.new_source_file(FileName::Real(filename).into(), src.to_string());
 
     let lexer = Lexer::new(
-        Syntax::Typescript(TsConfig {
+        Syntax::Typescript(TsSyntax {
             decorators: true,
             ..Default::default()
         }),

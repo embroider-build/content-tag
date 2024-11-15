@@ -14,7 +14,7 @@ use swc_ecma_ast::{
     ModuleItem,
 };
 use swc_ecma_codegen::Emitter;
-use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
+use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsSyntax};
 use swc_ecma_transforms::resolver;
 use swc_ecma_utils::private_ident;
 use swc_ecma_visit::{visit_mut_pass, VisitMutWith, VisitWith};
@@ -75,7 +75,7 @@ impl Preprocessor {
             .new_source_file(filename.into(), src.to_string());
 
         let lexer = Lexer::new(
-            Syntax::Typescript(TsConfig {
+            Syntax::Typescript(TsSyntax {
                 decorators: true,
                 ..Default::default()
             }),
@@ -112,7 +112,7 @@ impl Preprocessor {
             .new_source_file(filename.into(), src.to_string());
 
         let lexer = Lexer::new(
-            Syntax::Typescript(TsConfig {
+            Syntax::Typescript(TsSyntax {
                 decorators: true,
                 ..Default::default()
             }),
