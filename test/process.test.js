@@ -95,10 +95,28 @@ describe(`process`, function () {
   });
 
   it("Provides inline source maps if inline_source_map option is set to true", function () {
-    let output = p.process(`<template>Hi</template>`, { inline_source_map: true });
+    let output = p.process(`<template>Hi</template>`, {
+      inline_source_map: true,
+    });
 
     expect(output.code).to.match(
       /sourceMappingURL=data:application\/json;base64,/
     );
+  });
+
+  it("handles 'declarative shadow-dom'", function () {
+    // https://developer.chrome.com/docs/css-ui/declarative-shadow-dom
+    let input = `
+<template>
+  <template shadowrootmode="open">
+      <slot></slot>
+  </template>
+  <h2>Light content<h2>
+</template>
+`;
+
+    let output = p.process(input);
+
+    expect(output).to.equalCode();
   });
 });
