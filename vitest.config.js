@@ -4,16 +4,12 @@ import { defineConfig } from 'vite';
  * We're currently using Mocha for node testing.
  */
 export default defineConfig({
-  esbuild: false,
-  optimizeDeps: {
-    disabled: true,
-  },
   test: {
     include: ['test/browser/**/*'],
     browser: {
       name: 'chrome',
       headless: true,
-      provider: 'preview',
+      provider: 'webdriverio',
       providerOptions: {
         launch: {
           devtools: false,
