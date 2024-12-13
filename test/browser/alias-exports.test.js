@@ -1,6 +1,4 @@
-import chai from 'chai';
-
-const { expect } = chai;
+import { describe, it, expect } from 'vitest';
 
 
 describe('package.json#export aliases', () => {
