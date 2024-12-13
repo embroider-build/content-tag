@@ -14,14 +14,14 @@
         "types": "./index.d.ts",
         "default": "./pkg/standalone.js"
       },
-      "./standalone": {
-        "types": "./index.d.ts",
-        "default": "./pkg/standalone.js"
-      },
       "default": {
         "types": "./index.d.cts",
         "default": "./pkg/node.cjs"
       }
+    },
+    "./standalone": {
+      "types": "./index.d.ts",
+      "default": "./pkg/standalone.js"
     }
   },
   "files": [
