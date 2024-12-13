@@ -13,7 +13,7 @@ export default defineConfig({
     browser: {
       name: 'chrome',
       headless: true,
-      provider: 'webdriverio',
+      provider: 'preview',
       providerOptions: {
         launch: {
           devtools: false,
