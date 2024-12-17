@@ -1,4 +1,14 @@
 # `content-tag` Changelog
+## Release (2024-12-17)
+
+content-tag 3.1.0 (minor)
+
+#### :rocket: Enhancement
+* `content-tag`
+  * [#89](https://github.com/embroider-build/content-tag/pull/89) Allow direct importing of the standalone module ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
 ## Release (2024-11-08)
 
 content-tag 3.0.0 (major)
