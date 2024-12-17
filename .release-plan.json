@@ -1,17 +1,17 @@
 {
   "solution": {
     "content-tag": {
-      "impact": "major",
-      "oldVersion": "2.0.3",
-      "newVersion": "3.0.0",
+      "impact": "minor",
+      "oldVersion": "3.0.0",
+      "newVersion": "3.1.0",
       "constraints": [
         {
-          "impact": "major",
-          "reason": "Appears in changelog section :boom: Breaking Change"
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-11-08)\n\ncontent-tag 3.0.0 (major)\n\n#### :boom: Breaking Change\n* `content-tag`\n  * [#86](https://github.com/embroider-build/content-tag/pull/86) Change return type of process from string to { code, map } ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-12-17)\n\ncontent-tag 3.1.0 (minor)\n\n#### :rocket: Enhancement\n* `content-tag`\n  * [#89](https://github.com/embroider-build/content-tag/pull/89) Allow direct importing of the standalone module ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }

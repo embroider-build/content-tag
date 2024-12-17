@@ -1,6 +1,6 @@
 {
   "name": "content-tag",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "A rust program that uses a fork of swc to parse and transform Javascript containing the content-tag proposal",
   "repository": {
     "type": "git",
