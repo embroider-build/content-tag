@@ -28,6 +28,10 @@
         "types": "./pkg/stubs/require-types.d.cts",
         "default": "./pkg/stubs/require.cjs"
       }
+    },
+    "./utils": {
+      "types": "./pkg/utils.d.ts",
+      "import": "./pkg/utils.js"
     }
   },
   "files": [

@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   "env": {
     "mocha": true,
@@ -5,11 +7,7 @@ module.exports = {
     "es2021": true
   },
   "extends": "eslint:recommended",
-  "overrides": [
-  ],
   "parserOptions": {
     "ecmaVersion": "latest"
   },
-  "rules": {
-  }
 }
