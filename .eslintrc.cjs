@@ -10,4 +10,14 @@ module.exports = {
   "parserOptions": {
     "ecmaVersion": "latest"
   },
+  overrides: [
+    {
+      files: ['pkg/**/*.{js,mjs}'],
+      env: {
+        commonjs: false,
+        module: true,
+      },
+
+    }
+  ]
 }
