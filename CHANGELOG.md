@@ -1,4 +1,14 @@
 # `content-tag` Changelog
+## Release (2025-02-01)
+
+content-tag 3.1.1 (patch)
+
+#### :bug: Bug Fix
+* `content-tag`
+  * [#94](https://github.com/embroider-build/content-tag/pull/94) Replace random import alias with constant ([@davidtaylorhq](https://github.com/davidtaylorhq))
+
+#### Committers: 1
+- David Taylor ([@davidtaylorhq](https://github.com/davidtaylorhq))
 ## Release (2024-12-17)
 
 content-tag 3.1.0 (minor)
