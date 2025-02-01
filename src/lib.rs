@@ -18,7 +18,6 @@ use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
 use swc_ecma_transforms::resolver;
 use swc_ecma_utils::private_ident;
 use swc_ecma_visit::{as_folder, VisitMutWith, VisitWith};
-use uuid::Uuid;
 
 mod bindings;
 mod locate;
@@ -40,6 +39,8 @@ pub struct CodeMapPair {
     pub code: String,
     pub map: String,
 }
+
+pub const IMPORT_ALIAS: &str = "template_fd9b2463e5f141cfb5666b64daa1f11a";
 
 struct SourceMapConfig;
 impl SourceMapGenConfig for SourceMapConfig {
@@ -120,11 +121,7 @@ impl Preprocessor {
         GLOBALS.set(&Default::default(), || {
             let mut parsed_module = parser.parse_module()?;
 
-            let id = private_ident!(format!(
-                "{}_{}",
-                target_specifier,
-                Uuid::new_v4().to_string().replace("-", "")
-            ));
+            let id = private_ident!(IMPORT_ALIAS);
             let mut needs_import = false;
             parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
                 &id,
