@@ -12,8 +12,8 @@ function normalizeOutput(output) {
   return output.replace(/template_[0-9a-f]{32}/g, "template_UUID");
 }
 
-describe(`process`, function () {
-  it("works for a basic example", function () {
+describe(`process`, function() {
+  it("works for a basic example", function() {
     let output = p.process("<template>Hi</template>");
 
     expect(normalizeOutput(output.code)).to
@@ -25,7 +25,7 @@ describe(`process`, function () {
   });`);
   });
 
-  it("escapes backticks", function () {
+  it("escapes backticks", function() {
     let input = `
     class Foo extends Component {
       greeting = 'Hello';
@@ -52,15 +52,35 @@ describe(`process`, function () {
     );
   });
 
-  it("Emits parse errors with anonymous file", function () {
-    expect(function () {
+  it('works on default export + satisfies', function() {
+    let input = `
+    import HelloWorld from 'somewhere';
+     import type { TOC } from '@ember/component/template-only';
+     <template><HelloWorld /></template> satisfies TOC<{
+      Blocks: { default: [] } 
+     }>;
+`
+    let output = p.process(input);
+
+    expect(normalizeOutput(output.code)).to.equalCode(`
+      import { template as template_UUID } from "@ember/template-compiler";
+      export default template_UUID(\`<HelloWorld />\`, {
+        eval() {
+          return eval(arguments[0]);
+        }
+      });
+    `);
+  });
+
+  it("Emits parse errors with anonymous file", function() {
+    expect(function() {
       p.process(`const thing = "face";
   <template>Hi`);
     }).to.throw(`Parse Error at <anon>:2:15: 2:15`);
   });
 
-  it("Emits parse errors with real file", function () {
-    expect(function () {
+  it("Emits parse errors with real file", function() {
+    expect(function() {
       p.process(
         `const thing = "face";
   <template>Hi`,
@@ -69,7 +89,7 @@ describe(`process`, function () {
     }).to.throw(`Parse Error at path/to/my/component.gjs:2:15: 2:15`);
   });
 
-  it("Offers source_code snippet on parse errors", function () {
+  it("Offers source_code snippet on parse errors", function() {
     let parseError;
     try {
       p.process(`class {`);
@@ -81,7 +101,7 @@ describe(`process`, function () {
       .matches(/Expected ident.*class \{/s);
   });
 
-  it("Offers source_code_color snippet on parse errors", function () {
+  it("Offers source_code_color snippet on parse errors", function() {
     let parseError;
     try {
       p.process(`class {`);
@@ -94,7 +114,7 @@ describe(`process`, function () {
       .matches(/Expected ident.*[\u001b].*class \{/s);
   });
 
-  it("Provides inline source maps if inline_source_map option is set to true", function () {
+  it("Provides inline source maps if inline_source_map option is set to true", function() {
     let output = p.process(`<template>Hi</template>`, { inline_source_map: true });
 
     expect(output.code).to.match(
