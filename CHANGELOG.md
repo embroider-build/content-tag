@@ -1,4 +1,14 @@
 # `content-tag` Changelog
+## Release (2025-03-20)
+
+content-tag 3.1.2 (patch)
+
+#### :bug: Bug Fix
+* `content-tag`
+  * [#97](https://github.com/embroider-build/content-tag/pull/97) Support automatic export default when using TS satisfies keyword ([@ef4](https://github.com/ef4))
+
+#### Committers: 1
+- Edward Faulkner ([@ef4](https://github.com/ef4))
 ## Release (2025-02-01)
 
 content-tag 3.1.1 (patch)
