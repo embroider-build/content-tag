@@ -298,6 +298,17 @@ testcase! {
 }
 
 testcase! {
+  handles_typescript_implied_export_default,
+  r#"<template>hello</template> satisfies MyType"#,
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+export default template_UUID(`hello`, {
+    eval () {
+        return eval(arguments[0]);
+    }
+}) satisfies MyType;"#
+}
+
+testcase! {
   handles_typescript_this,
   r#"function f(this: Context, ...args: unknown[]) {
         function t(this: Context, ...args: unknown[]) {};

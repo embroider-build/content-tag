@@ -1,3 +1,4 @@
+use swc_common::Spanned;
 use swc_core::ecma::{
     ast::{
         BlockStmt, CallExpr, Callee, ClassMember, ContentTagExpression, ContentTagMember, Expr,
@@ -10,6 +11,7 @@ use swc_core::ecma::{
 
 use swc_ecma_ast::{
     ContentTagContent, ExportDefaultExpr, ExprOrSpread, ModuleDecl, ModuleItem, Tpl, TplElement,
+    TsSatisfiesExpr, TsType,
 };
 
 use swc_atoms::Atom;
@@ -67,7 +69,11 @@ impl<'a> TransformVisitor<'a> {
 }
 
 fn escape_template_literal(input: &Atom) -> Atom {
-    input.replace("\\", "\\\\").replace("`", "\\`").replace("$", "\\$").into()
+    input
+        .replace("\\", "\\\\")
+        .replace("`", "\\`")
+        .replace("$", "\\$")
+        .into()
 }
 
 impl<'a> VisitMut for TransformVisitor<'a> {
@@ -123,6 +129,18 @@ impl<'a> VisitMut for TransformVisitor<'a> {
                     },
                 )));
                 self.set_found_it();
+            } else if let Some(satisfies) = content_tag_satisfies_expression_statement(&item) {
+                items_updated.push(ModuleItem::ModuleDecl(ModuleDecl::ExportDefaultExpr(
+                    ExportDefaultExpr {
+                        span: satisfies.template.span,
+                        expr: Box::new(Expr::TsSatisfies(TsSatisfiesExpr {
+                            expr: Box::new(self.transform_tag_expression(&satisfies.template)),
+                            type_ann: satisfies.ts_type.clone(),
+                            span: satisfies.ts_type.span(),
+                        })),
+                    },
+                )));
+                self.set_found_it();
             } else {
                 items_updated.push(item);
             }
@@ -140,6 +158,31 @@ fn content_tag_expression_statement(item: &ModuleItem) -> Option<&ContentTagExpr
     })) = item
     {
         Some(content_tag)
+    } else {
+        None
+    }
+}
+
+struct TemplateSatisfies<'a> {
+    pub template: &'a ContentTagExpression,
+    pub ts_type: &'a Box<TsType>,
+}
+
+fn content_tag_satisfies_expression_statement(item: &ModuleItem) -> Option<TemplateSatisfies> {
+    if let ModuleItem::Stmt(Stmt::Expr(ExprStmt {
+        expr:
+            box Expr::TsSatisfies(TsSatisfiesExpr {
+                expr: box Expr::ContentTagExpression(content_tag),
+                type_ann: ts_type,
+                ..
+            }),
+        ..
+    })) = item
+    {
+        Some(TemplateSatisfies {
+            template: content_tag,
+            ts_type,
+        })
     } else {
         None
     }
