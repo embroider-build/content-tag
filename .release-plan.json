@@ -2,8 +2,8 @@
   "solution": {
     "content-tag": {
       "impact": "patch",
-      "oldVersion": "3.1.0",
-      "newVersion": "3.1.1",
+      "oldVersion": "3.1.1",
+      "newVersion": "3.1.2",
       "constraints": [
         {
           "impact": "patch",
@@ -13,5 +13,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-02-01)\n\ncontent-tag 3.1.1 (patch)\n\n#### :bug: Bug Fix\n* `content-tag`\n  * [#94](https://github.com/embroider-build/content-tag/pull/94) Replace random import alias with constant ([@davidtaylorhq](https://github.com/davidtaylorhq))\n\n#### Committers: 1\n- David Taylor ([@davidtaylorhq](https://github.com/davidtaylorhq))\n"
+  "description": "## Release (2025-03-20)\n\ncontent-tag 3.1.2 (patch)\n\n#### :bug: Bug Fix\n* `content-tag`\n  * [#97](https://github.com/embroider-build/content-tag/pull/97) Support automatic export default when using TS satisfies keyword ([@ef4](https://github.com/ef4))\n\n#### Committers: 1\n- Edward Faulkner ([@ef4](https://github.com/ef4))\n"
 }
