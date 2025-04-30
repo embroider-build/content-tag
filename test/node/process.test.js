@@ -101,4 +101,9 @@ describe(`process`, function () {
       /sourceMappingURL=data:application\/json;base64,/
     );
   });
+
+  it("Preserves typescript declare", function () {
+    let output = p.process(`class X { declare a: string; }`);
+    expect(output.code).to.match(/declare a: string/);
+  });
 });
