@@ -1,4 +1,14 @@
 # `content-tag` Changelog
+## Release (2025-05-01)
+
+content-tag 3.1.3 (patch)
+
+#### :bug: Bug Fix
+* `content-tag`
+  * [#99](https://github.com/embroider-build/content-tag/pull/99) content-tag accidentally strips "declare" keyword from class properties ([@ef4](https://github.com/ef4))
+
+#### Committers: 1
+- Edward Faulkner ([@ef4](https://github.com/ef4))
 ## Release (2025-03-20)
 
 content-tag 3.1.2 (patch)
