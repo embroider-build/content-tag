@@ -6,10 +6,10 @@ use swc_ecma_ast::{
 };
 use swc_ecma_visit::{Visit, VisitWith};
 
-
 #[derive(Default, Debug)]
 pub struct LocateContentTagVisitor {
     pub occurrences: Vec<Occurrence>,
+    pub src: String,
 }
 
 #[derive(Eq, PartialEq, Debug, Serialize)]
@@ -32,10 +32,10 @@ impl LocateContentTagVisitor {
             kind,
             tag_name: "template".to_owned(),
             contents: contents.value.to_string(),
-            range: span.into(),
-            start_range: opening.span.into(),
-            content_range: contents.span.into(),
-            end_range: closing.span.into(),
+            range: Range::new(&self.src, span),
+            start_range: Range::new(&self.src, &opening.span),
+            content_range: Range::new(&self.src, &contents.span),
+            end_range: Range::new(&self.src, &closing.span),
         };
 
         self.occurrences.push(occurrence);
@@ -98,23 +98,21 @@ pub struct Occurrence {
 }
 
 #[derive(Serialize, Debug, Eq, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct Range {
-    start: usize,
-    end: usize,
+    start_byte: usize,
+    end_byte: usize,
+    start_char: usize,
+    end_char: usize,
 }
-
-impl From<&Span> for Range {
-    fn from(value: &Span) -> Self {
+impl Range {
+    pub fn new(src: &str, span: &Span) -> Range {
         Range {
-            start: value.lo.0 as usize - 1,
-            end: value.hi.0 as usize - 1,
+            start_byte: span.lo.0 as usize - 1,
+            end_byte: span.hi.0 as usize - 1,
+            start_char: src[..span.lo.0 as usize - 1].chars().count(),
+            end_char: src[..span.hi.0 as usize - 1].chars().count(),
         }
-    }
-}
-
-impl From<Span> for Range {
-    fn from(value: Span) -> Self {
-        (&value).into()
     }
 }
 
@@ -131,10 +129,30 @@ fn test_basic_example() {
         kind: ContentTagKind::Expression,
         tag_name: "template".into(),
         contents: "Hello!".into(),
-        range: Range { start: 0, end: 27 },
-        start_range: Range { start: 0, end: 10 },
-        content_range: Range { start: 10, end: 16 },
-        end_range: Range { start: 16, end: 27 },
+        range: Range {
+            start_byte: 0,
+            end_byte: 27,
+            start_char: 0,
+            end_char: 27,
+        },
+        start_range: Range {
+            start_byte: 0,
+            end_byte: 10,
+            start_char: 0,
+            end_char: 10,
+        },
+        content_range: Range {
+            start_byte: 10,
+            end_byte: 16,
+            start_char: 10,
+            end_char: 16,
+        },
+        end_range: Range {
+            start_byte: 16,
+            end_byte: 27,
+            start_char: 16,
+            end_char: 27,
+        },
     };
     assert_eq!(output, vec![expected]);
 }
@@ -153,10 +171,30 @@ fn test_expression_position() {
         kind: ContentTagKind::Expression,
         tag_name: "template".into(),
         contents: "Hello!".into(),
-        range: Range { start: 12, end: 39 },
-        start_range: Range { start: 12, end: 22 },
-        content_range: Range { start: 22, end: 28 },
-        end_range: Range { start: 28, end: 39 },
+        range: Range {
+            start_byte: 12,
+            end_byte: 39,
+            start_char: 12,
+            end_char: 39,
+        },
+        start_range: Range {
+            start_byte: 12,
+            end_byte: 22,
+            start_char: 12,
+            end_char: 22,
+        },
+        content_range: Range {
+            start_byte: 22,
+            end_byte: 28,
+            start_char: 22,
+            end_char: 28,
+        },
+        end_range: Range {
+            start_byte: 28,
+            end_byte: 39,
+            start_char: 28,
+            end_char: 39,
+        },
     }];
 
     assert_eq!(output, expected);
@@ -180,10 +218,77 @@ fn test_inside_class_body() {
         kind: ContentTagKind::ClassMember,
         tag_name: "template".into(),
         contents: "Hello!".into(),
-        range: Range { start: 49, end: 76 },
-        start_range: Range { start: 49, end: 59 },
-        content_range: Range { start: 59, end: 65 },
-        end_range: Range { start: 65, end: 76 },
+        range: Range {
+            start_byte: 49,
+            end_byte: 76,
+            start_char: 49,
+            end_char: 76,
+        },
+        start_range: Range {
+            start_byte: 49,
+            end_byte: 59,
+            start_char: 49,
+            end_char: 59,
+        },
+        content_range: Range {
+            start_byte: 59,
+            end_byte: 65,
+            start_char: 59,
+            end_char: 65,
+        },
+        end_range: Range {
+            start_byte: 65,
+            end_byte: 76,
+            start_char: 65,
+            end_char: 76,
+        },
+    }];
+
+    assert_eq!(output, expected);
+}
+
+#[test]
+fn test_multibyte_character_inside_template() {
+    let p = Preprocessor::new();
+    let output = p
+        .parse(
+            r#"
+                  class A {
+                    <template>Hell😀!</template>
+                  }
+                "#,
+            Default::default(),
+        )
+        .unwrap();
+
+    let expected = vec![Occurrence {
+        kind: ContentTagKind::ClassMember,
+        tag_name: "template".into(),
+        contents: "Hell😀!".into(),
+        range: Range {
+            start_byte: 49,
+            end_byte: 79,
+            start_char: 49,
+            end_char: 76,
+        },
+        start_range: Range {
+            start_byte: 49,
+            end_byte: 59,
+            start_char: 49,
+            end_char: 59,
+        },
+        content_range: Range {
+            start_byte: 59,
+            end_byte: 68,
+            start_char: 59,
+            end_char: 65,
+        },
+        end_range: Range {
+            start_byte: 68,
+            end_byte: 79,
+            start_char: 65,
+            end_char: 76,
+        },
     }];
 
     assert_eq!(output, expected);
@@ -209,10 +314,30 @@ fn test_preceded_by_a_slash_character() {
         kind: ContentTagKind::Expression,
         tag_name: "template".into(),
         contents: "Hello!".into(),
-        range: Range { start: 65, end: 92 },
-        start_range: Range { start: 65, end: 75 },
-        content_range: Range { start: 75, end: 81 },
-        end_range: Range { start: 81, end: 92 },
+        range: Range {
+            start_byte: 65,
+            end_byte: 92,
+            start_char: 65,
+            end_char: 92,
+        },
+        start_range: Range {
+            start_byte: 65,
+            end_byte: 75,
+            start_char: 65,
+            end_char: 75,
+        },
+        content_range: Range {
+            start_byte: 75,
+            end_byte: 81,
+            start_char: 75,
+            end_char: 81,
+        },
+        end_range: Range {
+            start_byte: 81,
+            end_byte: 92,
+            start_char: 81,
+            end_char: 92,
+        },
     }];
 
     assert_eq!(output, expected);
@@ -235,10 +360,30 @@ fn test_template_inside_a_regexp() {
         kind: ContentTagKind::Expression,
         tag_name: "template".into(),
         contents: "Hello!".into(),
-        range: Range { start: 67, end: 94 },
-        start_range: Range { start: 67, end: 77 },
-        content_range: Range { start: 77, end: 83 },
-        end_range: Range { start: 83, end: 94 },
+        range: Range {
+            start_byte: 67,
+            end_byte: 94,
+            start_char: 67,
+            end_char: 94,
+        },
+        start_range: Range {
+            start_byte: 67,
+            end_byte: 77,
+            start_char: 67,
+            end_char: 77,
+        },
+        content_range: Range {
+            start_byte: 77,
+            end_byte: 83,
+            start_char: 77,
+            end_char: 83,
+        },
+        end_range: Range {
+            start_byte: 83,
+            end_byte: 94,
+            start_char: 83,
+            end_char: 94,
+        },
     }];
 
     assert_eq!(output, expected);
@@ -263,11 +408,31 @@ fn test_inner_expression() {
     assert_eq!(
         output,
         vec![Occurrence {
-            range: Range { start: 13, end: 39 },
-            content_range: Range { start: 23, end: 28 },
+            range: Range {
+                start_byte: 13,
+                end_byte: 39,
+                start_char: 13,
+                end_char: 39
+            },
+            content_range: Range {
+                start_byte: 23,
+                end_byte: 28,
+                start_char: 23,
+                end_char: 28
+            },
             contents: "Hello".into(),
-            end_range: Range { start: 28, end: 39 },
-            start_range: Range { start: 13, end: 23 },
+            end_range: Range {
+                start_byte: 28,
+                end_byte: 39,
+                start_char: 28,
+                end_char: 39
+            },
+            start_range: Range {
+                start_byte: 13,
+                end_byte: 23,
+                start_char: 13,
+                end_char: 23
+            },
             tag_name: "template".into(),
             kind: ContentTagKind::Expression
         }]
