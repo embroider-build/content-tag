@@ -17,22 +17,15 @@ describe(`parse`, function () {
         type: "expression",
         tagName: "template",
         contents: "Hello!",
-        range: {
-          start: 0,
-          end: 27,
-        },
+        range: { startByte: 0, endByte: 27, startChar: 0, endChar: 27 },
         contentRange: {
-          start: 10,
-          end: 16,
+          startByte: 10,
+          endByte: 16,
+          startChar: 10,
+          endChar: 16,
         },
-        startRange: {
-          end: 10,
-          start: 0,
-        },
-        endRange: {
-          start: 16,
-          end: 27,
-        },
+        startRange: { startByte: 0, endByte: 10, startChar: 0, endChar: 10 },
+        endRange: { startByte: 16, endByte: 27, startChar: 16, endChar: 27 },
       },
     ]);
   });
@@ -45,22 +38,15 @@ describe(`parse`, function () {
         type: "expression",
         tagName: "template",
         contents: "Hello!",
-        range: {
-          start: 12,
-          end: 39,
-        },
+        range: { startByte: 12, endByte: 39, startChar: 12, endChar: 39 },
         contentRange: {
-          start: 22,
-          end: 28,
+          startByte: 22,
+          endByte: 28,
+          startChar: 22,
+          endChar: 28,
         },
-        startRange: {
-          start: 12,
-          end: 22,
-        },
-        endRange: {
-          start: 28,
-          end: 39,
-        },
+        startRange: { startByte: 12, endByte: 22, startChar: 12, endChar: 22 },
+        endRange: { startByte: 28, endByte: 39, startChar: 28, endChar: 39 },
       },
     ]);
   });
@@ -77,22 +63,15 @@ describe(`parse`, function () {
         type: "class-member",
         tagName: "template",
         contents: "Hello!",
-        range: {
-          start: 25,
-          end: 52,
-        },
+        range: { startByte: 25, endByte: 52, startChar: 25, endChar: 52 },
         contentRange: {
-          start: 35,
-          end: 41,
+          startByte: 35,
+          endByte: 41,
+          startChar: 35,
+          endChar: 41,
         },
-        startRange: {
-          start: 25,
-          end: 35,
-        },
-        endRange: {
-          start: 41,
-          end: 52,
-        },
+        startRange: { startByte: 25, endByte: 35, startChar: 25, endChar: 35 },
+        endRange: { startByte: 41, endByte: 52, startChar: 41, endChar: 52 },
       },
     ]);
   });
@@ -111,22 +90,15 @@ describe(`parse`, function () {
         type: "expression",
         tagName: "template",
         contents: "Hello!",
-        range: {
-          start: 41,
-          end: 68,
-        },
+        range: { startByte: 41, endByte: 68, startChar: 41, endChar: 68 },
         contentRange: {
-          start: 51,
-          end: 57,
+          startByte: 51,
+          endByte: 57,
+          startChar: 51,
+          endChar: 57,
         },
-        startRange: {
-          start: 41,
-          end: 51,
-        },
-        endRange: {
-          start: 57,
-          end: 68,
-        },
+        startRange: { startByte: 41, endByte: 51, startChar: 41, endChar: 51 },
+        endRange: { startByte: 57, endByte: 68, startChar: 57, endChar: 68 },
       },
     ]);
   });
@@ -142,22 +114,15 @@ describe(`parse`, function () {
         type: "expression",
         tagName: "template",
         contents: "Hello!",
-        range: {
-          start: 43,
-          end: 70,
-        },
+        range: { startByte: 43, endByte: 70, startChar: 43, endChar: 70 },
         contentRange: {
-          start: 53,
-          end: 59,
+          startByte: 53,
+          endByte: 59,
+          startChar: 53,
+          endChar: 59,
         },
-        startRange: {
-          start: 43,
-          end: 53,
-        },
-        endRange: {
-          start: 59,
-          end: 70,
-        },
+        startRange: { startByte: 43, endByte: 53, startChar: 43, endChar: 53 },
+        endRange: { startByte: 59, endByte: 70, startChar: 59, endChar: 70 },
       },
     ]);
   });
@@ -176,5 +141,28 @@ describe(`parse`, function () {
         { filename: "path/to/my/component.gjs" }
       );
     }).to.throw(`Parse Error at path/to/my/component.gjs:2:15: 2:15`);
+  });
+
+  it("handles multibyte characters", function () {
+    let output = p.parse(
+      "const prefix = '熊';\nconst tpl = <template>Hello!</template>"
+    );
+
+    expect(output).to.eql([
+      {
+        type: "expression",
+        tagName: "template",
+        contents: "Hello!",
+        range: { startByte: 34, endByte: 61, startChar: 32, endChar: 59 },
+        contentRange: {
+          startByte: 44,
+          endByte: 50,
+          startChar: 42,
+          endChar: 48,
+        },
+        startRange: { startByte: 34, endByte: 44, startChar: 32, endChar: 42 },
+        endRange: { startByte: 50, endByte: 61, startChar: 48, endChar: 59 },
+      },
+    ]);
   });
 });
