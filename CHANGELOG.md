@@ -1,4 +1,14 @@
 # `content-tag` Changelog
+## Release (2025-05-07)
+
+content-tag 4.0.0 (major)
+
+#### :boom: Breaking Change
+* `content-tag`
+  * [#101](https://github.com/embroider-build/content-tag/pull/101) parse API: make bytes vs characters explicit ([@ef4](https://github.com/ef4))
+
+#### Committers: 1
+- Edward Faulkner ([@ef4](https://github.com/ef4))
 ## Release (2025-05-01)
 
 content-tag 3.1.3 (patch)
