@@ -89,12 +89,8 @@ interface Range {
   startByte: number;
   endByte: number;
 
-  // Range in unicode characters. If you're trying to slice out parts of the tring, you want this, not the byte.
-  //
-  // CAUTION: Javascript String.prototype.slice is not actually safe to use on these values
-  // because it gets characters beyond UTF16 wrong. You want:
-  //     Array.from(myString).slice(startChar, endChar).join('')
-  // instead.
+  // Range in unicode codepoints.
+  // CAUTION: see "Unicode Codepoint Slicing Warning" below.
   startChar: number;
   endChar: number;
 }
@@ -151,6 +147,18 @@ interface Parsed {
   endRange: Range;
 }
 ````
+
+## Unicode Codepoint Slicing Warning
+
+If you have a string and want to use the range provided by our `parse` method to slice out parts of that string, you need avoid two major pitfalls.
+
+First, you want to use our `startChar` and `endChar` not `startByte` and `endByte`. Earlier versions of this library only provided `start` and `end` and they were always bytes, making string slicing unnecessarily difficult.
+
+Second, beware that Javascript's `String.prototype.slice` doesn't actually work on Unicode codepoints. It works on UTF-16 units, which are not the same thing. Intead, you can rely on `String.prototype[Symbol.iterator]` which _does_ work on Unicode codepoints. So this is safe, even when fancy things like emojis are present:
+
+```js
+Array.from(myString).slice(range.startChar, range.endChar).join("");
+```
 
 ## Contributing
 
