@@ -14,21 +14,20 @@ npm install content-tag
 
 ### Node (CommonJS)
 
-```js 
-let { Preprocessor } = require('content-tag');
+```js
+let { Preprocessor } = require("content-tag");
 let p = new Preprocessor();
-let output = p.process('<template>Hi</template>');
+let output = p.process("<template>Hi</template>");
 
 console.log(output);
 ```
 
-
 ### Node (ESM)
 
 ```js
-import { Preprocessor } from 'content-tag';
+import { Preprocessor } from "content-tag";
 let p = new Preprocessor();
-let output = p.process('<template>Hi</template>');
+let output = p.process("<template>Hi</template>");
 
 console.log(output);
 ```
@@ -36,9 +35,9 @@ console.log(output);
 ### Browser (ESM)
 
 ```js
-import { Preprocessor } from 'content-tag';
+import { Preprocessor } from "content-tag";
 let p = new Preprocessor();
-let output = p.process('<template>Hi</template>');
+let output = p.process("<template>Hi</template>");
 
 console.log(output);
 ```
@@ -55,9 +54,9 @@ Parses a given source code string using the `content-tag` spec into standard
 JavaScript.
 
 ```ts
-import { Preprocessor } from 'content-tag';
+import { Preprocessor } from "content-tag";
 let p = new Preprocessor();
-let output = p.process('<template>Hi</template>');
+let output = p.process("<template>Hi</template>");
 ```
 
 ### `Preprocessor.parse(src: string, options?: PreprocessorOptions): Parsed[];`
@@ -66,29 +65,40 @@ Parses a given source code string using the `content-tag` spec into an array of
 `Parsed` content tag objects.
 
 ```ts
-import { Preprocessor } from 'content-tag';
+import { Preprocessor } from "content-tag";
 let p = new Preprocessor();
-let output = p.parse('<template>Hi</template>');
+let output = p.parse("<template>Hi</template>");
 ```
 
 #### `PreprocessorOptions`
 
-````ts
+```ts
 interface PreprocessorOptions {
-
   /** Default is `false` */
   inline_source_map?: boolean;
 
   filename?: string;
-
 }
-````
+```
 
 #### `Parsed`
 
-NOTE: All ranges are in bytes, not characters.
-
 ````ts
+interface Range {
+  // Range in raw bytes.
+  startByte: number;
+  endByte: number;
+
+  // Range in unicode characters. If you're trying to slice out parts of the tring, you want this, not the byte.
+  //
+  // CAUTION: Javascript String.prototype.slice is not actually safe to use on these values
+  // because it gets characters beyond UTF16 wrong. You want:
+  //     Array.from(myString).slice(startChar, endChar).join('')
+  // instead.
+  startChar: number;
+  endChar: number;
+}
+
 interface Parsed {
   /**
    * The type for the content tag.
@@ -116,16 +126,13 @@ interface Parsed {
   contents: string;
 
   /**
-   * Byte range of the contents, inclusive of inclusive of the
+   * Range of the contents, inclusive of the
    * `<template></template>` tags.
    */
-  range: {
-    start: number;
-    end: number;
-  };
+  range: Range;
 
   /**
-   * Byte range of the template contents, not inclusive of the
+   * Range of the template contents, not inclusive of the
    * `<template></template>` tags.
    */
   contentRange: {
@@ -133,21 +140,18 @@ interface Parsed {
     end: number;
   };
 
-  /** Byte range of the opening `<template>` tag. */
-  startRange: {
-    end: number;
-    start: number;
-  };
+  /**
+   * Range of the opening `<template>` tag.
+   */
+  startRange: Range;
 
-  /** Byte range of the closing `</template>` tag. */
-  endRange: {
-    start: number;
-    end: number;
-  };
+  /**
+   * Range of the closing `</template>` tag.
+   */
+  endRange: Range;
 }
 ````
 
 ## Contributing
 
 See the [CONTRIBUTING.md](./CONTRIBUTING.md) file.
-
