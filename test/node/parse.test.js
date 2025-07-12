@@ -165,4 +165,35 @@ describe(`parse`, function () {
       },
     ]);
   });
+
+  it('has correct character ranges', function () {
+    let file = [
+      'const one = <template>💩💩💩💩💩💩💩</template>;' +
+      '' +
+      'const two = <template>💩</template>;'
+    ].join('\n')
+
+    let output = p.parse(file);
+
+    let one = output[0];
+    let two = output[1];
+
+    {
+      let { range, startRange, endRange, contentRange } = one;
+
+      expect(file.slice(range.startChar, range.endChar)).to.eql(`<template>💩💩💩💩💩💩💩</template>`);
+      expect(file.slice(startRange.startChar, startRange.endChar)).to.eql(`<template>`);
+      expect(file.slice(endRange.startChar, endRange.endChar)).to.eql(`</template>`);
+      expect(file.slice(contentRange.startChar, contentRange.endChar)).to.eql(`💩💩💩💩💩💩💩`);
+    }
+
+    {
+      let { range, startRange, endRange, contentRange } = two;
+
+      expect(file.slice(range.startChar, range.endChar)).to.eql(`<template>💩</template>`);
+      expect(file.slice(startRange.startChar, startRange.endChar)).to.eql(`<template>`);
+      expect(file.slice(endRange.startChar, endRange.endChar)).to.eql(`</template>`);
+      expect(file.slice(contentRange.startChar, contentRange.endChar)).to.eql(`💩`);
+    }
+  });
 });
