@@ -31,5 +31,6 @@ jobs:
     - name: Node Tests
       run: npm test
 
+    - run: npm run lint:format:js
     - run: npm run lint:package
     - run: npm run lint:published-types
