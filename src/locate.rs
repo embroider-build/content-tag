@@ -102,16 +102,16 @@ pub struct Occurrence {
 pub struct Range {
     start_byte: usize,
     end_byte: usize,
-    start_char: usize,
-    end_char: usize,
+    start_utf16_codepoint: usize,
+    end_utf16_codepoint: usize,
 }
 impl Range {
     pub fn new(src: &str, span: &Span) -> Range {
         Range {
             start_byte: span.lo.0 as usize - 1,
             end_byte: span.hi.0 as usize - 1,
-            start_char: src[..span.lo.0 as usize - 1].chars().count(),
-            end_char: src[..span.hi.0 as usize - 1].chars().count(),
+            start_utf16_codepoint: src[..span.lo.0 as usize - 1].encode_utf16().collect().len(),
+            end_utf16_codepoint: src[..span.hi.0 as usize - 1].encode_utf16().collect().len(),
         }
     }
 }
@@ -132,26 +132,26 @@ fn test_basic_example() {
         range: Range {
             start_byte: 0,
             end_byte: 27,
-            start_char: 0,
-            end_char: 27,
+            start_utf16_codepoint: 0,
+            end_utf16_codepoint: 27,
         },
         start_range: Range {
             start_byte: 0,
             end_byte: 10,
-            start_char: 0,
-            end_char: 10,
+            start_utf16_codepoint: 0,
+            end_utf16_codepoint: 10,
         },
         content_range: Range {
             start_byte: 10,
             end_byte: 16,
-            start_char: 10,
-            end_char: 16,
+            start_utf16_codepoint: 10,
+            end_utf16_codepoint: 16,
         },
         end_range: Range {
             start_byte: 16,
             end_byte: 27,
-            start_char: 16,
-            end_char: 27,
+            start_utf16_codepoint: 16,
+            end_utf16_codepoint: 27,
         },
     };
     assert_eq!(output, vec![expected]);
@@ -174,26 +174,26 @@ fn test_expression_position() {
         range: Range {
             start_byte: 12,
             end_byte: 39,
-            start_char: 12,
-            end_char: 39,
+            start_utf16_codepoint: 12,
+            end_utf16_codepoint: 39,
         },
         start_range: Range {
             start_byte: 12,
             end_byte: 22,
-            start_char: 12,
-            end_char: 22,
+            start_utf16_codepoint: 12,
+            end_utf16_codepoint: 22,
         },
         content_range: Range {
             start_byte: 22,
             end_byte: 28,
-            start_char: 22,
-            end_char: 28,
+            start_utf16_codepoint: 22,
+            end_utf16_codepoint: 28,
         },
         end_range: Range {
             start_byte: 28,
             end_byte: 39,
-            start_char: 28,
-            end_char: 39,
+            start_utf16_codepoint: 28,
+            end_utf16_codepoint: 39,
         },
     }];
 
@@ -221,26 +221,26 @@ fn test_inside_class_body() {
         range: Range {
             start_byte: 49,
             end_byte: 76,
-            start_char: 49,
-            end_char: 76,
+            start_utf16_codepoint: 49,
+            end_utf16_codepoint: 76,
         },
         start_range: Range {
             start_byte: 49,
             end_byte: 59,
-            start_char: 49,
-            end_char: 59,
+            start_utf16_codepoint: 49,
+            end_utf16_codepoint: 59,
         },
         content_range: Range {
             start_byte: 59,
             end_byte: 65,
-            start_char: 59,
-            end_char: 65,
+            start_utf16_codepoint: 59,
+            end_utf16_codepoint: 65,
         },
         end_range: Range {
             start_byte: 65,
             end_byte: 76,
-            start_char: 65,
-            end_char: 76,
+            start_utf16_codepoint: 65,
+            end_utf16_codepoint: 76,
         },
     }];
 
@@ -268,26 +268,26 @@ fn test_multibyte_character_inside_template() {
         range: Range {
             start_byte: 49,
             end_byte: 79,
-            start_char: 49,
-            end_char: 76,
+            start_utf16_codepoint: 49,
+            end_utf16_codepoint: 76,
         },
         start_range: Range {
             start_byte: 49,
             end_byte: 59,
-            start_char: 49,
-            end_char: 59,
+            start_utf16_codepoint: 49,
+            end_utf16_codepoint: 59,
         },
         content_range: Range {
             start_byte: 59,
             end_byte: 68,
-            start_char: 59,
-            end_char: 65,
+            start_utf16_codepoint: 59,
+            end_utf16_codepoint: 65,
         },
         end_range: Range {
             start_byte: 68,
             end_byte: 79,
-            start_char: 65,
-            end_char: 76,
+            start_utf16_codepoint: 65,
+            end_utf16_codepoint: 76,
         },
     }];
 
@@ -317,26 +317,26 @@ fn test_preceded_by_a_slash_character() {
         range: Range {
             start_byte: 65,
             end_byte: 92,
-            start_char: 65,
-            end_char: 92,
+            start_utf16_codepoint: 65,
+            end_utf16_codepoint: 92,
         },
         start_range: Range {
             start_byte: 65,
             end_byte: 75,
-            start_char: 65,
-            end_char: 75,
+            start_utf16_codepoint: 65,
+            end_utf16_codepoint: 75,
         },
         content_range: Range {
             start_byte: 75,
             end_byte: 81,
-            start_char: 75,
-            end_char: 81,
+            start_utf16_codepoint: 75,
+            end_utf16_codepoint: 81,
         },
         end_range: Range {
             start_byte: 81,
             end_byte: 92,
-            start_char: 81,
-            end_char: 92,
+            start_utf16_codepoint: 81,
+            end_utf16_codepoint: 92,
         },
     }];
 
@@ -363,26 +363,26 @@ fn test_template_inside_a_regexp() {
         range: Range {
             start_byte: 67,
             end_byte: 94,
-            start_char: 67,
-            end_char: 94,
+            start_utf16_codepoint: 67,
+            end_utf16_codepoint: 94,
         },
         start_range: Range {
             start_byte: 67,
             end_byte: 77,
-            start_char: 67,
-            end_char: 77,
+            start_utf16_codepoint: 67,
+            end_utf16_codepoint: 77,
         },
         content_range: Range {
             start_byte: 77,
             end_byte: 83,
-            start_char: 77,
-            end_char: 83,
+            start_utf16_codepoint: 77,
+            end_utf16_codepoint: 83,
         },
         end_range: Range {
             start_byte: 83,
             end_byte: 94,
-            start_char: 83,
-            end_char: 94,
+            start_utf16_codepoint: 83,
+            end_utf16_codepoint: 94,
         },
     }];
 
@@ -411,27 +411,27 @@ fn test_inner_expression() {
             range: Range {
                 start_byte: 13,
                 end_byte: 39,
-                start_char: 13,
-                end_char: 39
+                start_utf16_codepoint: 13,
+                end_utf16_codepoint: 39
             },
             content_range: Range {
                 start_byte: 23,
                 end_byte: 28,
-                start_char: 23,
-                end_char: 28
+                start_utf16_codepoint: 23,
+                end_utf16_codepoint: 28
             },
             contents: "Hello".into(),
             end_range: Range {
                 start_byte: 28,
                 end_byte: 39,
-                start_char: 28,
-                end_char: 39
+                start_utf16_codepoint: 28,
+                end_utf16_codepoint: 39
             },
             start_range: Range {
                 start_byte: 13,
                 end_byte: 23,
-                start_char: 13,
-                end_char: 23
+                start_utf16_codepoint: 13,
+                end_utf16_codepoint: 23
             },
             tag_name: "template".into(),
             kind: ContentTagKind::Expression
