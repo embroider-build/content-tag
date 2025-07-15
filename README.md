@@ -93,6 +93,11 @@ interface Range {
   // CAUTION: see "Unicode Codepoint Slicing Warning" below.
   startChar: number;
   endChar: number;
+
+  // utf16 is used by JavaScript strings.
+  // e.g. str.slice(range.startUtf16Codepoint, range.endUtf16Codepoint)
+  startUtf16Codepoint: number;
+  endUtf16Codepoint: number;
 }
 
 interface Parsed {
@@ -158,6 +163,11 @@ Second, beware that Javascript's `String.prototype.slice` doesn't actually work 
 
 ```js
 Array.from(myString).slice(range.startChar, range.endChar).join("");
+```
+
+if you want to just slice from a string you can use 
+```js
+str.slice(range.startUtf16Codepoint, range.endUtf16Codepoint)
 ```
 
 ## Contributing

@@ -8,6 +8,8 @@ interface Range {
   endByte: number;
   startChar: number;
   endChar: number;
+  startUtf16Codepoint: number;
+  endUtf16Codepoint: number;
 }
 
 interface Parsed {
