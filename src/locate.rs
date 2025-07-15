@@ -111,7 +111,7 @@ impl Range {
             start_byte: span.lo.0 as usize - 1,
             end_byte: span.hi.0 as usize - 1,
             start_utf16_codepoint: src[..span.lo.0 as usize - 1].encode_utf16().collect::<Vec<_>>().len(),
-            end_utf16_codepoint: src[..span.hi.0 as usize - 1].encode_utf16().collect::<Vec<_>>().len() + 1, // +1 to align with other parsers where `end` is after the last character.
+            end_utf16_codepoint: src[..span.hi.0 as usize - 1].encode_utf16().collect::<Vec<_>>().len(),
         }
     }
 }
@@ -269,7 +269,7 @@ fn test_multibyte_character_inside_template() {
             start_byte: 49,
             end_byte: 79,
             start_utf16_codepoint: 49,
-            end_utf16_codepoint: 76,
+            end_utf16_codepoint: 77,
         },
         start_range: Range {
             start_byte: 49,
@@ -281,13 +281,13 @@ fn test_multibyte_character_inside_template() {
             start_byte: 59,
             end_byte: 68,
             start_utf16_codepoint: 59,
-            end_utf16_codepoint: 65,
+            end_utf16_codepoint: 66,
         },
         end_range: Range {
             start_byte: 68,
             end_byte: 79,
-            start_utf16_codepoint: 65,
-            end_utf16_codepoint: 76,
+            start_utf16_codepoint: 66,
+            end_utf16_codepoint: 77,
         },
     }];
 
