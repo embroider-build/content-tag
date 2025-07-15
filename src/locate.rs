@@ -114,8 +114,8 @@ impl Range {
             end_byte: span.hi.0 as usize - 1,
             start_char: src[..span.lo.0 as usize - 1].chars().count(),
             end_char: src[..span.hi.0 as usize - 1].chars().count(),
-            start_utf16_codepoint: src[..span.lo.0 as usize - 1].encode_utf16().collect::<Vec<_>>().len(),
-            end_utf16_codepoint: src[..span.hi.0 as usize - 1].encode_utf16().collect::<Vec<_>>().len(),
+            start_utf16_codepoint: src[..span.lo.0 as usize - 1].encode_utf16().count(),
+            end_utf16_codepoint: src[..span.hi.0 as usize - 1].encode_utf16().count(),
         }
     }
 }
