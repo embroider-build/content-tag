@@ -8,8 +8,8 @@ const { expect } = chai;
 
 const p = new Preprocessor();
 
-describe(`parse`, function() {
-  it("basic example", function() {
+describe(`parse`, function () {
+  it("basic example", function () {
     let output = p.parse("<template>Hello!</template>");
 
     expect(output).to.eql([
@@ -30,7 +30,7 @@ describe(`parse`, function() {
     ]);
   });
 
-  it("expression position", function() {
+  it("expression position", function () {
     let output = p.parse("const tpl = <template>Hello!</template>");
 
     expect(output).to.eql([
@@ -51,7 +51,7 @@ describe(`parse`, function() {
     ]);
   });
 
-  it("inside class body", function() {
+  it("inside class body", function () {
     let output = p.parse(`
       class A {
         <template>Hello!</template>
@@ -76,7 +76,7 @@ describe(`parse`, function() {
     ]);
   });
 
-  it("preceded by a slash character", function() {
+  it("preceded by a slash character", function () {
     // What is this testing?
     // Would a better test be:
     // `const divide = 1 / <template>Hello!</template>;`
@@ -103,7 +103,7 @@ describe(`parse`, function() {
     ]);
   });
 
-  it("/<template>/ inside a regexp", function() {
+  it("/<template>/ inside a regexp", function () {
     let output = p.parse(`
       const myregex = /<template>/;
       <template>Hello!</template>
@@ -127,25 +127,25 @@ describe(`parse`, function() {
     ]);
   });
 
-  it("no match", function() {
+  it("no match", function () {
     let output = p.parse("console.log('Hello world');");
 
     expect(output).to.eql([]);
   });
 
-  it("Emits parse errors", function() {
-    expect(function() {
+  it("Emits parse errors", function () {
+    expect(function () {
       p.process(
         `const thing = "face";
   <template>Hi`,
-        { filename: "path/to/my/component.gjs" }
+        { filename: "path/to/my/component.gjs" },
       );
     }).to.throw(`Parse Error at path/to/my/component.gjs:2:15: 2:15`);
   });
 
-  it("handles multibyte characters", function() {
+  it("handles multibyte characters", function () {
     let output = p.parse(
-      "const prefix = '熊';\nconst tpl = <template>Hello!</template>"
+      "const prefix = '熊';\nconst tpl = <template>Hello!</template>",
     );
 
     expect(output).to.eql([
@@ -166,12 +166,12 @@ describe(`parse`, function() {
     ]);
   });
 
-  it('has correct character ranges', function() {
+  it("has correct character ranges", function () {
     let file = [
-      'const one = <template>💩💩💩💩💩💩💩</template>;' +
-      '' +
-      'const two = <template>💩</template>;'
-    ].join('\n')
+      "const one = <template>💩💩💩💩💩💩💩</template>;" +
+        "" +
+        "const two = <template>💩</template>;",
+    ].join("\n");
 
     let output = p.parse(file);
 
@@ -179,22 +179,32 @@ describe(`parse`, function() {
     let two = output[1];
     let arr = Array.from(file);
 
-    const slice = (start, end) => arr.slice(start, end).join('');
+    const slice = (start, end) => arr.slice(start, end).join("");
 
     {
       let { range, startRange, endRange, contentRange } = one;
 
-      expect(slice(range.startChar, range.endChar)).to.eql(`<template>💩💩💩💩💩💩💩</template>`);
-      expect(slice(startRange.startChar, startRange.endChar)).to.eql(`<template>`);
+      expect(slice(range.startChar, range.endChar)).to.eql(
+        `<template>💩💩💩💩💩💩💩</template>`,
+      );
+      expect(slice(startRange.startChar, startRange.endChar)).to.eql(
+        `<template>`,
+      );
       expect(slice(endRange.startChar, endRange.endChar)).to.eql(`</template>`);
-      expect(slice(contentRange.startChar, contentRange.endChar)).to.eql(`💩💩💩💩💩💩💩`);
+      expect(slice(contentRange.startChar, contentRange.endChar)).to.eql(
+        `💩💩💩💩💩💩💩`,
+      );
     }
 
     {
       let { range, startRange, endRange, contentRange } = two;
 
-      expect(slice(range.startChar, range.endChar)).to.eql(`<template>💩</template>`);
-      expect(slice(startRange.startChar, startRange.endChar)).to.eql(`<template>`);
+      expect(slice(range.startChar, range.endChar)).to.eql(
+        `<template>💩</template>`,
+      );
+      expect(slice(startRange.startChar, startRange.endChar)).to.eql(
+        `<template>`,
+      );
       expect(slice(endRange.startChar, endRange.endChar)).to.eql(`</template>`);
       expect(slice(contentRange.startChar, contentRange.endChar)).to.eql(`💩`);
     }
