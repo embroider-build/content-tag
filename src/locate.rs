@@ -111,7 +111,7 @@ impl Range {
             start_byte: span.lo.0 as usize - 1,
             end_byte: span.hi.0 as usize - 1,
             start_utf16_codepoint: src[..span.lo.0 as usize - 1].encode_utf16().collect::<Vec<_>>().len(),
-            end_utf16_codepoint: src[..span.hi.0 as usize - 1].encode_utf16().collect::<Vec<_>>().len(),
+            end_utf16_codepoint: src[..span.hi.0 as usize - 1].encode_utf16().collect::<Vec<_>>().len() + 1, // +1 to align with other parsers where `end` is after the last character.
         }
     }
 }
