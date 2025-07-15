@@ -1,4 +1,15 @@
 # `content-tag` Changelog
+## Release (2025-07-15)
+
+content-tag 4.0.1 (patch)
+
+#### :house: Internal
+* `content-tag`
+  * [#107](https://github.com/embroider-build/content-tag/pull/107) Configure prettier ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#104](https://github.com/embroider-build/content-tag/pull/104) Add additional js/runtime tests for how to use character offsets ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
 ## Release (2025-05-07)
 
 content-tag 4.0.0 (major)
