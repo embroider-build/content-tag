@@ -138,14 +138,14 @@ describe(`parse`, function () {
       p.process(
         `const thing = "face";
   <template>Hi`,
-        { filename: "path/to/my/component.gjs" }
+        { filename: "path/to/my/component.gjs" },
       );
     }).to.throw(`Parse Error at path/to/my/component.gjs:2:15: 2:15`);
   });
 
   it("handles multibyte characters", function () {
     let output = p.parse(
-      "const prefix = '熊';\nconst tpl = <template>Hello!</template>"
+      "const prefix = '熊';\nconst tpl = <template>Hello!</template>",
     );
 
     expect(output).to.eql([
@@ -164,5 +164,49 @@ describe(`parse`, function () {
         endRange: { startByte: 50, endByte: 61, startChar: 48, endChar: 59 },
       },
     ]);
+  });
+
+  it("has correct character ranges", function () {
+    let file = [
+      "const one = <template>💩💩💩💩💩💩💩</template>;" +
+        "" +
+        "const two = <template>💩</template>;",
+    ].join("\n");
+
+    let output = p.parse(file);
+
+    let one = output[0];
+    let two = output[1];
+    let arr = Array.from(file);
+
+    const slice = (start, end) => arr.slice(start, end).join("");
+
+    {
+      let { range, startRange, endRange, contentRange } = one;
+
+      expect(slice(range.startChar, range.endChar)).to.eql(
+        `<template>💩💩💩💩💩💩💩</template>`,
+      );
+      expect(slice(startRange.startChar, startRange.endChar)).to.eql(
+        `<template>`,
+      );
+      expect(slice(endRange.startChar, endRange.endChar)).to.eql(`</template>`);
+      expect(slice(contentRange.startChar, contentRange.endChar)).to.eql(
+        `💩💩💩💩💩💩💩`,
+      );
+    }
+
+    {
+      let { range, startRange, endRange, contentRange } = two;
+
+      expect(slice(range.startChar, range.endChar)).to.eql(
+        `<template>💩</template>`,
+      );
+      expect(slice(startRange.startChar, startRange.endChar)).to.eql(
+        `<template>`,
+      );
+      expect(slice(endRange.startChar, endRange.endChar)).to.eql(`</template>`);
+      expect(slice(contentRange.startChar, contentRange.endChar)).to.eql(`💩`);
+    }
   });
 });
