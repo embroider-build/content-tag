@@ -177,23 +177,24 @@ describe(`parse`, function () {
 
     let one = output[0];
     let two = output[1];
+    let arr = Array.from(file);
 
     {
       let { range, startRange, endRange, contentRange } = one;
 
-      expect(file.slice(range.startChar, range.endChar)).to.eql(`<template>💩💩💩💩💩💩💩</template>`);
-      expect(file.slice(startRange.startChar, startRange.endChar)).to.eql(`<template>`);
-      expect(file.slice(endRange.startChar, endRange.endChar)).to.eql(`</template>`);
-      expect(file.slice(contentRange.startChar, contentRange.endChar)).to.eql(`💩💩💩💩💩💩💩`);
+      expect(arr.slice(range.startChar, range.endChar)).to.eql(`<template>💩💩💩💩💩💩💩</template>`);
+      expect(arr.slice(startRange.startChar, startRange.endChar)).to.eql(`<template>`);
+      expect(arr.slice(endRange.startChar, endRange.endChar)).to.eql(`</template>`);
+      expect(arr.slice(contentRange.startChar, contentRange.endChar)).to.eql(`💩💩💩💩💩💩💩`);
     }
 
     {
       let { range, startRange, endRange, contentRange } = two;
 
-      expect(file.slice(range.startChar, range.endChar)).to.eql(`<template>💩</template>`);
-      expect(file.slice(startRange.startChar, startRange.endChar)).to.eql(`<template>`);
-      expect(file.slice(endRange.startChar, endRange.endChar)).to.eql(`</template>`);
-      expect(file.slice(contentRange.startChar, contentRange.endChar)).to.eql(`💩`);
+      expect(arr.slice(range.startChar, range.endChar)).to.eql(`<template>💩</template>`);
+      expect(arr.slice(startRange.startChar, startRange.endChar)).to.eql(`<template>`);
+      expect(arr.slice(endRange.startChar, endRange.endChar)).to.eql(`</template>`);
+      expect(arr.slice(contentRange.startChar, contentRange.endChar)).to.eql(`💩`);
     }
   });
 });
