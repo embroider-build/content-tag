@@ -1,14 +1,14 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../swc"
-		}
-	],
-	"settings": {
-		"editor.inlayHints.enabled": "off",
-		"editor.formatOnSave": true
-	}
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "../swc",
+    },
+  ],
+  "settings": {
+    "editor.inlayHints.enabled": "off",
+    "editor.formatOnSave": true,
+  },
 }
