@@ -41,7 +41,7 @@ export class Preprocessor {
    */
   process(
     src: string,
-    options?: PreprocessorOptions
+    options?: PreprocessorOptions,
   ): { code: string; map: string };
   /**
    * @param {string} src

@@ -48,7 +48,7 @@ describe(`process`, function () {
                  }
              });
          }
-     };`
+     };`,
     );
   });
 
@@ -64,7 +64,7 @@ describe(`process`, function () {
       p.process(
         `const thing = "face";
   <template>Hi`,
-        { filename: "path/to/my/component.gjs" }
+        { filename: "path/to/my/component.gjs" },
       );
     }).to.throw(`Parse Error at path/to/my/component.gjs:2:15: 2:15`);
   });
@@ -95,10 +95,12 @@ describe(`process`, function () {
   });
 
   it("Provides inline source maps if inline_source_map option is set to true", function () {
-    let output = p.process(`<template>Hi</template>`, { inline_source_map: true });
+    let output = p.process(`<template>Hi</template>`, {
+      inline_source_map: true,
+    });
 
     expect(output.code).to.match(
-      /sourceMappingURL=data:application\/json;base64,/
+      /sourceMappingURL=data:application\/json;base64,/,
     );
   });
 

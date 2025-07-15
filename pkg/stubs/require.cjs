@@ -6,9 +6,10 @@
  */
 class Preprocessor {
   constructor() {
-    throw new Error(`Tried to create a Preprocessor using require() when an import was expected. Please change to using import.`);
+    throw new Error(
+      `Tried to create a Preprocessor using require() when an import was expected. Please change to using import.`,
+    );
   }
 }
-
 
 module.exports = { Preprocessor };
