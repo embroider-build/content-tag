@@ -111,7 +111,7 @@ impl Range {
             start_byte: span.lo.0 as usize - 1,
             end_byte: span.hi.0 as usize - 1,
             start_char: src[..span.lo.0 as usize - 1].chars().count(),
-            end_char: src[..span.hi.0 as usize - 1].chars().count(),
+            end_char: src[..span.hi.0 as usize - 1].chars().count() + 1,
         }
     }
 }
