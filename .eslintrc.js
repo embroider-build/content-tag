@@ -1,15 +1,13 @@
 module.exports = {
-  "env": {
-    "mocha": true,
-    "commonjs": true,
-    "es2021": true
+  env: {
+    mocha: true,
+    commonjs: true,
+    es2021: true,
   },
-  "extends": "eslint:recommended",
-  "overrides": [
-  ],
-  "parserOptions": {
-    "ecmaVersion": "latest"
+  extends: "eslint:recommended",
+  overrides: [],
+  parserOptions: {
+    ecmaVersion: "latest",
   },
-  "rules": {
-  }
-}
+  rules: {},
+};
