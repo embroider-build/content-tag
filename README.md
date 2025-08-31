@@ -48,7 +48,7 @@ console.log(output);
 
 All `content-tag` public API lives on the `Preprocessor` object.
 
-### `Preprocessor.process(src: string, options?: PreprocessorOptions): string;`
+### `Preprocessor.process(src: string, options?: PreprocessorOptions): { code: string, map: string };`
 
 Parses a given source code string using the `content-tag` spec into standard
 JavaScript.
