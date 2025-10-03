@@ -324,3 +324,26 @@ testcase! {
          return template_UUID(``, { eval() { return eval(arguments[0]) } });
        }"#
 }
+
+testcase! {
+  extraneous_indentation_strip,
+  r#"let x = <template>
+    hello
+  </template>"#,
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+     let x = template_UUID(`hello`, { eval() { return eval(arguments[0])} });"#
+}
+
+testcase! {
+  multiline_extraneous_indentation_strip,
+  r#"let x = <template>
+    hello
+
+    extra line break
+    <div>
+      content
+    </div>
+  </template>"#,
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+     let x = template_UUID(`hello\n\nextra line break\n<div>\n  content\n</div>`, { eval() { return eval(arguments[0])} });"#
+}
