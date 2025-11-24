@@ -105,17 +105,17 @@ fn strip_indent(input: &str) -> String {
             continue;
         }
 
-        let leading_whitespace: String = line.chars()
-            .take_while(|c| *c == ' ' || *c == '\t')
-            .collect();
-
-        let indent_count = leading_whitespace.len();
-
-        if leading_whitespace.contains(' ') {
-            uses_spaces = true;
-        }
-        if leading_whitespace.contains('\t') {
-            uses_tabs = true;
+        let mut indent_count = 0;
+        for c in line.chars() {
+            if c == ' ' {
+                uses_spaces = true;
+                indent_count += 1;
+            } else if c == '\t' {
+                uses_tabs = true;
+                indent_count += 1;
+            } else {
+                break;
+            }
         }
 
         min_indent = Some(match min_indent {
