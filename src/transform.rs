@@ -54,13 +54,14 @@ impl<'a> TransformVisitor<'a> {
     }
 
     fn content_literal(&self, contents: &Box<ContentTagContent>) -> ExprOrSpread {
+        let stripped_content = strip_indent(&contents.value);
         Box::new(Expr::Tpl(Tpl {
             span: contents.span,
             exprs: vec![],
             quasis: vec![TplElement {
                 span: contents.span,
                 cooked: None,
-                raw: escape_template_literal(&contents.value),
+                raw: escape_template_literal(&stripped_content.into()),
                 tail: false,
             }],
         }))
@@ -74,6 +75,78 @@ fn escape_template_literal(input: &Atom) -> Atom {
         .replace("`", "\\`")
         .replace("$", "\\$")
         .into()
+}
+
+// https://rfcs.emberjs.com/id/1121-extraneous-invisible-character-stripping/
+fn strip_indent(input: &str) -> String {
+    let lines: Vec<&str> = input.lines().collect();
+
+    if lines.is_empty() {
+        return String::new();
+    }
+
+    let first_non_empty = lines.iter().position(|line| !line.trim().is_empty());
+    let last_non_empty = lines.iter().rposition(|line| !line.trim().is_empty());
+
+    let (first_idx, last_idx) = match (first_non_empty, last_non_empty) {
+        (Some(first), Some(last)) => (first, last),
+        _ => return String::new(), // All lines are empty
+    };
+
+    // Get the trimmed lines (removing leading/trailing empty lines)
+    let trimmed_lines = &lines[first_idx..=last_idx];
+
+    let mut min_indent: Option<usize> = None;
+    let mut uses_spaces = false;
+    let mut uses_tabs = false;
+
+    for line in trimmed_lines {
+        if line.trim().is_empty() {
+            continue;
+        }
+
+        let leading_whitespace: String = line.chars()
+            .take_while(|c| *c == ' ' || *c == '\t')
+            .collect();
+
+        let indent_count = leading_whitespace.len();
+
+        if leading_whitespace.contains(' ') {
+            uses_spaces = true;
+        }
+        if leading_whitespace.contains('\t') {
+            uses_tabs = true;
+        }
+
+        min_indent = Some(match min_indent {
+            None => indent_count,
+            Some(current) => current.min(indent_count),
+        });
+    }
+
+    if uses_spaces && uses_tabs {
+        return trimmed_lines.join("\n");
+    }
+
+    let min_indent = min_indent.unwrap_or(0);
+
+    if min_indent == 0 {
+        return trimmed_lines.join("\n");
+    }
+
+    let stripped_lines: Vec<String> = trimmed_lines
+        .iter()
+        .map(|line| {
+            if line.trim().is_empty() {
+                String::new()
+            } else {
+                let chars: Vec<char> = line.chars().collect();
+                chars.iter().skip(min_indent).collect()
+            }
+        })
+        .collect();
+
+    stripped_lines.join("\n")
 }
 
 impl<'a> VisitMut for TransformVisitor<'a> {
@@ -300,4 +373,143 @@ test!(
     do_not_interpret_js_escapes_in_hbs,
     r#"let x = <template>Hello\nWorld\u1234</template>"#,
     r#"let x = template(`Hello\\nWorld\\u1234`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    strips_leading_trailing_whitespace,
+    r#"let x = <template>
+  <span>Hello</span>
+</template>"#,
+    r#"let x = template(`<span>Hello</span>`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    strips_common_indentation,
+    r#"let x = <template>
+    <div>
+      <span>Hello</span>
+    </div>
+  </template>"#,
+    r#"let x = template(`<div>
+  <span>Hello</span>
+</div>`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    strips_indentation_multiline,
+    r#"<template>
+  Hello
+  <span>there</span>.
+  <p>
+    <span>how are you</span>
+  </p>
+</template>"#,
+    r#"export default template(`Hello
+<span>there</span>.
+<p>
+  <span>how are you</span>
+</p>`, { eval() { return eval(arguments[0]) }},);"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    class_member_strips_indentation,
+    r#"class X {
+  <template>
+    <span>Hello</span>
+  </template>
+}"#,
+    r#"class X {
+  static {
+      template(`<span>Hello</span>`, { component: this, eval() { return eval(arguments[0]) }},);
+  }
+}"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    deeply_nested_indentation,
+    r#"class Component {
+  method() {
+    return <template>
+      <div>
+        <span>Nested</span>
+      </div>
+    </template>;
+  }
+}"#,
+    r#"class Component {
+  method() {
+    return template(`<div>
+  <span>Nested</span>
+</div>`, { eval() { return eval(arguments[0]) }});
+  }
+}"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    preserves_internal_indentation,
+    r#"let x = <template>
+  <div>
+    <pre>
+      some code
+        with indentation
+    </pre>
+  </div>
+</template>"#,
+    r#"let x = template(`<div>
+  <pre>
+    some code
+      with indentation
+  </pre>
+</div>`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    opt_out_with_comment,
+    r#"let x = <template>
+{{!-- prevent automatic de-indent --}}
+    <pre>
+      content here
+    </pre>
+  </template>"#,
+    r#"let x = template(`
+{{!-- prevent automatic de-indent --}}
+    <pre>
+      content here
+    </pre>
+  `, { eval() { return eval(arguments[0]) }})"#
 );

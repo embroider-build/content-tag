@@ -108,4 +108,188 @@ describe(`process`, function () {
     let output = p.process(`class X { declare a: string; }`);
     expect(output.code).to.match(/declare a: string/);
   });
+
+  describe("indentation stripping (RFC #1121)", function () {
+    it("strips leading and trailing whitespace from simple template", function () {
+      let output = p.process(`<template>
+  <span>Hello</span>
+</template>`);
+
+      expect(normalizeOutput(output.code)).to.equalCode(
+        `import { template as template_UUID } from "@ember/template-compiler";
+         export default template_UUID(\`<span>Hello</span>\`, {
+             eval () {
+                 return eval(arguments[0]);
+             }
+         });`,
+      );
+    });
+
+    it("strips common indentation from nested templates", function () {
+      let input = `
+      class Foo extends Component {
+        <template>
+          <div>
+            <span>{{this.greeting}}</span>
+          </div>
+        </template>
+      }
+    `;
+
+      let output = p.process(input);
+
+      expect(normalizeOutput(output.code)).to.equalCode(
+        `import { template as template_UUID } from "@ember/template-compiler";
+         class Foo extends Component {
+             static{
+                 template_UUID(\`<div>
+  <span>{{this.greeting}}</span>
+</div>\`, {
+                     component: this,
+                     eval () {
+                         return eval(arguments[0]);
+                     }
+                 });
+             }
+         };`,
+      );
+    });
+
+    it("strips indentation from multiline content", function () {
+      let input = `<template>
+  Hello
+  <span>there</span>.
+  <p>
+    <span>how are you</span>
+  </p>
+</template>`;
+
+      let output = p.process(input);
+
+      expect(normalizeOutput(output.code)).to.equalCode(
+        `import { template as template_UUID } from "@ember/template-compiler";
+         export default template_UUID(\`Hello
+<span>there</span>.
+<p>
+  <span>how are you</span>
+</p>\`, {
+             eval () {
+                 return eval(arguments[0]);
+             }
+         });`,
+      );
+    });
+
+    it("preserves relative indentation within template", function () {
+      let input = `
+      let x = <template>
+        <div>
+          <pre>
+            some code
+              with indentation
+          </pre>
+        </div>
+      </template>
+    `;
+
+      let output = p.process(input);
+
+      expect(normalizeOutput(output.code)).to.equalCode(
+        `import { template as template_UUID } from "@ember/template-compiler";
+         let x = template_UUID(\`<div>
+  <pre>
+    some code
+      with indentation
+  </pre>
+</div>\`, {
+             eval () {
+                 return eval(arguments[0]);
+             }
+         });`,
+      );
+    });
+
+    it("allows opt-out with comment", function () {
+      let input = `let x = <template>
+{{!-- prevent automatic de-indent --}}
+    <pre>
+      content here
+    </pre>
+  </template>`;
+
+      let output = p.process(input);
+
+      // When opted out, original whitespace is preserved
+      expect(normalizeOutput(output.code)).to.equalCode(
+        `import { template as template_UUID } from "@ember/template-compiler";
+         let x = template_UUID(\`
+{{!-- prevent automatic de-indent --}}
+    <pre>
+      content here
+    </pre>
+  \`, {
+             eval () {
+                 return eval(arguments[0]);
+             }
+         });`,
+      );
+    });
+
+    it("handles deeply nested indentation", function () {
+      let input = `
+      class Component {
+        method() {
+          return <template>
+            <div>
+              <span>Nested</span>
+            </div>
+          </template>;
+        }
+      }
+    `;
+
+      let output = p.process(input);
+
+      expect(normalizeOutput(output.code)).to.equalCode(
+        `import { template as template_UUID } from "@ember/template-compiler";
+         class Component {
+             method() {
+                 return template_UUID(\`<div>
+  <span>Nested</span>
+</div>\`, {
+                     eval () {
+                         return eval(arguments[0]);
+                     }
+                 });
+             }
+         }`,
+      );
+    });
+
+    it("works with template expressions", function () {
+      let input = `const MyTemplate = <template>
+  <span>x</span>
+</template>
+
+<template>
+  <MyTemplate />
+</template>`;
+
+      let output = p.process(input);
+
+      expect(normalizeOutput(output.code)).to.equalCode(
+        `import { template as template_UUID } from "@ember/template-compiler";
+         const MyTemplate = template_UUID(\`<span>x</span>\`, {
+             eval () {
+                 return eval(arguments[0]);
+             }
+         });
+         export default template_UUID(\`<MyTemplate />\`, {
+             eval () {
+                 return eval(arguments[0]);
+             }
+         });`,
+      );
+    });
+  });
 });

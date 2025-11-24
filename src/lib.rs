@@ -345,5 +345,10 @@ testcase! {
     </div>
   </template>"#,
   r#"import { template as template_UUID } from "@ember/template-compiler";
-     let x = template_UUID(`hello\n\nextra line break\n<div>\n  content\n</div>`, { eval() { return eval(arguments[0])} });"#
+     let x = template_UUID(`hello
+
+extra line break
+<div>
+  content
+</div>`, { eval() { return eval(arguments[0])} });"#
 }
