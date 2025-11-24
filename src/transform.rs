@@ -77,7 +77,7 @@ fn escape_template_literal(input: &Atom) -> Atom {
         .into()
 }
 
-// https://rfcs.emberjs.com/id/1121-extraneous-invisible-character-stripping/
+// RFC: https://github.com/emberjs/rfcs/pull/1121
 fn strip_indent(input: &str) -> String {
     let lines: Vec<&str> = input.lines().collect();
 
