@@ -78,28 +78,26 @@ fn escape_template_literal(input: &Atom) -> Atom {
 }
 
 fn strip_indent(input: &str) -> String {
-    let mut lines: Vec<&str> = input.lines().collect();
+    let lines: Vec<&str> = input.lines().collect();
 
     if lines.len() <= 1 {
         return input.to_string();
     }
 
-    while lines.first().is_some_and(|l| l.trim().is_empty()) {
-        lines.remove(0);
-    }
-    while lines.last().is_some_and(|l| l.trim().is_empty()) {
-        lines.pop();
-    }
+    let start = lines.iter().position(|l| !l.trim().is_empty()).unwrap_or(lines.len());
+    let end = lines.iter().rposition(|l| !l.trim().is_empty()).map(|i| i + 1).unwrap_or(0);
 
-    if lines.is_empty() {
+    if start >= end {
         return String::new();
     }
+
+    let lines = &lines[start..end];
 
     let mut min_indent: Option<usize> = None;
     let mut has_spaces = false;
     let mut has_tabs = false;
 
-    for line in &lines {
+    for line in lines {
         let content = line.trim_start();
         if content.is_empty() {
             continue;
