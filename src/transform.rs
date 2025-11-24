@@ -140,8 +140,7 @@ fn strip_indent(input: &str) -> String {
             if line.trim().is_empty() {
                 String::new()
             } else {
-                let chars: Vec<char> = line.chars().collect();
-                chars.iter().skip(min_indent).collect()
+                line.chars().skip(min_indent).collect()
             }
         })
         .collect();
