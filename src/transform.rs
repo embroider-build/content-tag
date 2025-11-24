@@ -77,74 +77,64 @@ fn escape_template_literal(input: &Atom) -> Atom {
         .into()
 }
 
-// RFC: https://github.com/emberjs/rfcs/pull/1121
 fn strip_indent(input: &str) -> String {
-    let lines: Vec<&str> = input.lines().collect();
+    let mut lines: Vec<&str> = input.lines().collect();
 
     if lines.is_empty() {
         return String::new();
     }
 
-    let first_non_empty = lines.iter().position(|line| !line.trim().is_empty());
-    let last_non_empty = lines.iter().rposition(|line| !line.trim().is_empty());
+    if lines.len() == 1 {
+        return lines[0].to_string();
+    }
 
-    let (first_idx, last_idx) = match (first_non_empty, last_non_empty) {
-        (Some(first), Some(last)) => (first, last),
-        _ => return String::new(),
-    };
+    while lines.first().is_some_and(|l| l.trim().is_empty()) {
+        lines.remove(0);
+    }
+    while lines.last().is_some_and(|l| l.trim().is_empty()) {
+        lines.pop();
+    }
 
-    let trimmed_lines = &lines[first_idx..=last_idx];
+    if lines.is_empty() {
+        return String::new();
+    }
 
     let mut min_indent: Option<usize> = None;
-    let mut uses_spaces = false;
-    let mut uses_tabs = false;
+    let mut has_spaces = false;
+    let mut has_tabs = false;
 
-    for line in trimmed_lines {
-        if line.trim().is_empty() {
+    for line in &lines {
+        let content = line.trim_start();
+        if content.is_empty() {
             continue;
         }
 
-        let mut indent_count = 0;
-        for c in line.chars() {
-            if c == ' ' {
-                uses_spaces = true;
-                indent_count += 1;
-            } else if c == '\t' {
-                uses_tabs = true;
-                indent_count += 1;
-            } else {
-                break;
-            }
-        }
+        let indent_size = line.len() - content.len();
+        let indent_chars = &line[..indent_size];
 
-        min_indent = Some(match min_indent {
-            None => indent_count,
-            Some(current) => current.min(indent_count),
-        });
-    }
+        has_spaces |= indent_chars.contains(' ');
+        has_tabs |= indent_chars.contains('\t');
 
-    if uses_spaces && uses_tabs {
-        return trimmed_lines.join("\n");
+        min_indent = Some(min_indent.map_or(indent_size, |current| current.min(indent_size)));
     }
 
     let min_indent = min_indent.unwrap_or(0);
 
-    if min_indent == 0 {
-        return trimmed_lines.join("\n");
+    if (has_spaces && has_tabs) || min_indent == 0 {
+        return lines.join("\n");
     }
 
-    let stripped_lines: Vec<String> = trimmed_lines
+    lines
         .iter()
         .map(|line| {
-            if line.trim().is_empty() {
-                line.to_string()
+            if line.len() >= min_indent {
+                &line[min_indent..]
             } else {
-                line.chars().skip(min_indent).collect()
+                line
             }
         })
-        .collect();
-
-    stripped_lines.join("\n")
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 impl<'a> VisitMut for TransformVisitor<'a> {

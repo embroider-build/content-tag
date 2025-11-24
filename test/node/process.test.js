@@ -289,5 +289,18 @@ describe(`process`, function () {
          });`,
       );
     });
+
+    it("prerves whitespace when component is one line", function () {
+      let output = p.process(`<template> <span>Hello</span> </template>`);
+
+      expect(normalizeOutput(output.code)).to.equalCode(
+        `import { template as template_UUID } from "@ember/template-compiler";
+         export default template_UUID(\` <span>Hello</span> \`, {
+             eval () {
+                 return eval(arguments[0]);
+             }
+         });`,
+      );
+    });
   });
 });
