@@ -90,10 +90,9 @@ fn strip_indent(input: &str) -> String {
 
     let (first_idx, last_idx) = match (first_non_empty, last_non_empty) {
         (Some(first), Some(last)) => (first, last),
-        _ => return String::new(), // All lines are empty
+        _ => return String::new(),
     };
 
-    // Get the trimmed lines (removing leading/trailing empty lines)
     let trimmed_lines = &lines[first_idx..=last_idx];
 
     let mut min_indent: Option<usize> = None;
