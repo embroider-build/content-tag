@@ -80,12 +80,8 @@ fn escape_template_literal(input: &Atom) -> Atom {
 fn strip_indent(input: &str) -> String {
     let mut lines: Vec<&str> = input.lines().collect();
 
-    if lines.is_empty() {
-        return String::new();
-    }
-
-    if lines.len() == 1 {
-        return lines[0].to_string();
+    if lines.len() <= 1 {
+        return input.to_string();
     }
 
     while lines.first().is_some_and(|l| l.trim().is_empty()) {
