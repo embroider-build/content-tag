@@ -109,12 +109,16 @@ fn strip_indent(input: &str) -> String {
         has_spaces |= indent_chars.contains(' ');
         has_tabs |= indent_chars.contains('\t');
 
+        if has_spaces && has_tabs {
+            return lines.join("\n");
+        }
+
         min_indent = Some(min_indent.map_or(indent_size, |current| current.min(indent_size)));
     }
 
     let min_indent = min_indent.unwrap_or(0);
 
-    if (has_spaces && has_tabs) || min_indent == 0 {
+    if min_indent == 0 {
         return lines.join("\n");
     }
 
