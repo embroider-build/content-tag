@@ -222,12 +222,10 @@ describe(`process`, function () {
       // When opted out, original whitespace is preserved
       expect(normalizeOutput(output.code)).to.equalCode(
         `import { template as template_UUID } from "@ember/template-compiler";
-         let x = template_UUID(\`
-{{!-- prevent automatic de-indent --}}
+         let x = template_UUID(\`{{!-- prevent automatic de-indent --}}
     <pre>
       content here
-    </pre>
-  \`, {
+    </pre>\`, {
              eval () {
                  return eval(arguments[0]);
              }

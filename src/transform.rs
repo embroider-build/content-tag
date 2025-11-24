@@ -138,7 +138,7 @@ fn strip_indent(input: &str) -> String {
         .iter()
         .map(|line| {
             if line.trim().is_empty() {
-                String::new()
+                line.to_string()
             } else {
                 line.chars().skip(min_indent).collect()
             }
