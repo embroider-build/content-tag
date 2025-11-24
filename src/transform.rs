@@ -505,10 +505,8 @@ test!(
       content here
     </pre>
   </template>"#,
-    r#"let x = template(`
-{{!-- prevent automatic de-indent --}}
+    r#"let x = template(`{{!-- prevent automatic de-indent --}}
     <pre>
       content here
-    </pre>
-  `, { eval() { return eval(arguments[0]) }})"#
+    </pre>`, { eval() { return eval(arguments[0]) }})"#
 );
