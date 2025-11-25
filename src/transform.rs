@@ -54,13 +54,14 @@ impl<'a> TransformVisitor<'a> {
     }
 
     fn content_literal(&self, contents: &Box<ContentTagContent>) -> ExprOrSpread {
+        let stripped_content = strip_indent(&contents.value);
         Box::new(Expr::Tpl(Tpl {
             span: contents.span,
             exprs: vec![],
             quasis: vec![TplElement {
                 span: contents.span,
                 cooked: None,
-                raw: escape_template_literal(&contents.value),
+                raw: escape_template_literal(&stripped_content.into()),
                 tail: false,
             }],
         }))
@@ -74,6 +75,64 @@ fn escape_template_literal(input: &Atom) -> Atom {
         .replace("`", "\\`")
         .replace("$", "\\$")
         .into()
+}
+
+fn strip_indent(input: &str) -> String {
+    let lines: Vec<&str> = input.lines().collect();
+
+    if lines.len() <= 1 {
+        return input.to_string();
+    }
+
+    let start = lines.iter().position(|l| !l.trim().is_empty()).unwrap_or(lines.len());
+    let end = lines.iter().rposition(|l| !l.trim().is_empty()).map(|i| i + 1).unwrap_or(0);
+
+    if start >= end {
+        return String::new();
+    }
+
+    let lines = &lines[start..end];
+
+    let mut min_indent: Option<usize> = None;
+    let mut has_spaces = false;
+    let mut has_tabs = false;
+
+    for line in lines {
+        let content = line.trim_start();
+        if content.is_empty() {
+            continue;
+        }
+
+        let indent_size = line.len() - content.len();
+        let indent_chars = &line[..indent_size];
+
+        has_spaces |= indent_chars.contains(' ');
+        has_tabs |= indent_chars.contains('\t');
+
+        if has_spaces && has_tabs {
+            return lines.join("\n");
+        }
+
+        min_indent = Some(min_indent.map_or(indent_size, |current| current.min(indent_size)));
+    }
+
+    let min_indent = min_indent.unwrap_or(0);
+
+    if min_indent == 0 {
+        return lines.join("\n");
+    }
+
+    lines
+        .iter()
+        .map(|line| {
+            if line.len() >= min_indent {
+                &line[min_indent..]
+            } else {
+                line
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 impl<'a> VisitMut for TransformVisitor<'a> {
@@ -300,4 +359,141 @@ test!(
     do_not_interpret_js_escapes_in_hbs,
     r#"let x = <template>Hello\nWorld\u1234</template>"#,
     r#"let x = template(`Hello\\nWorld\\u1234`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    strips_leading_trailing_whitespace,
+    r#"let x = <template>
+  <span>Hello</span>
+</template>"#,
+    r#"let x = template(`<span>Hello</span>`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    strips_common_indentation,
+    r#"let x = <template>
+    <div>
+      <span>Hello</span>
+    </div>
+  </template>"#,
+    r#"let x = template(`<div>
+  <span>Hello</span>
+</div>`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    strips_indentation_multiline,
+    r#"<template>
+  Hello
+  <span>there</span>.
+  <p>
+    <span>how are you</span>
+  </p>
+</template>"#,
+    r#"export default template(`Hello
+<span>there</span>.
+<p>
+  <span>how are you</span>
+</p>`, { eval() { return eval(arguments[0]) }},);"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    class_member_strips_indentation,
+    r#"class X {
+  <template>
+    <span>Hello</span>
+  </template>
+}"#,
+    r#"class X {
+  static {
+      template(`<span>Hello</span>`, { component: this, eval() { return eval(arguments[0]) }},);
+  }
+}"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    deeply_nested_indentation,
+    r#"class Component {
+  method() {
+    return <template>
+      <div>
+        <span>Nested</span>
+      </div>
+    </template>;
+  }
+}"#,
+    r#"class Component {
+  method() {
+    return template(`<div>
+  <span>Nested</span>
+</div>`, { eval() { return eval(arguments[0]) }});
+  }
+}"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    preserves_internal_indentation,
+    r#"let x = <template>
+  <div>
+    <pre>
+      some code
+        with indentation
+    </pre>
+  </div>
+</template>"#,
+    r#"let x = template(`<div>
+  <pre>
+    some code
+      with indentation
+  </pre>
+</div>`, { eval() { return eval(arguments[0]) }})"#
+);
+
+test!(
+    Default::default(),
+    |_| as_folder(TransformVisitor::new(
+        &Ident::new("template".into(), Default::default()),
+        None,
+    )),
+    opt_out_with_comment,
+    r#"let x = <template>
+{{!-- prevent automatic de-indent --}}
+    <pre>
+      content here
+    </pre>
+  </template>"#,
+    r#"let x = template(`{{!-- prevent automatic de-indent --}}
+    <pre>
+      content here
+    </pre>`, { eval() { return eval(arguments[0]) }})"#
 );
