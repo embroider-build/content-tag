@@ -1,4 +1,25 @@
 # `content-tag` Changelog
+## Release (2025-11-25)
+
+content-tag 4.1.0 (minor)
+
+#### :rocket: Enhancement
+* `content-tag`
+  * [#112](https://github.com/embroider-build/content-tag/pull/112) indentation stripping ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#108](https://github.com/embroider-build/content-tag/pull/108) add utf16 code points range ([@patricklx](https://github.com/patricklx))
+
+#### :memo: Documentation
+* `content-tag`
+  * [#111](https://github.com/embroider-build/content-tag/pull/111) Fix return type in readme to include code and map (as the dts already… ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `content-tag`
+  * [#107](https://github.com/embroider-build/content-tag/pull/107) Configure prettier ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#104](https://github.com/embroider-build/content-tag/pull/104) Add additional js/runtime tests for how to use character offsets ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 2
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
 ## Release (2025-05-07)
 
 content-tag 4.0.0 (major)
