@@ -1,7 +1,7 @@
 name: Setup
 description: Setup node, rust, and install dependencies
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     ##############
     # Rust / Cargo
@@ -17,20 +17,25 @@ runs:
           debug-${{ runner.os }}-${{ hashFiles('rust-toolchain') }}-
           debug-${{ runner.os }}-
     - name: Install wasm-pack
-      shell: 'bash'
+      shell: "bash"
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
     - name: Install wasm-opt
-      shell: 'bash'
+      shell: "bash"
       run: cargo install wasm-opt
 
     ##############
     # Node
     ##############
+    # pnpm is used by release-plan (accidentally?)
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
     - uses: actions/setup-node@v4
       with:
         node-version: 18
-        cache: 'npm'
+        cache: "npm"
 
     - name: Install node dependencies
-      shell: 'bash'
+      shell: "bash"
       run: npm ci
