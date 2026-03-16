@@ -5,3 +5,4 @@ sample/
 
 *.md
 *.html
+pnpm-lock.yaml
