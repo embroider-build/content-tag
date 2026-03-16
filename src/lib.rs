@@ -88,6 +88,7 @@ impl Preprocessor {
 
             let mut visitor = locate::LocateContentTagVisitor {
                 occurrences: Default::default(),
+                is_ascii: src.is_ascii(),
                 src: src.to_string(),
             };
 

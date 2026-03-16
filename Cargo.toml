@@ -47,6 +47,10 @@ features = [
     "fast-rng"  # Use a faster (but still sufficiently random) RNG
 ]
 
+[[bench]]
+name = "parse_bench"
+harness = false
+
 [dev-dependencies]
 difference = "2"
 regex = "1.11.1"
