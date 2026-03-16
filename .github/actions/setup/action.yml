@@ -21,7 +21,7 @@ runs:
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
     - name: Install wasm-opt
       shell: "bash"
-      run: cargo install wasm-opt
+      run: cargo install wasm-opt --locked
 
     ##############
     # Node
