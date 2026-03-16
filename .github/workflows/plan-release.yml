@@ -46,18 +46,21 @@ jobs:
         # lerna-changelog can discover what's changed since the last release
         with:
           fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      
-      - run: npm ci
-      
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
       - name: "Generate Explanation and Prep Changelogs"
         id: explanation
         run: |
           set -x
-          
-          npx release-plan prepare --single-package=content-tag
+
+          pnpm exec release-plan prepare --single-package=content-tag
           
           echo 'text<<EOF' >> $GITHUB_OUTPUT
           jq .description .release-plan.json -r >> $GITHUB_OUTPUT
