@@ -10,6 +10,7 @@ use swc_ecma_visit::{Visit, VisitWith};
 pub struct LocateContentTagVisitor {
     pub occurrences: Vec<Occurrence>,
     pub src: String,
+    pub is_ascii: bool,
 }
 
 #[derive(Eq, PartialEq, Debug, Serialize)]
@@ -32,10 +33,10 @@ impl LocateContentTagVisitor {
             kind,
             tag_name: "template".to_owned(),
             contents: contents.value.to_string(),
-            range: Range::new(&self.src, span),
-            start_range: Range::new(&self.src, &opening.span),
-            content_range: Range::new(&self.src, &contents.span),
-            end_range: Range::new(&self.src, &closing.span),
+            range: Range::new(&self.src, span, self.is_ascii),
+            start_range: Range::new(&self.src, &opening.span, self.is_ascii),
+            content_range: Range::new(&self.src, &contents.span, self.is_ascii),
+            end_range: Range::new(&self.src, &closing.span, self.is_ascii),
         };
 
         self.occurrences.push(occurrence);
@@ -108,14 +109,28 @@ pub struct Range {
     end_utf16_codepoint: usize,
 }
 impl Range {
-    pub fn new(src: &str, span: &Span) -> Range {
-        Range {
-            start_byte: span.lo.0 as usize - 1,
-            end_byte: span.hi.0 as usize - 1,
-            start_char: src[..span.lo.0 as usize - 1].chars().count(),
-            end_char: src[..span.hi.0 as usize - 1].chars().count(),
-            start_utf16_codepoint: src[..span.lo.0 as usize - 1].encode_utf16().count(),
-            end_utf16_codepoint: src[..span.hi.0 as usize - 1].encode_utf16().count(),
+    pub fn new(src: &str, span: &Span, is_ascii: bool) -> Range {
+        let start_byte = span.lo.0 as usize - 1;
+        let end_byte = span.hi.0 as usize - 1;
+        if is_ascii {
+            // For ASCII sources, byte/char/utf16 offsets are all identical.
+            Range {
+                start_byte,
+                end_byte,
+                start_char: start_byte,
+                end_char: end_byte,
+                start_utf16_codepoint: start_byte,
+                end_utf16_codepoint: end_byte,
+            }
+        } else {
+            Range {
+                start_byte,
+                end_byte,
+                start_char: src[..start_byte].chars().count(),
+                end_char: src[..end_byte].chars().count(),
+                start_utf16_codepoint: src[..start_byte].encode_utf16().count(),
+                end_utf16_codepoint: src[..end_byte].encode_utf16().count(),
+            }
         }
     }
 }
