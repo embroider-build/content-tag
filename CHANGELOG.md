@@ -1,4 +1,25 @@
 # `content-tag` Changelog
+
+## Release (2026-03-17)
+
+* content-tag 4.1.1 (patch)
+
+#### :bug: Bug Fix
+* `content-tag`
+  * [#116](https://github.com/embroider-build/content-tag/pull/116) Fix missing utf16 codepoint fields in Node.js type definitions "must be manually kept in sync with ./index.d.cts" ([@johanrd](https://github.com/johanrd))
+
+#### :house: Internal
+* `content-tag`
+  * [#122](https://github.com/embroider-build/content-tag/pull/122) Reroll lockfile ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#119](https://github.com/embroider-build/content-tag/pull/119) Update release plan via: `pnpm dlx create-release-plan-setup@latest --update` ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#120](https://github.com/embroider-build/content-tag/pull/120) Migrate fully to pnpm ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#117](https://github.com/embroider-build/content-tag/pull/117) Fix CI: add --locked to cargo install wasm-opt ([@Copilot](https://github.com/apps/copilot-swe-agent))
+  * [#115](https://github.com/embroider-build/content-tag/pull/115) Force re-try of publish ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 3
+- Copilot [Bot] ([@copilot-swe-agent](https://github.com/apps/copilot-swe-agent))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [@johanrd](https://github.com/johanrd)
 ## Release (2025-11-25)
 
 content-tag 4.1.0 (minor)
