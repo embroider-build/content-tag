@@ -1,4 +1,32 @@
 # `content-tag` Changelog
+
+## Release (2026-03-17)
+
+* content-tag 4.1.1 (patch)
+
+#### :bug: Bug Fix
+* `content-tag`
+  * [#124](https://github.com/embroider-build/content-tag/pull/124) introduce a constructor in LocateContentTagVisitor ([@ef4](https://github.com/ef4))
+  * [#118](https://github.com/embroider-build/content-tag/pull/118) Performance idea: add ascii skip char counting happy path. Worth the complexity? ([@johanrd](https://github.com/johanrd))
+  * [#116](https://github.com/embroider-build/content-tag/pull/116) Fix missing utf16 codepoint fields in Node.js type definitions "must be manually kept in sync with ./index.d.cts" ([@johanrd](https://github.com/johanrd))
+
+#### :house: Internal
+* `content-tag`
+  * [#127](https://github.com/embroider-build/content-tag/pull/127) Tweak release-plan to use our custom setup action ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#126](https://github.com/embroider-build/content-tag/pull/126) Revert "Prepare Release v4.1.1" ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#121](https://github.com/embroider-build/content-tag/pull/121) Prepare Release v4.1.1 ([@github-actions[bot]](https://github.com/apps/github-actions))
+  * [#122](https://github.com/embroider-build/content-tag/pull/122) Reroll lockfile ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#119](https://github.com/embroider-build/content-tag/pull/119) Update release plan via: `pnpm dlx create-release-plan-setup@latest --update` ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#120](https://github.com/embroider-build/content-tag/pull/120) Migrate fully to pnpm ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#117](https://github.com/embroider-build/content-tag/pull/117) Fix CI: add --locked to cargo install wasm-opt ([@Copilot](https://github.com/apps/copilot-swe-agent))
+  * [#115](https://github.com/embroider-build/content-tag/pull/115) Force re-try of publish ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 5
+- Copilot [Bot] ([@copilot-swe-agent](https://github.com/apps/copilot-swe-agent))
+- Edward Faulkner ([@ef4](https://github.com/ef4))
+- GitHub Actions [Bot] ([@github-actions](https://github.com/apps/github-actions))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [@johanrd](https://github.com/johanrd)
 ## Release (2025-11-25)
 
 content-tag 4.1.0 (minor)
