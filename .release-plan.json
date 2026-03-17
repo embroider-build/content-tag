@@ -1,14 +1,17 @@
 {
   "solution": {
     "content-tag": {
-      "impact": "patch",
-      "oldVersion": "4.1.0",
-      "newVersion": "4.1.1",
-      "tagName": "latest",
+      "impact": "minor",
+      "oldVersion": "4.0.0",
+      "newVersion": "4.1.0",
       "constraints": [
         {
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
           "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
+          "reason": "Appears in changelog section :memo: Documentation"
         },
         {
           "impact": "patch",
@@ -18,5 +21,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2026-03-17)\n\n* content-tag 4.1.1 (patch)\n\n#### :bug: Bug Fix\n* `content-tag`\n  * [#116](https://github.com/embroider-build/content-tag/pull/116) Fix missing utf16 codepoint fields in Node.js type definitions \"must be manually kept in sync with ./index.d.cts\" ([@johanrd](https://github.com/johanrd))\n\n#### :house: Internal\n* `content-tag`\n  * [#122](https://github.com/embroider-build/content-tag/pull/122) Reroll lockfile ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#119](https://github.com/embroider-build/content-tag/pull/119) Update release plan via: `pnpm dlx create-release-plan-setup@latest --update` ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#120](https://github.com/embroider-build/content-tag/pull/120) Migrate fully to pnpm ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#117](https://github.com/embroider-build/content-tag/pull/117) Fix CI: add --locked to cargo install wasm-opt ([@Copilot](https://github.com/apps/copilot-swe-agent))\n  * [#115](https://github.com/embroider-build/content-tag/pull/115) Force re-try of publish ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 3\n- Copilot [Bot] ([@copilot-swe-agent](https://github.com/apps/copilot-swe-agent))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n- [@johanrd](https://github.com/johanrd)\n"
+  "description": "## Release (2025-11-25)\n\ncontent-tag 4.1.0 (minor) \n\n#### :rocket: Enhancement\n* `content-tag`\n  * [#112](https://github.com/embroider-build/content-tag/pull/112) indentation stripping ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#108](https://github.com/embroider-build/content-tag/pull/108) add utf16 code points range ([@patricklx](https://github.com/patricklx))\n\n#### :memo: Documentation\n* `content-tag`\n  * [#111](https://github.com/embroider-build/content-tag/pull/111) Fix return type in readme to include code and map (as the dts already… ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `content-tag`\n  * [#107](https://github.com/embroider-build/content-tag/pull/107) Configure prettier ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#104](https://github.com/embroider-build/content-tag/pull/104) Add additional js/runtime tests for how to use character offsets ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 2\n- Patrick Pircher ([@patricklx](https://github.com/patricklx))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
