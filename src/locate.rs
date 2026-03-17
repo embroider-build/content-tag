@@ -9,8 +9,8 @@ use swc_ecma_visit::{Visit, VisitWith};
 #[derive(Default, Debug)]
 pub struct LocateContentTagVisitor {
     pub occurrences: Vec<Occurrence>,
-    pub src: String,
-    pub is_ascii: bool,
+    src: String,
+    is_ascii: bool,
 }
 
 #[derive(Eq, PartialEq, Debug, Serialize)]
@@ -21,6 +21,15 @@ enum ContentTagKind {
 }
 
 impl LocateContentTagVisitor {
+    pub fn new(src: String) -> Self {
+        let is_ascii = src.is_ascii();
+        Self {
+            occurrences: Default::default(),
+            src,
+            is_ascii,
+        }
+    }
+
     fn add_occurrence(
         &mut self,
         kind: ContentTagKind,

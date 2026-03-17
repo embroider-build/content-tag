@@ -86,11 +86,7 @@ impl Preprocessor {
         GLOBALS.set(&Default::default(), || {
             let parsed_module = parser.parse_module()?;
 
-            let mut visitor = locate::LocateContentTagVisitor {
-                occurrences: Default::default(),
-                is_ascii: src.is_ascii(),
-                src: src.to_string(),
-            };
+            let mut visitor = locate::LocateContentTagVisitor::new(src.to_string());
 
             parsed_module.visit_with(&mut visitor);
 
