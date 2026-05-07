@@ -14,10 +14,11 @@ use swc_ecma_ast::{
     ModuleItem,
 };
 use swc_ecma_codegen::Emitter;
-use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
+use swc_ecma_parser::TsSyntax;
+use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax};
 use swc_ecma_transforms::resolver;
 use swc_ecma_utils::private_ident;
-use swc_ecma_visit::{as_folder, VisitMutWith, VisitWith};
+use swc_ecma_visit::{VisitMutWith, VisitWith};
 
 mod bindings;
 mod locate;
@@ -71,10 +72,12 @@ impl Preprocessor {
             None => FileName::Anon,
         };
 
-        let source_file = self.source_map.new_source_file(filename, src.to_string());
+        let source_file = self
+            .source_map
+            .new_source_file(filename.into(), src.to_string());
 
         let lexer = Lexer::new(
-            Syntax::Typescript(TsConfig {
+            Syntax::Typescript(TsSyntax {
                 decorators: true,
                 ..Default::default()
             }),
@@ -106,10 +109,12 @@ impl Preprocessor {
             None => FileName::Anon,
         };
 
-        let source_file = self.source_map.new_source_file(filename, src.to_string());
+        let source_file = self
+            .source_map
+            .new_source_file(filename.into(), src.to_string());
 
         let lexer = Lexer::new(
-            Syntax::Typescript(TsConfig {
+            Syntax::Typescript(TsSyntax {
                 decorators: true,
                 ..Default::default()
             }),
@@ -123,10 +128,10 @@ impl Preprocessor {
 
             let id = private_ident!(IMPORT_ALIAS);
             let mut needs_import = false;
-            parsed_module.visit_mut_with(&mut as_folder(transform::TransformVisitor::new(
+            parsed_module.visit_mut_with(&mut transform::TransformVisitor::new(
                 &id,
                 Some(&mut needs_import),
-            )));
+            ));
 
             if needs_import {
                 insert_import(&mut parsed_module, target_module, target_specifier, &id)
@@ -161,7 +166,7 @@ impl Preprocessor {
         emitter.emit_module(module).unwrap();
 
         self.source_map()
-            .build_source_map_with_config(&srcmap, None, SourceMapConfig {})
+            .build_source_map(&srcmap, None, SourceMapConfig {})
             .to_writer(&mut source_map_buffer)
             .unwrap();
 
@@ -204,7 +209,7 @@ fn insert_import(
             specifiers: vec![ImportSpecifier::Named(ImportNamedSpecifier {
                 span: Default::default(),
                 local: local.clone(),
-                imported: Some(ModuleExportName::Ident(Ident::new(
+                imported: Some(ModuleExportName::Ident(Ident::new_no_ctxt(
                     target_specifier.into(),
                     Default::default(),
                 ))),
@@ -213,6 +218,7 @@ fn insert_import(
             src: Box::new(target_module.into()),
             type_only: false,
             with: None,
+            phase: Default::default(),
         })),
     );
 }
