@@ -4,7 +4,6 @@ use swc_core::ecma::{
         BlockStmt, CallExpr, Callee, ClassMember, ContentTagExpression, ContentTagMember, Expr,
         ExprStmt, Ident, StaticBlock, Stmt,
     },
-    transforms::testing::test,
     visit::VisitMut,
     visit::VisitMutWith,
 };
@@ -84,8 +83,15 @@ fn strip_indent(input: &str) -> String {
         return input.to_string();
     }
 
-    let start = lines.iter().position(|l| !l.trim().is_empty()).unwrap_or(lines.len());
-    let end = lines.iter().rposition(|l| !l.trim().is_empty()).map(|i| i + 1).unwrap_or(0);
+    let start = lines
+        .iter()
+        .position(|l| !l.trim().is_empty())
+        .unwrap_or(lines.len());
+    let end = lines
+        .iter()
+        .rposition(|l| !l.trim().is_empty())
+        .map(|i| i + 1)
+        .unwrap_or(0);
 
     if start >= end {
         return String::new();
@@ -227,7 +233,7 @@ struct TemplateSatisfies<'a> {
     pub ts_type: &'a Box<TsType>,
 }
 
-fn content_tag_satisfies_expression_statement(item: &ModuleItem) -> Option<TemplateSatisfies> {
+fn content_tag_satisfies_expression_statement(item: &ModuleItem) -> Option<TemplateSatisfies<'_>> {
     if let ModuleItem::Stmt(Stmt::Expr(ExprStmt {
         expr:
             box Expr::TsSatisfies(TsSatisfiesExpr {
@@ -250,25 +256,33 @@ fn content_tag_satisfies_expression_statement(item: &ModuleItem) -> Option<Templ
 #[cfg(test)]
 use swc_core::ecma::visit::as_folder;
 
+macro_rules! test {
+    ($test_name:ident, $input:expr, $expected:expr) => {
+        #[test]
+        fn $test_name() {
+            swc_core::ecma::transforms::testing::test_transform(
+                Default::default(),
+                |_| {
+                    as_folder(TransformVisitor::new(
+                        &Ident::new("template".into(), Default::default()),
+                        None,
+                    ))
+                },
+                $input,
+                $expected,
+                false,
+            )
+        }
+    };
+}
+
 test!(
-    Default::default(),
-    |_| {
-        as_folder(TransformVisitor::new(
-            &Ident::new("template".into(), Default::default()),
-            None,
-        ))
-    },
     content_tag_template_expression,
     r#"let x = <template>Hello</template>"#,
     r#"let x = template(`Hello`, { eval() { return eval(arguments[0]); }})"#
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     content_tag_template_member,
     r#"class X { <template>Hello</template> } "#,
     r#"class X {
@@ -279,11 +293,6 @@ test!(
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     expression_inside_class_member,
     r#"class X { thing = <template>Hello</template> } "#,
     r#"class X {
@@ -292,11 +301,6 @@ test!(
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     class_member_inside_expression,
     r#"let x = class { <template>Hello</template> } "#,
     r#"let x = class {
@@ -307,66 +311,36 @@ test!(
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     content_tag_export_default,
     r#"<template>Hello</template>"#,
     r#"export default template(`Hello`, { eval() { return eval(arguments[0]) }},);"#
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     inner_expression,
     r#"let x = doIt(<template>Hello</template>)"#,
     r#"let x = doIt(template(`Hello`, { eval() { return eval(arguments[0]) }}))"#
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     backtick_in_template,
     r#"let x = <template>He`llo</template>"#,
     r#"let x = template(`He\`llo`, { eval() { return eval(arguments[0]) }})"#
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     dollar_in_template,
     r#"let x = <template>He${ll}o</template>"#,
     r#"let x = template(`He\${ll}o`, { eval() { return eval(arguments[0]) }})"#
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     do_not_interpret_js_escapes_in_hbs,
     r#"let x = <template>Hello\nWorld\u1234</template>"#,
     r#"let x = template(`Hello\\nWorld\\u1234`, { eval() { return eval(arguments[0]) }})"#
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     strips_leading_trailing_whitespace,
     r#"let x = <template>
   <span>Hello</span>
@@ -375,11 +349,6 @@ test!(
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     strips_common_indentation,
     r#"let x = <template>
     <div>
@@ -392,11 +361,6 @@ test!(
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     strips_indentation_multiline,
     r#"<template>
   Hello
@@ -413,11 +377,6 @@ test!(
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     class_member_strips_indentation,
     r#"class X {
   <template>
@@ -432,11 +391,6 @@ test!(
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     deeply_nested_indentation,
     r#"class Component {
   method() {
@@ -457,11 +411,6 @@ test!(
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     preserves_internal_indentation,
     r#"let x = <template>
   <div>
@@ -480,11 +429,6 @@ test!(
 );
 
 test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor::new(
-        &Ident::new("template".into(), Default::default()),
-        None,
-    )),
     opt_out_with_comment,
     r#"let x = <template>
 {{!-- prevent automatic de-indent --}}
