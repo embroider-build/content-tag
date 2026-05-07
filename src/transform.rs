@@ -50,7 +50,7 @@ impl<'a> TransformVisitor<'a> {
                 self.content_literal(contents),
                 crate::snippets::scope_params(closing.span).into(),
             ],
-            type_args: None,
+            ..Default::default()
         })
     }
 
@@ -168,7 +168,7 @@ impl<'a> VisitMut for TransformVisitor<'a> {
                     self.content_literal(contents),
                     crate::snippets::scope_params_with_this(closing.span).into(),
                 ],
-                type_args: None,
+                ..Default::default()
             });
             let call_statement = ExprStmt {
                 span: *span,
@@ -179,6 +179,7 @@ impl<'a> VisitMut for TransformVisitor<'a> {
                 body: BlockStmt {
                     span: *span,
                     stmts: vec![Stmt::Expr(call_statement)],
+                    ..Default::default()
                 },
             });
             self.set_found_it();
