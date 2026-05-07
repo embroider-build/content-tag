@@ -28,6 +28,22 @@ pub fn testcase(input: &str, expected: &str) -> Result<(), swc_ecma_parser::erro
     Ok(())
 }
 
+pub fn testcase_substr(input: &str, expected: &str) -> Result<(), swc_ecma_parser::error::Error> {
+    let p = Preprocessor::new();
+    let actual = p.process(input, Default::default())?;
+
+    if !actual.code.contains(expected) {
+        panic!(
+            "output does not include expected substr ({}):\n{}",
+            expected, actual.code
+        );
+    }
+
+    assert!(!actual.map.is_empty(), "expected .map to not be empty");
+
+    Ok(())
+}
+
 fn normalize(src: &str) -> String {
     let filename = "test.js".into();
 
