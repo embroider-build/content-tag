@@ -271,7 +271,7 @@ macro_rules! test {
         fn $test_name() {
             swc_core::ecma::transforms::testing::test_inline_input_output(
                 Default::default(),
-                false.into(),
+                true.into(),
                 |_| {
                     TransformVisitor::new(
                         &Ident::new_no_ctxt("template".into(), Default::default()),
