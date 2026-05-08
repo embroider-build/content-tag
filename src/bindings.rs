@@ -2,13 +2,13 @@ use crate::{Options, Preprocessor as CorePreprocessor};
 use js_sys::Reflect;
 use std::path::PathBuf;
 use swc_common::{
-    errors::{ColorConfig, Handler},
+    errors::Handler,
     sync::Lrc,
     SourceMap, Spanned,
 };
 use swc_error_reporters::{
     handler::{HandlerOpts, ThreadSafetyDiagnostics},
-    ErrorEmitter,
+    ErrorEmitter, GraphicalReportHandler, GraphicalTheme, ToPrettyDiagnostic,
 };
 use wasm_bindgen::prelude::*;
 
@@ -83,23 +83,23 @@ pub struct Preprocessor {
 fn capture_err_detail(
     err: swc_ecma_parser::error::Error,
     source_map: Lrc<SourceMap>,
-    color: ColorConfig,
+    theme: GraphicalTheme,
 ) -> JsValue {
-    let diagnostics = ThreadSafetyDiagnostics::default();
+    let mut diagnostics = ThreadSafetyDiagnostics::default();
     let emitter = ErrorEmitter {
         diagnostics: diagnostics.clone(),
         cm: source_map.clone(),
-        opts: HandlerOpts {
-            color,
-            skip_filename: false,
-        },
+        opts: HandlerOpts::default(),
     };
     let handler = Handler::with_emitter(true, false, Box::new(emitter));
     err.into_diagnostic(&handler).emit();
-    diagnostics
-        .to_pretty_string(&source_map, false, color)
-        .join("")
-        .into()
+    let reporter = GraphicalReportHandler::new_themed(theme);
+    let s: String = diagnostics
+        .take()
+        .iter()
+        .map(|d| d.to_pretty_string(&source_map, false, &reporter))
+        .collect();
+    s.into()
 }
 
 fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<SourceMap>) -> JsValue {
@@ -108,13 +108,17 @@ fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<Sourc
     js_sys::Reflect::set(
         &js_err,
         &"source_code".into(),
-        &capture_err_detail(err.clone(), source_map.clone(), ColorConfig::Never),
+        &capture_err_detail(
+            err.clone(),
+            source_map.clone(),
+            GraphicalTheme::unicode_nocolor(),
+        ),
     )
     .unwrap();
     js_sys::Reflect::set(
         &js_err,
         &"source_code_color".into(),
-        &capture_err_detail(err, source_map, ColorConfig::Always),
+        &capture_err_detail(err, source_map, GraphicalTheme::unicode()),
     )
     .unwrap();
     return js_err;
