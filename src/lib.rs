@@ -328,6 +328,13 @@ testcase! {
        }"#
 }
 
+#[test]
+fn preserves_type_reexport() -> Result<(), swc_ecma_parser::error::Error> {
+    // we're using a substring test here because the bug I'm testing also effects
+    // the normalizer that the other tests are relying on.
+    test_helpers::testcase_substr("export { type X } from 'elsewhere';", "type X")
+}
+
 testcase! {
   extraneous_indentation_strip,
   r#"let x = <template>

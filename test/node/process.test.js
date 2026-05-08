@@ -109,6 +109,13 @@ describe(`process`, function () {
     expect(output.code).to.match(/declare a: string/);
   });
 
+  it("Preserves typescript export type", function () {
+    let output = p.process(`
+      export { type Y } from 'elsewhere';
+    `);
+    expect(output.code).to.match(/type Y/);
+  });
+
   describe("indentation stripping (RFC #1121)", function () {
     it("strips leading and trailing whitespace from simple template", function () {
       let output = p.process(`<template>
