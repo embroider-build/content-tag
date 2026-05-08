@@ -1,12 +1,15 @@
 use crate::{Options, Preprocessor as CorePreprocessor};
 use js_sys::Reflect;
-use std::{fmt, path::PathBuf, str};
+use std::path::PathBuf;
 use swc_common::{
     errors::Handler,
-    sync::{Lock, Lrc},
+    sync::Lrc,
     SourceMap, Spanned,
 };
-use swc_error_reporters::{GraphicalReportHandler, GraphicalTheme, PrettyEmitter};
+use swc_error_reporters::{
+    handler::{HandlerOpts, ThreadSafetyDiagnostics},
+    ErrorEmitter, GraphicalReportHandler, GraphicalTheme, ToPrettyDiagnostic,
+};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -77,30 +80,25 @@ pub struct Preprocessor {
     // core: Box<CorePreprocessor>,
 }
 
-#[derive(Clone, Default)]
-struct Writer(Lrc<Lock<String>>);
-
-impl fmt::Write for Writer {
-    fn write_str(&mut self, s: &str) -> fmt::Result {
-        self.0.lock().write_str(s)
-    }
-}
-
 fn capture_err_detail(
     err: swc_ecma_parser::error::Error,
     source_map: Lrc<SourceMap>,
     theme: GraphicalTheme,
 ) -> JsValue {
-    let wr = Writer::default();
-    let emitter = PrettyEmitter::new(
-        source_map,
-        Box::new(wr.clone()),
-        GraphicalReportHandler::new_themed(theme),
-        Default::default(),
-    );
+    let mut diagnostics = ThreadSafetyDiagnostics::default();
+    let emitter = ErrorEmitter {
+        diagnostics: diagnostics.clone(),
+        cm: source_map.clone(),
+        opts: HandlerOpts::default(),
+    };
     let handler = Handler::with_emitter(true, false, Box::new(emitter));
     err.into_diagnostic(&handler).emit();
-    let s = wr.0.lock().as_str().to_string();
+    let reporter = GraphicalReportHandler::new_themed(theme);
+    let s: String = diagnostics
+        .take()
+        .iter()
+        .map(|d| d.to_pretty_string(&source_map, false, &reporter))
+        .collect();
     s.into()
 }
 

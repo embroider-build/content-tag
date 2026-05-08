@@ -8,6 +8,8 @@ use swc_core::ecma::{
     visit::VisitMutWith,
 };
 
+#[cfg(test)]
+use swc_ecma_ast::Pass;
 use swc_ecma_ast::{
     ContentTagContent, ExportDefaultExpr, ExprOrSpread, ModuleDecl, ModuleItem, Tpl, TplElement,
     TsSatisfiesExpr, TsType,
@@ -48,7 +50,7 @@ impl<'a> TransformVisitor<'a> {
                 self.content_literal(contents),
                 crate::snippets::scope_params(closing.span).into(),
             ],
-            type_args: None,
+            ..Default::default()
         })
     }
 
@@ -166,7 +168,7 @@ impl<'a> VisitMut for TransformVisitor<'a> {
                     self.content_literal(contents),
                     crate::snippets::scope_params_with_this(closing.span).into(),
                 ],
-                type_args: None,
+                ..Default::default()
             });
             let call_statement = ExprStmt {
                 span: *span,
@@ -177,6 +179,7 @@ impl<'a> VisitMut for TransformVisitor<'a> {
                 body: BlockStmt {
                     span: *span,
                     stmts: vec![Stmt::Expr(call_statement)],
+                    ..Default::default()
                 },
             });
             self.set_found_it();
@@ -254,23 +257,30 @@ fn content_tag_satisfies_expression_statement(item: &ModuleItem) -> Option<Templ
 }
 
 #[cfg(test)]
-use swc_core::ecma::visit::as_folder;
+impl<'a> TransformVisitor<'a> {
+    pub fn into_pass(self) -> impl Pass + use<'a> {
+        use swc_ecma_visit::visit_mut_pass;
+
+        visit_mut_pass(self)
+    }
+}
 
 macro_rules! test {
     ($test_name:ident, $input:expr, $expected:expr) => {
         #[test]
         fn $test_name() {
-            swc_core::ecma::transforms::testing::test_transform(
+            swc_core::ecma::transforms::testing::test_inline_input_output(
                 Default::default(),
+                true.into(),
                 |_| {
-                    as_folder(TransformVisitor::new(
-                        &Ident::new("template".into(), Default::default()),
+                    TransformVisitor::new(
+                        &Ident::new_no_ctxt("template".into(), Default::default()),
                         None,
-                    ))
+                    )
+                    .into_pass()
                 },
                 $input,
                 $expected,
-                false,
             )
         }
     };
