@@ -1,5 +1,25 @@
 # `content-tag` Changelog
 
+## Release (2026-05-08)
+
+* content-tag 4.2.0 (minor)
+
+#### :rocket: Enhancement
+* `content-tag`
+  * [#132](https://github.com/embroider-build/content-tag/pull/132) Update to latest swc ([@ef4](https://github.com/ef4))
+
+#### :bug: Bug Fix
+* `content-tag`
+  * [#128](https://github.com/embroider-build/content-tag/pull/128) Regression test for incorrect stripping of type reexports ([@ef4](https://github.com/ef4))
+
+#### :house: Internal
+* `content-tag`
+  * [#131](https://github.com/embroider-build/content-tag/pull/131) cleaning up tests ([@ef4](https://github.com/ef4))
+  * [#129](https://github.com/embroider-build/content-tag/pull/129) bumping rust toolchain ([@ef4](https://github.com/ef4))
+
+#### Committers: 1
+- Edward Faulkner ([@ef4](https://github.com/ef4))
+
 ## Release (2026-03-17)
 
 * content-tag 4.1.1 (patch)
