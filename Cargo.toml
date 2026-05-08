@@ -41,10 +41,25 @@ wasm-bindgen = "0.2.95"
 js-sys = "0.3.64"
 
 [dependencies.uuid]
-version = "1.11.0"
+version = "1.23.1"
 features = [
-    "v4",       # Lets you generate random UUIDs
-    "fast-rng"  # Use a faster (but still sufficiently random) RNG
+    "v4",
+    "rng-getrandom"
+]
+
+# this is really a transitive dep but we need to set its feature
+[dependencies.getrandom]
+version = "0.4.2"
+features = [
+    "wasm_js"
+]
+
+# this is really a transitive dep but we need to set its feature
+[dependencies.getrandom2]
+version = "0.3.4"
+package = "getrandom"
+features = [
+    "wasm_js"
 ]
 
 [[bench]]

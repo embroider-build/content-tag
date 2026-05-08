@@ -18,7 +18,7 @@ runs:
           debug-${{ runner.os }}-
     - name: Install wasm-pack
       shell: "bash"
-      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      run: curl https://wasm-bindgen.github.io/wasm-pack/installer/init.sh -sSf | zsh
     - name: Install wasm-opt
       shell: "bash"
       run: cargo install wasm-opt --locked
