@@ -89,7 +89,7 @@ checksum = "d92bec98840b8f03a5ff5413de5293bfcd8bf96467cf5452609f939ec6f5de16"
 [[package]]
 name = "ast_node"
 version = "5.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "quote",
  "swc_macros_common",
@@ -138,7 +138,7 @@ dependencies = [
 [[package]]
 name = "better_scoped_tls"
 version = "1.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "scoped-tls",
 ]
@@ -595,7 +595,7 @@ dependencies = [
 [[package]]
 name = "from_variant"
 version = "3.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "swc_macros_common",
  "syn",
@@ -745,7 +745,7 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 [[package]]
 name = "hstr"
 version = "3.0.4"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "hashbrown 0.14.5",
  "new_debug_unreachable",
@@ -1303,7 +1303,7 @@ checksum = "84350ffee5cedfabf9bee3e8825721f651da8ff79d50fe7a37cf0ca015c428ee"
 [[package]]
 name = "preset_env_base"
 version = "7.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "anyhow",
  "browserslist-rs",
@@ -1698,7 +1698,7 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 [[package]]
 name = "string_enum"
 version = "1.0.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "quote",
  "swc_macros_common",
@@ -1714,7 +1714,7 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 [[package]]
 name = "swc"
 version = "63.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
@@ -1764,7 +1764,7 @@ dependencies = [
 [[package]]
 name = "swc_allocator"
 version = "4.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "allocator-api2",
  "bumpalo",
@@ -1775,7 +1775,7 @@ dependencies = [
 [[package]]
 name = "swc_atoms"
 version = "9.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "hstr",
  "once_cell",
@@ -1785,7 +1785,7 @@ dependencies = [
 [[package]]
 name = "swc_common"
 version = "21.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "anyhow",
  "ast_node",
@@ -1812,7 +1812,7 @@ dependencies = [
 [[package]]
 name = "swc_compiler_base"
 version = "55.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
@@ -1837,7 +1837,7 @@ dependencies = [
 [[package]]
 name = "swc_config"
 version = "4.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "anyhow",
  "bytes-str",
@@ -1857,7 +1857,7 @@ dependencies = [
 [[package]]
 name = "swc_config_macro"
 version = "1.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1868,7 +1868,7 @@ dependencies = [
 [[package]]
 name = "swc_core"
 version = "65.0.3"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "swc_allocator",
  "swc_atoms",
@@ -1883,7 +1883,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_ast"
 version = "23.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "bitflags",
  "is-macro",
@@ -1902,7 +1902,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_codegen"
 version = "26.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "ascii",
  "compact_str",
@@ -1924,7 +1924,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_codegen_macros"
 version = "2.0.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "proc-macro2",
  "swc_macros_common",
@@ -1934,7 +1934,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_bugfixes"
 version = "47.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "rustc-hash",
  "swc_atoms",
@@ -1951,7 +1951,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_common"
 version = "38.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "swc_common",
  "swc_ecma_ast",
@@ -1962,7 +1962,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_es2015"
 version = "46.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "arrayvec",
  "indexmap",
@@ -1989,7 +1989,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_es2016"
 version = "43.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "swc_ecma_ast",
  "swc_ecma_transformer",
@@ -2001,7 +2001,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_es2017"
 version = "43.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "serde",
  "swc_common",
@@ -2015,7 +2015,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_es2018"
 version = "44.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "serde",
  "swc_ecma_ast",
@@ -2028,7 +2028,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_es2019"
 version = "43.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "swc_common",
  "swc_ecma_ast",
@@ -2041,7 +2041,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_es2020"
 version = "45.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "serde",
  "swc_common",
@@ -2057,7 +2057,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_es2021"
 version = "43.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "swc_ecma_ast",
  "swc_ecma_transformer",
@@ -2069,7 +2069,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_es2022"
 version = "45.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "rustc-hash",
  "swc_atoms",
@@ -2088,7 +2088,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_compat_regexp"
 version = "4.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "icu_properties",
  "swc_ecma_regexp_ast",
@@ -2098,7 +2098,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_ext_transforms"
 version = "29.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "phf",
  "swc_common",
@@ -2110,7 +2110,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_hooks"
 version = "0.7.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "swc_atoms",
  "swc_common",
@@ -2121,7 +2121,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_lints"
 version = "30.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "auto_impl",
  "dashmap",
@@ -2141,7 +2141,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_loader"
 version = "21.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "anyhow",
  "dashmap",
@@ -2162,7 +2162,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_minifier"
 version = "52.0.4"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "arrayvec",
  "bitflags",
@@ -2197,7 +2197,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_parser"
 version = "39.0.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "bitflags",
  "either",
@@ -2217,7 +2217,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_preset_env"
 version = "53.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "anyhow",
  "foldhash 0.1.5",
@@ -2241,7 +2241,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_regexp"
 version = "0.10.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "phf",
  "rustc-hash",
@@ -2256,7 +2256,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_regexp_ast"
 version = "0.10.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "bitflags",
  "is-macro",
@@ -2268,12 +2268,12 @@ dependencies = [
 [[package]]
 name = "swc_ecma_regexp_common"
 version = "0.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 
 [[package]]
 name = "swc_ecma_regexp_visit"
 version = "0.10.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2285,7 +2285,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_testing"
 version = "22.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "anyhow",
  "hex",
@@ -2297,7 +2297,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transformer"
 version = "14.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "rustc-hash",
  "swc_atoms",
@@ -2315,7 +2315,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms"
 version = "52.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "par-core",
  "swc_common",
@@ -2333,7 +2333,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_base"
 version = "42.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "better_scoped_tls",
  "indexmap",
@@ -2354,7 +2354,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_classes"
 version = "42.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "swc_common",
  "swc_ecma_ast",
@@ -2366,7 +2366,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_compat"
 version = "48.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "indexmap",
  "par-core",
@@ -2393,7 +2393,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_macros"
 version = "1.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2404,7 +2404,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_module"
 version = "46.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -2431,7 +2431,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_optimization"
 version = "44.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "bytes-str",
  "dashmap",
@@ -2454,7 +2454,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_proposal"
 version = "42.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "either",
  "rustc-hash",
@@ -2471,7 +2471,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_react"
 version = "46.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "base64 0.22.1",
  "bytes-str",
@@ -2495,7 +2495,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_testing"
 version = "46.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "ansi_term",
  "anyhow",
@@ -2520,7 +2520,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_typescript"
 version = "46.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "bytes-str",
  "rustc-hash",
@@ -2537,7 +2537,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_utils"
 version = "29.1.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "dragonbox_ecma",
  "indexmap",
@@ -2555,7 +2555,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_visit"
 version = "23.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "new_debug_unreachable",
  "num-bigint",
@@ -2569,7 +2569,7 @@ dependencies = [
 [[package]]
 name = "swc_eq_ignore_macros"
 version = "1.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2579,7 +2579,7 @@ dependencies = [
 [[package]]
 name = "swc_error_reporters"
 version = "23.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "anyhow",
  "miette",
@@ -2591,7 +2591,7 @@ dependencies = [
 [[package]]
 name = "swc_macros_common"
 version = "1.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2601,7 +2601,7 @@ dependencies = [
 [[package]]
 name = "swc_node_comments"
 version = "21.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "dashmap",
  "rustc-hash",
@@ -2612,7 +2612,7 @@ dependencies = [
 [[package]]
 name = "swc_sourcemap"
 version = "10.0.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "base64-simd",
  "bitvec",
@@ -2630,7 +2630,7 @@ dependencies = [
 [[package]]
 name = "swc_timer"
 version = "1.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "tracing",
 ]
@@ -2638,7 +2638,7 @@ dependencies = [
 [[package]]
 name = "swc_trace_macro"
 version = "2.0.2"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "quote",
  "syn",
@@ -2647,7 +2647,7 @@ dependencies = [
 [[package]]
 name = "swc_transform_common"
 version = "15.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "better_scoped_tls",
  "rustc-hash",
@@ -2658,7 +2658,7 @@ dependencies = [
 [[package]]
 name = "swc_typescript"
 version = "28.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "bitflags",
  "petgraph",
@@ -2673,7 +2673,7 @@ dependencies = [
 [[package]]
 name = "swc_visit"
 version = "2.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "either",
  "new_debug_unreachable",
@@ -2732,7 +2732,7 @@ dependencies = [
 [[package]]
 name = "testing"
 version = "22.0.0"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "cargo_metadata 0.18.1",
  "difference",
@@ -2752,7 +2752,7 @@ dependencies = [
 [[package]]
 name = "testing_macros"
 version = "1.0.1"
-source = "git+https://github.com/ef4/swc.git?branch=content-tag#26dfc9db0b3d92aa650f38bf9c7c4cb6889d200a"
+source = "git+https://github.com/NullVoxPopuli-ai-agent/swc.git?branch=nested-template-elements#cfee670ade0c2b4147c6bc867ede5c2390df54cf"
 dependencies = [
  "anyhow",
  "glob",

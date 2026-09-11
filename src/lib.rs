@@ -362,3 +362,39 @@ extra line break
   content
 </div>`, { eval() { return eval(arguments[0])} });"#
 }
+
+testcase! {
+  nested_template_element,
+  r#"let x = <template><template shadowrootmode="open">hello</template></template>"#,
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+     let x = template_UUID(`<template shadowrootmode="open">hello</template>`, { eval() { return eval(arguments[0])} });"#
+}
+
+testcase! {
+  nested_template_element_multiline,
+  r#"export default <template>
+    <template shadowrootmode="open">
+      <p>in the shadow</p>
+    </template>
+    <Foo />
+  </template>"#,
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+     export default template_UUID(`<template shadowrootmode="open">
+  <p>in the shadow</p>
+</template>
+<Foo />`, { eval() { return eval(arguments[0])} });"#
+}
+
+testcase! {
+  nested_template_elements_siblings_and_depth,
+  r#"let x = <template><template>a</template><div><template><template>b</template></template></div></template>"#,
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+     let x = template_UUID(`<template>a</template><div><template><template>b</template></template></div>`, { eval() { return eval(arguments[0])} });"#
+}
+
+testcase! {
+  element_with_template_prefix_is_not_nested,
+  r#"let x = <template><templates>a</templates></template>"#,
+  r#"import { template as template_UUID } from "@ember/template-compiler";
+     let x = template_UUID(`<templates>a</templates>`, { eval() { return eval(arguments[0])} });"#
+}

@@ -451,3 +451,13 @@ test!(
       content here
     </pre>`, { eval() { return eval(arguments[0]) }})"#
 );
+
+test!(
+    content_tag_nested_template_element_member,
+    r#"class X { <template><template shadowrootmode="open">Hello</template></template> } "#,
+    r#"class X {
+      static {
+          template(`<template shadowrootmode="open">Hello</template>`, { component: this, eval() { return eval(arguments[0]) }},);
+      }
+    }"#
+);

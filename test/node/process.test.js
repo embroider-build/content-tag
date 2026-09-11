@@ -309,5 +309,86 @@ describe(`process`, function () {
          });`,
       );
     });
+
+    describe("nested <template> elements", function () {
+      it("keeps a declarative shadow root template inside the content tag", function () {
+        let output = p.process(
+          `<template><template shadowrootmode="open"><p>Hi</p></template></template>`,
+        );
+
+        expect(normalizeOutput(output.code)).to.equalCode(
+          `import { template as template_UUID } from "@ember/template-compiler";
+         export default template_UUID(\`<template shadowrootmode="open"><p>Hi</p></template>\`, {
+             eval () {
+                 return eval(arguments[0]);
+             }
+         });`,
+        );
+      });
+
+      it("keeps nested templates in a class member", function () {
+        let output = p.process(`
+        class Foo extends Component {
+          <template>
+            <template shadowrootmode="open">
+              <slot></slot>
+            </template>
+            <Bar />
+          </template>
+        }
+      `);
+
+        expect(normalizeOutput(output.code)).to.equalCode(
+          `import { template as template_UUID } from "@ember/template-compiler";
+         class Foo extends Component {
+             static{
+                 template_UUID(\`<template shadowrootmode="open">
+  <slot></slot>
+</template>
+<Bar />\`, {
+                     component: this,
+                     eval () {
+                         return eval(arguments[0]);
+                     }
+                 });
+             }
+         };`,
+        );
+      });
+
+      it("keeps sibling and deeper nested templates", function () {
+        let output = p.process(
+          `<template><template>a</template><div><template><template>b</template></template></div></template>`,
+        );
+
+        expect(normalizeOutput(output.code)).to.equalCode(
+          `import { template as template_UUID } from "@ember/template-compiler";
+         export default template_UUID(\`<template>a</template><div><template><template>b</template></template></div>\`, {
+             eval () {
+                 return eval(arguments[0]);
+             }
+         });`,
+        );
+      });
+
+      it("does not treat an element with a template prefix as nested", function () {
+        let output = p.process(`<template><templates>a</templates></template>`);
+
+        expect(normalizeOutput(output.code)).to.equalCode(
+          `import { template as template_UUID } from "@ember/template-compiler";
+         export default template_UUID(\`<templates>a</templates>\`, {
+             eval () {
+                 return eval(arguments[0]);
+             }
+         });`,
+        );
+      });
+
+      it("reports an error for an unclosed nested template", function () {
+        expect(() =>
+          p.process(`<template><template shadowrootmode="open">Hi</template>`),
+        ).to.throw();
+      });
+    });
   });
 });

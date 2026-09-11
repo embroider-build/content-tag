@@ -522,3 +522,106 @@ fn test_inner_expression() {
         }]
     );
 }
+
+#[test]
+fn test_nested_template_element() {
+    let p = Preprocessor::new();
+    let src = r#"<template><template shadowrootmode="open">Hi</template></template>"#;
+    let output = p.parse(src, Default::default()).unwrap();
+
+    assert_eq!(
+        output,
+        vec![Occurrence {
+            kind: ContentTagKind::Expression,
+            tag_name: "template".into(),
+            contents: r#"<template shadowrootmode="open">Hi</template>"#.into(),
+            range: Range {
+                start_byte: 0,
+                end_byte: 66,
+                start_char: 0,
+                end_char: 66,
+                start_utf16_codepoint: 0,
+                end_utf16_codepoint: 66,
+            },
+            start_range: Range {
+                start_byte: 0,
+                end_byte: 10,
+                start_char: 0,
+                end_char: 10,
+                start_utf16_codepoint: 0,
+                end_utf16_codepoint: 10,
+            },
+            content_range: Range {
+                start_byte: 10,
+                end_byte: 55,
+                start_char: 10,
+                end_char: 55,
+                start_utf16_codepoint: 10,
+                end_utf16_codepoint: 55,
+            },
+            end_range: Range {
+                start_byte: 55,
+                end_byte: 66,
+                start_char: 55,
+                end_char: 66,
+                start_utf16_codepoint: 55,
+                end_utf16_codepoint: 66,
+            },
+        }]
+    );
+}
+
+#[test]
+fn test_nested_template_element_in_inner_expression() {
+    let p = Preprocessor::new();
+    let src = r#"let x = doIt(<template>a<template>b</template>c</template>)"#;
+    let output = p.parse(src, Default::default()).unwrap();
+
+    assert_eq!(
+        output,
+        vec![Occurrence {
+            kind: ContentTagKind::Expression,
+            tag_name: "template".into(),
+            contents: "a<template>b</template>c".into(),
+            range: Range {
+                start_byte: 13,
+                end_byte: 58,
+                start_char: 13,
+                end_char: 58,
+                start_utf16_codepoint: 13,
+                end_utf16_codepoint: 58,
+            },
+            start_range: Range {
+                start_byte: 13,
+                end_byte: 23,
+                start_char: 13,
+                end_char: 23,
+                start_utf16_codepoint: 13,
+                end_utf16_codepoint: 23,
+            },
+            content_range: Range {
+                start_byte: 23,
+                end_byte: 47,
+                start_char: 23,
+                end_char: 47,
+                start_utf16_codepoint: 23,
+                end_utf16_codepoint: 47,
+            },
+            end_range: Range {
+                start_byte: 47,
+                end_byte: 58,
+                start_char: 47,
+                end_char: 58,
+                start_utf16_codepoint: 47,
+                end_utf16_codepoint: 58,
+            },
+        }]
+    );
+}
+
+#[test]
+fn test_unclosed_nested_template_element_is_an_error() {
+    let p = Preprocessor::new();
+    let src = r#"<template><template shadowrootmode="open">Hi</template>"#;
+    assert!(p.parse(src, Default::default()).is_err());
+}

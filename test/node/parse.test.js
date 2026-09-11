@@ -385,4 +385,50 @@ describe(`parse`, function () {
       ).to.eql(`💩`);
     }
   });
+
+  it("keeps nested <template> elements inside the content tag", function () {
+    let output = p.parse(
+      `<template><template shadowrootmode="open">Hi</template></template>`,
+    );
+
+    expect(output).to.eql([
+      {
+        type: "expression",
+        tagName: "template",
+        contents: `<template shadowrootmode="open">Hi</template>`,
+        range: {
+          startByte: 0,
+          endByte: 66,
+          startChar: 0,
+          endChar: 66,
+          startUtf16Codepoint: 0,
+          endUtf16Codepoint: 66,
+        },
+        contentRange: {
+          startByte: 10,
+          endByte: 55,
+          startChar: 10,
+          endChar: 55,
+          startUtf16Codepoint: 10,
+          endUtf16Codepoint: 55,
+        },
+        startRange: {
+          startByte: 0,
+          endByte: 10,
+          startChar: 0,
+          endChar: 10,
+          startUtf16Codepoint: 0,
+          endUtf16Codepoint: 10,
+        },
+        endRange: {
+          startByte: 55,
+          endByte: 66,
+          startChar: 55,
+          endChar: 66,
+          startUtf16Codepoint: 55,
+          endUtf16Codepoint: 66,
+        },
+      },
+    ]);
+  });
 });
