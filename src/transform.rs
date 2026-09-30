@@ -78,6 +78,20 @@ fn escape_template_literal(input: &Atom) -> Atom {
         .into()
 }
 
+// The leading spaces and tabs of a line. Only ASCII whitespace counts as
+// indentation, so slicing a line at (up to) this length never splits a
+// multi-byte character.
+fn indentation(line: &str) -> &str {
+    let content = line.trim_start_matches([' ', '\t']);
+    &line[..line.len() - content.len()]
+}
+
+// A line made up only of indentation. Lines with any other character, including
+// non-ASCII whitespace, are content.
+fn is_blank(line: &str) -> bool {
+    indentation(line).len() == line.len()
+}
+
 fn strip_indent(input: &str) -> String {
     let lines: Vec<&str> = input.lines().collect();
 
@@ -87,11 +101,11 @@ fn strip_indent(input: &str) -> String {
 
     let start = lines
         .iter()
-        .position(|l| !l.trim().is_empty())
+        .position(|l| !is_blank(l))
         .unwrap_or(lines.len());
     let end = lines
         .iter()
-        .rposition(|l| !l.trim().is_empty())
+        .rposition(|l| !is_blank(l))
         .map(|i| i + 1)
         .unwrap_or(0);
 
@@ -106,13 +120,12 @@ fn strip_indent(input: &str) -> String {
     let mut has_tabs = false;
 
     for line in lines {
-        let content = line.trim_start();
-        if content.is_empty() {
+        if is_blank(line) {
             continue;
         }
 
-        let indent_size = line.len() - content.len();
-        let indent_chars = &line[..indent_size];
+        let indent_chars = indentation(line);
+        let indent_size = indent_chars.len();
 
         has_spaces |= indent_chars.contains(' ');
         has_tabs |= indent_chars.contains('\t');
@@ -450,4 +463,18 @@ test!(
     <pre>
       content here
     </pre>`, { eval() { return eval(arguments[0]) }})"#
+);
+
+// Only ASCII spaces and tabs count as indentation. Other Unicode whitespace is
+// content, and must never be split in the middle of a multi-byte character.
+test!(
+    non_ascii_whitespace_is_not_indentation,
+    "let x = <template>\n\u{3000}<a></a>\n  <b></b>\n</template>",
+    "let x = template(`\u{3000}<a></a>\n  <b></b>`, { eval() { return eval(arguments[0]) }})"
+);
+
+test!(
+    multibyte_whitespace_on_blank_line,
+    "let x = <template>\n  <a></a>\n\u{3000}\n  <b></b>\n</template>",
+    "let x = template(`  <a></a>\n\u{3000}\n  <b></b>`, { eval() { return eval(arguments[0]) }})"
 );
