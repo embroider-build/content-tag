@@ -1,5 +1,16 @@
 # `content-tag` Changelog
 
+## Release (2026-09-30)
+
+* content-tag 4.2.1 (patch)
+
+#### :bug: Bug Fix
+* `content-tag`
+  * [#134](https://github.com/embroider-build/content-tag/pull/134) Fix multibyte whitespace indentation panic ([@ef4](https://github.com/ef4))
+
+#### Committers: 1
+- Edward Faulkner ([@ef4](https://github.com/ef4))
+
 ## Release (2026-05-08)
 
 * content-tag 4.2.0 (minor)
