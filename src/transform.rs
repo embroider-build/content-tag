@@ -451,3 +451,17 @@ test!(
       content here
     </pre>`, { eval() { return eval(arguments[0]) }})"#
 );
+
+// Only ASCII spaces and tabs count as indentation. Other Unicode whitespace is
+// content, and must never be split in the middle of a multi-byte character.
+test!(
+    non_ascii_whitespace_is_not_indentation,
+    "let x = <template>\n\u{3000}<a></a>\n  <b></b>\n</template>",
+    "let x = template(`\u{3000}<a></a>\n  <b></b>`, { eval() { return eval(arguments[0]) }})"
+);
+
+test!(
+    multibyte_whitespace_on_blank_line,
+    "let x = <template>\n  <a></a>\n\u{3000}\n  <b></b>\n</template>",
+    "let x = template(`<a></a>\n\u{3000}\n<b></b>`, { eval() { return eval(arguments[0]) }})"
+);
