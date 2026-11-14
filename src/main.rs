@@ -30,8 +30,8 @@ fn main() {
         Ok(output) => println!("{}", output.code),
         Err(err) => {
             let handler =
-                Handler::with_tty_emitter(ColorConfig::Auto, true, false, Some(p.source_map()));
-            err.into_diagnostic(&handler).emit();
+                Handler::with_tty_emitter(ColorConfig::Auto, true, false, Some(err.source_map));
+            err.error.into_diagnostic(&handler).emit();
         }
     }
 }

@@ -93,7 +93,11 @@ class Comp extends Component {
             &format!("      <p>{{{{this.description}}}}</p>\n{}", extra_content),
         );
         bench_parse(
-            &format!("{} extra rows inside template ({} chars)", num_rows, src.len()),
+            &format!(
+                "{} extra rows inside template ({} chars)",
+                num_rows,
+                src.len()
+            ),
             &src,
             3000,
         );
@@ -149,7 +153,10 @@ export default class AuthService extends Service {
 }"#;
 
     bench_parse(
-        &format!("base component (1 template, {} chars)", base_component.len()),
+        &format!(
+            "base component (1 template, {} chars)",
+            base_component.len()
+        ),
         base_component,
         5000,
     );

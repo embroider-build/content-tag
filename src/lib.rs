@@ -4,10 +4,11 @@
 extern crate lazy_static;
 
 use base64::{engine::general_purpose, Engine as _};
+use std::fmt;
 use std::path::PathBuf;
 use swc_common::comments::SingleThreadedComments;
 use swc_common::source_map::SourceMapGenConfig;
-use swc_common::{self, sync::Lrc, FileName, Mark, SourceMap};
+use swc_common::{self, sync::Lrc, FileName, Mark, SourceFile, SourceMap};
 use swc_core::common::GLOBALS;
 use swc_ecma_ast::{
     Ident, ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl, ModuleExportName,
@@ -31,9 +32,29 @@ pub struct Options {
     pub inline_source_map: bool,
 }
 
-pub struct Preprocessor {
-    source_map: Lrc<SourceMap>,
-    comments: SingleThreadedComments,
+/// Reads `<template>` content tags. It holds no state, so one preprocessor can
+/// be reused for any number of files. Each call to `parse` or `process` keeps
+/// its source map and comments to itself, and drops them when it returns.
+#[derive(Default)]
+pub struct Preprocessor {}
+
+/// A parse error, with the source map needed to show where it is.
+pub struct ParseError {
+    pub error: swc_ecma_parser::error::Error,
+    pub source_map: Lrc<SourceMap>,
+}
+
+// `SourceMap` does not implement `Debug`, so only the error is shown.
+impl fmt::Debug for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.error.fmt(f)
+    }
+}
+
+impl From<ParseError> for swc_ecma_parser::error::Error {
+    fn from(err: ParseError) -> Self {
+        err.error
+    }
 }
 
 pub struct CodeMapPair {
@@ -56,40 +77,43 @@ impl SourceMapGenConfig for SourceMapConfig {
 
 impl Preprocessor {
     pub fn new() -> Self {
-        Self {
-            source_map: Default::default(),
-            comments: SingleThreadedComments::default(),
-        }
+        Self {}
+    }
+
+    fn lexer<'a>(
+        &self,
+        source_file: &'a SourceFile,
+        comments: &'a SingleThreadedComments,
+    ) -> Lexer<'a> {
+        Lexer::new(
+            Syntax::Typescript(TsSyntax {
+                decorators: true,
+                ..Default::default()
+            }),
+            Default::default(),
+            StringInput::from(source_file),
+            Some(comments),
+        )
     }
 
     pub fn parse(
         &self,
         src: &str,
         options: Options,
-    ) -> Result<Vec<locate::Occurrence>, swc_ecma_parser::error::Error> {
-        let filename = match options.filename {
-            Some(name) => FileName::Real(name),
-            None => FileName::Anon,
-        };
+    ) -> Result<Vec<locate::Occurrence>, ParseError> {
+        let source_map: Lrc<SourceMap> = Default::default();
+        let comments = SingleThreadedComments::default();
+        let source_file = new_source_file(&source_map, src, options.filename);
 
-        let source_file = self
-            .source_map
-            .new_source_file(filename.into(), src.to_string());
-
-        let lexer = Lexer::new(
-            Syntax::Typescript(TsSyntax {
-                decorators: true,
-                ..Default::default()
-            }),
-            Default::default(),
-            StringInput::from(&*source_file),
-            Some(&self.comments),
-        );
-        let mut parser = Parser::new_from(lexer);
+        let mut parser = Parser::new_from(self.lexer(&source_file, &comments));
         GLOBALS.set(&Default::default(), || {
-            let parsed_module = parser.parse_module()?;
+            let parsed_module = parser.parse_module().map_err(|error| ParseError {
+                error,
+                source_map: source_map.clone(),
+            })?;
 
-            let mut visitor = locate::LocateContentTagVisitor::new(src.to_string());
+            let mut visitor =
+                locate::LocateContentTagVisitor::new(src.to_string(), source_file.start_pos);
 
             parsed_module.visit_with(&mut visitor);
 
@@ -97,34 +121,19 @@ impl Preprocessor {
         })
     }
 
-    pub fn process(
-        &self,
-        src: &str,
-        options: Options,
-    ) -> Result<CodeMapPair, swc_ecma_parser::error::Error> {
+    pub fn process(&self, src: &str, options: Options) -> Result<CodeMapPair, ParseError> {
         let target_specifier = "template";
         let target_module = "@ember/template-compiler";
-        let filename = match options.filename {
-            Some(name) => FileName::Real(name),
-            None => FileName::Anon,
-        };
+        let source_map: Lrc<SourceMap> = Default::default();
+        let comments = SingleThreadedComments::default();
+        let source_file = new_source_file(&source_map, src, options.filename);
 
-        let source_file = self
-            .source_map
-            .new_source_file(filename.into(), src.to_string());
-
-        let lexer = Lexer::new(
-            Syntax::Typescript(TsSyntax {
-                decorators: true,
-                ..Default::default()
-            }),
-            Default::default(),
-            StringInput::from(&*source_file),
-            Some(&self.comments),
-        );
-        let mut parser = Parser::new_from(lexer);
+        let mut parser = Parser::new_from(self.lexer(&source_file, &comments));
         GLOBALS.set(&Default::default(), || {
-            let mut parsed_module = parser.parse_module()?;
+            let mut parsed_module = parser.parse_module().map_err(|error| ParseError {
+                error,
+                source_map: source_map.clone(),
+            })?;
 
             let id = private_ident!(IMPORT_ALIAS);
             let mut needs_import = false;
@@ -142,57 +151,73 @@ impl Preprocessor {
 
             parsed_module.visit_mut_with(&mut resolver(unresolved_mark, top_level_mark, false));
 
-            let codemap = self.print(&parsed_module, options.inline_source_map);
-
-            Ok(codemap)
+            Ok(print(
+                &parsed_module,
+                &source_map,
+                &comments,
+                options.inline_source_map,
+            ))
         })
     }
+}
 
-    fn print(&self, module: &Module, inline_source_map: bool) -> CodeMapPair {
-        let mut buf = vec![];
-        let mut srcmap = vec![];
-        let mut source_map_buffer = vec![];
-        let mut emitter = Emitter {
-            cfg: Default::default(),
-            cm: self.source_map.clone(),
-            wr: swc_ecma_codegen::text_writer::JsWriter::new(
-                self.source_map().clone(),
-                "\n",
-                &mut buf,
-                Some(&mut srcmap),
-            ),
-            comments: Some(&self.comments),
-        };
-        emitter.emit_module(module).unwrap();
+fn new_source_file(
+    source_map: &Lrc<SourceMap>,
+    src: &str,
+    filename: Option<PathBuf>,
+) -> Lrc<SourceFile> {
+    let filename = match filename {
+        Some(name) => FileName::Real(name),
+        None => FileName::Anon,
+    };
+    source_map.new_source_file(filename.into(), src.to_string())
+}
 
-        self.source_map()
-            .build_source_map(&srcmap, None, SourceMapConfig {})
-            .to_writer(&mut source_map_buffer)
-            .unwrap();
+fn print(
+    module: &Module,
+    source_map: &Lrc<SourceMap>,
+    comments: &SingleThreadedComments,
+    inline_source_map: bool,
+) -> CodeMapPair {
+    let mut buf = vec![];
+    let mut srcmap = vec![];
+    let mut source_map_buffer = vec![];
+    let mut emitter = Emitter {
+        cfg: Default::default(),
+        cm: source_map.clone(),
+        wr: swc_ecma_codegen::text_writer::JsWriter::new(
+            source_map.clone(),
+            "\n",
+            &mut buf,
+            Some(&mut srcmap),
+        ),
+        comments: Some(comments),
+    };
+    emitter.emit_module(module).unwrap();
 
-        if inline_source_map {
-            let mut comment = "//# sourceMappingURL=data:application/json;base64,"
-                .to_owned()
-                .into_bytes();
-            buf.append(&mut comment);
+    source_map
+        .build_source_map(&srcmap, None, SourceMapConfig {})
+        .to_writer(&mut source_map_buffer)
+        .unwrap();
 
-            let mut encoded = general_purpose::URL_SAFE_NO_PAD
-                .encode(source_map_buffer.clone())
-                .into_bytes();
+    if inline_source_map {
+        let mut comment = "//# sourceMappingURL=data:application/json;base64,"
+            .to_owned()
+            .into_bytes();
+        buf.append(&mut comment);
 
-            buf.append(&mut encoded);
-        }
+        let mut encoded = general_purpose::URL_SAFE_NO_PAD
+            .encode(source_map_buffer.clone())
+            .into_bytes();
 
-        let s = String::from_utf8_lossy(&buf);
-
-        CodeMapPair {
-            code: s.to_string(),
-            map: String::from_utf8(source_map_buffer.clone()).unwrap(),
-        }
+        buf.append(&mut encoded);
     }
 
-    pub fn source_map(&self) -> Lrc<SourceMap> {
-        return self.source_map.clone();
+    let s = String::from_utf8_lossy(&buf);
+
+    CodeMapPair {
+        code: s.to_string(),
+        map: String::from_utf8(source_map_buffer.clone()).unwrap(),
     }
 }
 
@@ -361,4 +386,31 @@ extra line break
 <div>
   content
 </div>`, { eval() { return eval(arguments[0])} });"#
+}
+
+#[test]
+fn reused_preprocessor_gives_the_same_output() {
+    let p = Preprocessor::new();
+    let src = "let ü = 1;\nlet x = <template>💩</template>";
+    let first = p.process(src, Default::default()).unwrap();
+    for _ in 0..3 {
+        p.process("let y = <template>other</template>", Default::default())
+            .unwrap();
+        let again = p.process(src, Default::default()).unwrap();
+        assert_eq!(again.code, first.code);
+        assert_eq!(again.map, first.map);
+    }
+}
+
+#[test]
+fn reused_preprocessor_reports_errors_in_the_right_file() {
+    let p = Preprocessor::new();
+    p.process("let x = 1;\nlet y = 2;\n", Default::default())
+        .unwrap();
+    let err = p.process("let x = ;", Default::default()).err().unwrap();
+    assert_eq!(
+        err.source_map
+            .span_to_string(swc_common::Spanned::span(&err.error)),
+        "<anon>:1:9: 1:10"
+    );
 }

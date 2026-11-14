@@ -1,5 +1,5 @@
 use serde::Serialize;
-use swc_common::{self, Span};
+use swc_common::{self, BytePos, Span};
 use swc_ecma_ast::{
     ClassMember, ContentTagContent, ContentTagEnd, ContentTagExpression, ContentTagMember,
     ContentTagStart,
@@ -10,6 +10,8 @@ use swc_ecma_visit::{Visit, VisitWith};
 pub struct LocateContentTagVisitor {
     pub occurrences: Vec<Occurrence>,
     src: String,
+    // Where the file starts in its source map. Spans are measured from here.
+    start_pos: BytePos,
     is_ascii: bool,
 }
 
@@ -21,11 +23,12 @@ enum ContentTagKind {
 }
 
 impl LocateContentTagVisitor {
-    pub fn new(src: String) -> Self {
+    pub fn new(src: String, start_pos: BytePos) -> Self {
         let is_ascii = src.is_ascii();
         Self {
             occurrences: Default::default(),
             src,
+            start_pos,
             is_ascii,
         }
     }
@@ -42,10 +45,10 @@ impl LocateContentTagVisitor {
             kind,
             tag_name: "template".to_owned(),
             contents: contents.value.to_string(),
-            range: Range::new(&self.src, span, self.is_ascii),
-            start_range: Range::new(&self.src, &opening.span, self.is_ascii),
-            content_range: Range::new(&self.src, &contents.span, self.is_ascii),
-            end_range: Range::new(&self.src, &closing.span, self.is_ascii),
+            range: Range::new(&self.src, self.start_pos, span, self.is_ascii),
+            start_range: Range::new(&self.src, self.start_pos, &opening.span, self.is_ascii),
+            content_range: Range::new(&self.src, self.start_pos, &contents.span, self.is_ascii),
+            end_range: Range::new(&self.src, self.start_pos, &closing.span, self.is_ascii),
         };
 
         self.occurrences.push(occurrence);
@@ -118,9 +121,9 @@ pub struct Range {
     end_utf16_codepoint: usize,
 }
 impl Range {
-    pub fn new(src: &str, span: &Span, is_ascii: bool) -> Range {
-        let start_byte = span.lo.0 as usize - 1;
-        let end_byte = span.hi.0 as usize - 1;
+    pub fn new(src: &str, start_pos: BytePos, span: &Span, is_ascii: bool) -> Range {
+        let start_byte = (span.lo - start_pos).0 as usize;
+        let end_byte = (span.hi - start_pos).0 as usize;
         if is_ascii {
             // For ASCII sources, byte/char/utf16 offsets are all identical.
             Range {
@@ -521,4 +524,23 @@ fn test_inner_expression() {
             kind: ContentTagKind::Expression
         }]
     );
+}
+
+// A preprocessor can be reused. Each parse starts from a fresh source map, so
+// earlier files do not shift the ranges of later ones.
+#[test]
+fn test_reused_preprocessor_gives_the_same_ranges() {
+    let p = Preprocessor::new();
+    let ascii = "let x = <template>Hello</template>";
+    let unicode = "let ü = 1;\nlet x = <template>💩</template>";
+    let longer = format!("{}<template>Hi</template>", "// padding\n".repeat(50));
+
+    let first_ascii = p.parse(ascii, Default::default()).unwrap();
+    let first_unicode = p.parse(unicode, Default::default()).unwrap();
+    for _ in 0..3 {
+        p.parse(&longer, Default::default()).unwrap();
+        assert_eq!(p.parse(ascii, Default::default()).unwrap(), first_ascii);
+        assert_eq!(p.parse(unicode, Default::default()).unwrap(), first_unicode);
+    }
+    assert_eq!(first_unicode[0].range.start_char, 19);
 }
