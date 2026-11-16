@@ -1,5 +1,16 @@
 # `content-tag` Changelog
 
+## Release (2026-11-16)
+
+* content-tag 4.3.0 (minor)
+
+#### :rocket: Enhancement
+* `content-tag`
+  * [#136](https://github.com/embroider-build/content-tag/pull/136) Give each parse and process call its own source map ([@evoactivity](https://github.com/evoactivity))
+
+#### Committers: 1
+- Liam ([@evoactivity](https://github.com/evoactivity))
+
 ## Release (2026-09-30)
 
 * content-tag 4.2.1 (patch)
