@@ -1,11 +1,7 @@
 use crate::{Options, Preprocessor as CorePreprocessor};
 use js_sys::Reflect;
 use std::path::PathBuf;
-use swc_common::{
-    errors::Handler,
-    sync::Lrc,
-    SourceMap, Spanned,
-};
+use swc_common::{errors::Handler, sync::Lrc, SourceMap, Spanned};
 use swc_error_reporters::{
     handler::{HandlerOpts, ThreadSafetyDiagnostics},
     ErrorEmitter, GraphicalReportHandler, GraphicalTheme, ToPrettyDiagnostic,
@@ -57,27 +53,9 @@ impl Options {
     }
 }
 
-#[wasm_bindgen(getter_with_clone)]
-pub struct CodeMapPair {
-    pub code: String,
-    pub map: String,
-}
-
-#[wasm_bindgen]
-impl CodeMapPair {
-    #[wasm_bindgen(constructor)]
-    pub fn new(code: String, map: String) -> Self {
-        Self { code, map }
-    }
-}
-
 #[wasm_bindgen]
 pub struct Preprocessor {
-    // TODO: reusing this between calls result in incorrect spans; there may
-    // be value in reusing some part of the stack but we will have to figure
-    // out how to combine the APIs correctly to ensure we are not hanging on
-    // to the states unexpectedly
-    // core: Box<CorePreprocessor>,
+    core: CorePreprocessor,
 }
 
 fn capture_err_detail(
@@ -128,28 +106,32 @@ fn as_javascript_error(err: swc_ecma_parser::error::Error, source_map: Lrc<Sourc
 impl Preprocessor {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
-        // TODO: investigate reuse
-        // Self {
-        //     core: Box::new(CorePreprocessor::new()),
-        // }
-        Self {}
+        Self {
+            core: CorePreprocessor::new(),
+        }
     }
 
-    pub fn process(&self, src: String, options: JsValue) -> Result<CodeMapPair, JsValue> {
+    /// Returns a plain `{ code, map }` object. The strings are copied into
+    /// JavaScript, so nothing is left in wasm memory waiting for the
+    /// JavaScript object to be garbage collected.
+    pub fn process(&self, src: String, options: JsValue) -> Result<JsValue, JsValue> {
         let options = Options::new(options);
-        let preprocessor = CorePreprocessor::new();
-        let result = preprocessor.process(&src, options);
+        let result = self.core.process(&src, options);
 
         match result {
-            Ok(output) => Ok(CodeMapPair::new(output.code, output.map)),
-            Err(err) => Err(as_javascript_error(err, preprocessor.source_map()).into()),
+            Ok(output) => {
+                let result = js_sys::Object::new();
+                Reflect::set(&result, &"code".into(), &output.code.into())?;
+                Reflect::set(&result, &"map".into(), &output.map.into())?;
+                Ok(result.into())
+            }
+            Err(err) => Err(as_javascript_error(err.error, err.source_map)),
         }
     }
 
     pub fn parse(&self, src: String, options: JsValue) -> Result<JsValue, JsValue> {
         let options = Options::new(options);
-        let preprocessor = CorePreprocessor::new();
-        let result = preprocessor.parse(&src, options);
+        let result = self.core.parse(&src, options);
 
         match result {
             Ok(parsed) => {
@@ -158,7 +140,7 @@ impl Preprocessor {
                     Err(err) =>  Err(js_error(format!("Unexpected serialization error; please open an issue with the following debug info: {err:#?}").into()))
                 }
             },
-            Err(err) => Err(as_javascript_error(err, preprocessor.source_map()))
+            Err(err) => Err(as_javascript_error(err.error, err.source_map))
         }
     }
 }
